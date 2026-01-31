@@ -1,0 +1,14 @@
+---
+ {"title":"Implementing Coroutines With Effect Handlers","private":true} 
+---
+::: private 
+ If you found this you are a beta reader or really lucky! This article is not yet ready to be made public 😃
+::: 
+
+# Implementing Coroutines With Effect Handlers
+
+## References
+
+- https://without.boats/blog/coroutines-and-effects/
+- https://ocaml.org/manual/5.4/effects.html
+- https://without.boats/blog/let-futures-be-futures/

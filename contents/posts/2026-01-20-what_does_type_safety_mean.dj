@@ -1,0 +1,258 @@
+---
+ {"title":"What Does Type Safety Mean","private": true} 
+---
+
+::: private 
+ If you found this you are a beta reader or really lucky! This article is not yet ready to be made public 😃
+::: 
+
+# What Does Type Safety Mean
+
+The primary goal of the article is explaining to myself what _type safety_ actually means and in the process of it hopefully someone else finds it useful! It is intended to be a light read so it purposefully avoids the math and jumps directly to the core concepts. 
+
+## What Are Sound Languages
+
+We can learn what safe and unsafe languages are from:
+
+> Most programming languages exhibit a phase distinction between the static and dynamic phases of processing. The static phase consists of parsing and type checking to ensure that the program is well-formed; the dynamic phase consists of execution of well-formed programs. A language is said to be safe exactly when well-formed programs are well-behaved when executed.
+>
+> The static phase is specified by a statics comprising a collection of rules for deriving typing judgments stating that an expression is well-formed of a certain type. Types mediate the interaction between the constituent parts of a program by “predicting” some aspects of the execution behavior of the parts so that we may ensure they fit together properly at run-time. Type  safety tells us that these predictions are accurate; if not, the statics is  considered to be improperly defined, and the language is deemed unsafe for execution.
+>
+> — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
+
+This tells us that types are defined by inference rules (the typing judgments) in the _statics_. And that the realm of how a program is evaluated belongs to the _dynamics_.
+
+It introduces the concept of a well-formed program, which is one that has passed type checking, we'll call them _well-typed_.
+
+Harper calls a language _safe_ if _all_ well-typed programs are well-behaved, meaning they don't show behavior not accounted for by the statics. This property is often called _type soundness_: the statics are sound with respect to the dynamics.
+
+A language may be described as either _sound_ or _unsound_ relative to this relationship and that's how we'll refer to it going forward.
+
+ ****
+
+With that in mind, Harper also states what the role of a _type system_ is:
+
+> The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur.
+>
+> — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
+
+To showcase what this means, imagine this function defined in a fictitious language which has the property of being sound, meaning that well-typed programs are well-behaved at runtime.
+
+``` rust
+fn add(a: Int, b: Int) Int {
+    return a + b;
+}
+
+// This would result in a well-typed program.
+let res = add(10, 314);
+
+// This would result in an ill-typed program.
+let res = add(10, "Some");
+``` 
+
+The expression `add(10, 314)` _is_ sensible because `add` requires its arguments to be of type `Int` and both `10` and `314` satisfy this requirement; therefore the program is well-typed. Because the statics for `Int` would guarantee that the `+` operator will not get _stuck_ (what _stuck_ means will be dealt later) and as a result the program lies within the guarantees of the language.
+
+By comparison, `add(10, "Some")` is ill-typed because `"Some"` does not have type `Int` so it doesn't satisfy the context and allowing it to execute it would violate the guarantees of the language. To further clarify this, given this case:
+
+``` rust
+fn add(a: Int, b: Str) Int {
+    return a + b;
+}
+
+let res = add(10, "Some");
+```
+The program may or may not be well-typed depending on the statics of the language.
+
+- There is a rule defined for `+` given `Int` and `Str`, the program is well-typed and guaranteed not to get stuck.
+- No rule exists, the program is ill-typed and executing it would break the language guarantees (its statics).
+
+Now to showcase when a language is unsound, let's first drop the assumption that the language we are using is sound and take a look at this example:
+
+``` rust
+fn div(a: Int, b: Int) : Int {
+    return a / b
+}
+
+let res = div(10, 0);
+```
+
+This program is clearly well-typed but to state that the language is safe depends on the dynamics. We can decide according to how they handle the division by zero:
+
+- The dynamics do not define what happens in this failure case, undefined behavior creeps in, making the language unsound.
+- Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamics checks being the easiest to implement, these are mechanism such as throwing errors, exceptions, panicking, returning a special value, etc).
+
+### Case Study
+
+Now let's look at examples in real languages on similar programs and see how the same failure case is handled, one in Rust and the other in C:
+
+``` rust
+fn div(a: u32, b: u32) -> u32 {
+    a / b
+}
+
+fn main() {
+    let res = div(10, 0);
+    println!("{res}");
+}
+```
+
+Will result in the error handled with a panic:
+
+```bash 
+$ rustc -o main main.rs; ./main
+
+thread 'main' (432991) panicked at main.rs:2:5:
+attempt to divide by zero
+note: run with `RUST_BACKTRACE=1` environment variable to display a backtrace
+with a full backtrace in:
+```
+
+If we add the `RUST_BACKTRACE=1` env variable we can see the language's built-in error handling machinery at work:
+
+{highlight=10}
+``` bash
+$ rustc -o main main.rs; RUST_BACKTRACE=1 ./main
+
+thread 'main' (433803) panicked at main.rs:2:5:
+attempt to divide by zero
+stack backtrace:
+   0: __rustc::rust_begin_unwind
+             at /rustc/2286e5d224b3413484cf4f398a9f078487e7b49d/library/std/src/panicking.rs:690:5
+   1: core::panicking::panic_fmt
+             at /rustc/2286e5d224b3413484cf4f398a9f078487e7b49d/library/core/src/panicking.rs:80:14
+   2: core::panicking::panic_const::panic_const_div_by_zero
+             at /rustc/2286e5d224b3413484cf4f398a9f078487e7b49d/library/core/src/panicking.rs:175:17
+   3: main::div
+   4: main::main
+   5: core::ops::function::FnOnce::call_once
+```
+
+We can see in the highlighted line that this behavior is *defined by the language* and handled via a dynamic check that triggers a panic: division by zero does not result in undefined behavior, but instead transitions the program to a specified error state. Even though the program ends abruptly, evaluation doesn't get stuck, panicking is a defined state in the semantics. This is why Rust remains sound in the presence of such an error.
+
+::: info
+Recovering from a panic like this can be done by using [`catch_unwind`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html), but that is the wrong tool for expected failures. Instead, one should favor more idiomatic approaches, such as [`checked_div`](https://doc.rust-lang.org/std/primitive.u32.html#method.checked_div), which returns an `Option` instead of panicking, or encoding the [invariants](https://matklad.github.io/2023/10/06/what-is-an-invariant.html) in the function's type signature.
+:::
+
+Now on the C program:
+
+``` c
+#include <stdio.h>
+
+int div(int a, int b) {
+    return a / b;
+}
+
+int main() {
+    int res = div(10,0);
+    printf("%d", res);
+}
+```
+
+The program successfully compiles so is considered to be well-typed by this implementation of the C language, but when executed:
+
+``` bash
+$ gcc -g -O0 -o main main.c && ./main
+Floating point exception   (core dumped) ./main
+```
+
+We can use `gdb` to be able to see a backtrace of what happened:
+
+{highlight="7,17"}
+```bash
+$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex disassemble -ex quit
+Reading symbols from ./main...
+Starting program: /home/lautaro/Documents/main
+[Thread debugging using libthread_db enabled]
+Using host libthread_db library "/usr/lib/libthread_db.so.1".
+
+Program received signal SIGFPE, Arithmetic exception.
+0x0000555555555147 in div (a=10, b=0) at main.c:4
+4	    return a / b;
+Dump of assembler code for function div:
+   0x0000555555555139 <+0>:	push   %rbp
+   0x000055555555513a <+1>:	mov    %rsp,%rbp
+   0x000055555555513d <+4>:	mov    %edi,-0x4(%rbp)
+   0x0000555555555140 <+7>:	mov    %esi,-0x8(%rbp)
+   0x0000555555555143 <+10>:	mov    -0x4(%rbp),%eax
+   0x0000555555555146 <+13>:	cltd
+=> 0x0000555555555147 <+14>:	idivl  -0x8(%rbp)
+   0x000055555555514a <+17>:	pop    %rbp
+   0x000055555555514b <+18>:	ret
+End of assembler dump.
+```
+
+Now we can see what the program got compiled to in assembly, and check how at address `x0000555555555147` the division is done via `idivl` on x86_64. When the divisor is zero, the CPU detects an invalid operation and raises a hardware exception. The operating system then delivers a `SIGFPE` signal to the program. 
+
+Notice how the C language specification itself does not define what exactly should happen in this situation and considers it undefined behavior (UB). Whether the program crashes, hangs, or produces unpredictable results depends on the CPU and OS. This illustrates why C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
+
+::: info
+One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
+:::
+
+## What Is Type Safety 
+
+Now we can define that _Type Safety_ expresses the coherence between the statics and the dynamics; where we have said that the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined.
+
+Consequently, evaluation of a well-typed expression cannot _get_ stuck! It can never reach a non-value state for which no evaluation rule applies. This can be achieved by proving two theorems named _Preservation_ and _Progress_.
+
+### Preservation And Progress
+
+By previously defining some tools:
+
+```bash
+'Γ'     the static environment or typing context. 
+'⊢'     the turnstile; reads as "under the assumption of".
+'τ'     the type in question.
+':'     the typing relation.
+'->'    single step evaluation.
+'∧'     is logical "and".
+'∅'     the empty typing context.
+'∃'     existential quantifier.
+'∨'     is logical "or".
+'val'   denotes that e is a value.
+'.'     the binder operator and reads as “such that”.
+```
+Where Γ represents the variables that are in the scope alongside their types. It's used in the relation Γ ⊢ e : τ that can be read as "the typing context _shows_ that `e` has type τ".
+
+The theorems can be expressed as:
+
+```bash
+1. If Γ ⊢ e : τ ∧ e -> e', then Γ ⊢ e': τ       # Preservation
+2. If ∅ ⊢ e : τ then (e val) ∨ (∃ e'. e -> e')  # Progress
+```
+
+The first theorem is called _Preservation_ and it can be read as _"if under the typing context Γ, e has type τ and e steps to e' in one step, then e' also has type τ under Γ"_. It ensures that the steps of evaluation preserve typing.
+
+ The second is called _Progress_ and it can be read as _"if under the empty typing context ∅, e has type τ then e is either a value or there exists a state e' reachable by a single step from e"_. It ensures that well-typed closed expressions are either values or can be further evaluated.
+
+_Safety is the conjunction of Preservation and Progress_.
+
+Now that we have these tools, we can revisit the C example and see that the type system is considered _unsound_ because, while it is well-typed, the dynamics do not specify a valid evaluation step for division by zero (it violates _Progress_).
+
+## A Note On Soundness
+
+We have discussed what soundness is and what is it there for: it makes programs easier to reason about and helps avoid a lot of bugs and foot-guns. 
+
+However, I want to point out a limitation on the formal definition we borrowed from Harper. Up until now, we have mainly concerned ourselves with language design and the _abstract_ model of execution, but that is hardly all there is, we haven't talked about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience.
+
+To make this clearer: if we take C and change its specification so every case of UB transitioned to an error state. Under the framework we established, the program we wrote earlier would be be considered type-safe; yet nothing about the actual execution would have changed! Merely changing that doesn't affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
+
+This tells us that type safety, as a property of a language, doesn't automatically translate into practical safety guarantees. Matklad has a nice article that talks more about this and deals with a term often seen alongside type safety, [memory safety](https://matklad.github.io/2025/12/30/memory-safety-is.html).
+
+Soundness is not, by itself, indicative of a language's usefulness. Many widely used languages have had unsound type systems for decades yet programmers continue writing critical software with them (just think about all the software written in [C](https://blog.regehr.org/archives/213) and [Java](https://dl.acm.org/doi/10.1145/2983990.2984004)). 
+
+Languages can be unsound _by design_, trading type safety for goals like:
+
+- Squeezing max performance by allowing optimizations (C or C++)
+- A simpler type system ([Go](https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang))
+- Prioritize compatibility and ease of adoption (Typescript)
+
+At least in mainstream languages, the known consequences of unsoundness are generally well documented ([C++ for example](https://en.cppreference.com/w/c/language/behavior.html)); unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
+
+It's totally possible to write type-safe programs in an unsound language by restricting oneself to use only the sound subset of the language. In fact, it may happen that, within the space of all possible programs written in the language, the features that make it unsound are never encountered in practice! 
+
+Even if [I appreciate using a sound type system](https://www.tedinski.com/2018/12/05/types-as-design-tool.html), I don't believe having an unsound type system makes a language worse than one that has a sound one or disqualifies it for use; after all, languages are tools and their usefulness is really dictated primarily from the context in where they are used.
+
+## References
+- Harper, R. (2016). The practical foundations for programming languages. Cambridge University Press.
+- OCaml Programming: Correct + Efficient + Beautiful. (n.d.). Type Checking. In Interpreters (Chapter 10.5). Retrieved January 20, 2026, from <https://cs3110.github.io/textbook/chapters/interp/typecheck.html>

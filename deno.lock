@@ -1,0 +1,28 @@
+{
+  "version": "5",
+  "specifiers": {
+    "npm:web-tree-sitter@*": "0.26.3"
+  },
+  "npm": {
+    "web-tree-sitter@0.26.3": {
+      "integrity": "sha512-JIVgIKFS1w6lejxSntCtsS/QsE/ecTS00en809cMxMPxaor6MvUnQ+ovG8uTTTvQCFosSh4MeDdI5bSGw5SoBw=="
+    }
+  },
+  "remote": {
+    "https://raw.githubusercontent.com/denoland/std/refs/tags/release-2025.03.04/async/debounce.ts": "24a39a6cd67584083e6db114ae515798bf16d1f6f89d32e4e80961b37f816790",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/ast.ts": "d80ce714dbb893b2941a518c52e33a0b08140746084c8ccd672fcdd23efe66f0",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/attributes.ts": "fc1915de57094827f3960a1b62ab482d5518c6a32def0fb2c955d043d5f80aca",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/block.ts": "eda463c2a8776a86f8c774ec4bd6f49aa85864128dcecaf72fe8b8b6cb4193b9",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/event.ts": "4488ca5bd8561d703112a5d15630a78876326c044b042e2cfbcdc39adf45958f",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/find.ts": "229c8d3eb1dee576cf95a3fdd0681fb3b67c1c7b4401fad08bc1681ac1b2cfba",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/html.ts": "933d8bf70a5f8826a050b86b892e4c06b85541dd5888ab7953c791c5640251fc",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/inline.ts": "b2fe7bca0328e292365821035951c1ce69891892058172d3274d87498a769c69",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/options.ts": "4c503335519b98bd624753618727b5050b4df2aed1fb11ae56bfc20b735da598",
+    "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/parse.ts": "1f3969eb211c322787035954c22d66ed68bd113445f8b13a52e6ead69d306df9"
+  },
+  "workspace": {
+    "dependencies": [
+      "jsr:@std/assert@1"
+    ]
+  }
+}
