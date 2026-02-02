@@ -6,6 +6,7 @@ import { escapeHtml, h, Raw, render, VNode } from "./tsx.ts";
 import { Post as PostData } from "./main.ts";
 
 const site_url = "https://lautaroacosta.com";
+const github_url = "https://github.com/lauacosta";
 const blurb = "Lautaro's Coppermind";
 
 export function html_ugly(node: VNode, doctype = "<!DOCTYPE html>"): string {
@@ -32,6 +33,7 @@ function Fonts() {
   src: url('/css/Inter-Light.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -39,6 +41,7 @@ function Fonts() {
   src: url('/css/Montserrat-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -46,6 +49,7 @@ function Fonts() {
   src: url('/css/etbookot-roman-webfont.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
+  font-display: swap;
 }
 
 @font-face {
@@ -53,6 +57,7 @@ function Fonts() {
   src: url('/css/etbookot-italic-webfont.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
+  font-display: swap;
 }
 
 @font-face {
@@ -60,6 +65,7 @@ function Fonts() {
   src: url('/css/etbookot-bold-webfont.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
+  font-display: swap;
 }`;
   return (
     <style>
@@ -68,12 +74,13 @@ function Fonts() {
   );
 }
 
-function Base({ children, description, title, path, extra_css }: {
+function Base({ children, description, title, path, extra_css, date, src }: {
   children?: VNode[];
   src: string;
   description: string;
   title: string;
   path: string;
+  date?: string;
   extra_css?: string;
 }) {
   return (
@@ -99,6 +106,7 @@ function Base({ children, description, title, path, extra_css }: {
         <meta name="twitter:image" content="https://lautaroacosta.com/og.png" />
         <meta name="twitter:description" content={description} />
 
+        {date && <meta property="article:published_time" content={date} />}
         <meta name="author" content="Lautaro Acosta Quintana" />
 
         <link rel="icon" href="/favicon.png" type="image/png" />
@@ -119,6 +127,8 @@ function Base({ children, description, title, path, extra_css }: {
             <a class="title" href="/">Lautaro's Coppermind</a>
             <a href="/about.html">About</a>
             <a href="/blogroll.html">Blogroll</a>
+            <input type="checkbox" id="theme-toggle" hidden />
+            <label for="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></label>
           </nav>
         </header>
 
@@ -127,6 +137,9 @@ function Base({ children, description, title, path, extra_css }: {
         </main>
 
         <footer>
+          <p>
+            <a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>(revision history)</a>
+          </p>
           <p>
             <a href="/feed.xml">
               <FooterIcon name="rss" />
@@ -142,7 +155,7 @@ function Base({ children, description, title, path, extra_css }: {
               LinkedIn
             </a>
 
-            <a href="https://github.com/lauacosta">
+            <a href={github_url}>
               <FooterIcon name="github" />
               lauacosta
             </a>
@@ -202,6 +215,7 @@ export function Post({ post }: { post: PostData }) {
       src={post.src}
       title={post.title}
       path={post.path}
+      date={post.iso_date.toISOString()}
       description={blurb}
     >
       <article>
