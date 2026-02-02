@@ -138,8 +138,13 @@ function Base({ children, description, title, path, extra_css, date, src }: {
 
         <footer>
           <p>
-            <a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>(revision history)</a>
+            {date && (
+              <a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>
+                (revision history)
+              </a>
+            )}
           </p>
+
           <p>
             <a href="/feed.xml">
               <FooterIcon name="rss" />
