@@ -82,17 +82,24 @@ function Base({ children, description, title, path, extra_css }: {
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <title>{title}</title>
-        {description && <meta name="description" content={description} />}
+        <meta name="description" content={description} />
         <link rel="canonical" href={`${site_url}${path}`} />
 
         <meta property="og:type" content="article" />
         <meta property="og:title" content={title} />
-        {description && <meta property="og:description" content={description} />}
+        <meta property="og:image" content="https://lautaroacosta.com/og.png" />
+        <meta property="og:image:width" content="1260" />
+        <meta property="og:image:height" content="630" />
+        <meta property="og:locale" content="en-us" />
         <meta property="og:url" content={`${site_url}${path}`} />
+        <meta property="og:description" content={description} />
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={title} />
-        {description && <meta name="twitter:description" content={description} />}
+        <meta name="twitter:image" content="https://lautaroacosta.com/og.png" />
+        <meta name="twitter:description" content={description} />
+
+        <meta name="author" content="Lautaro Acosta Quintana" />
 
         <link rel="icon" href="/favicon.png" type="image/png" />
         <link rel="icon" href="/favicon.svg" type="image/svg+xml" />

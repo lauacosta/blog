@@ -161,6 +161,7 @@ async function build(clean: boolean, profile: boolean) {
   }
   const paths = [
     "favicon.svg",
+    "og.png",
     "favicon.png",
     "css/*",
     "assets/*",
