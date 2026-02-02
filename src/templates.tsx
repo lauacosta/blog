@@ -22,6 +22,12 @@ function Fonts() {
 }
 
 @font-face {
+  font-family: 'Ornaments';
+  src: url('/css/ornaments.woff2') format('woff2');
+  font-display: swap;
+}
+
+@font-face {
   font-family: 'Inter';
   src: url('/css/Inter-Light.woff2') format('woff2');
   font-weight: 400;

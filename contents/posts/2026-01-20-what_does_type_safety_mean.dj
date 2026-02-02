@@ -235,7 +235,7 @@ We have discussed what soundness is and what is it there for: it makes programs 
 
 However, I want to point out a limitation on the formal definition we borrowed from Harper. Up until now, we have mainly concerned ourselves with language design and the _abstract_ model of execution, but that is hardly all there is, we haven't talked about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience.
 
-To make this clearer: if we take C and change its specification so every case of UB transitioned to an error state. Under the framework we established, the program we wrote earlier would be be considered type-safe; yet nothing about the actual execution would have changed! Merely changing that doesn't affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
+To make this clearer: if we take C and change its specification so every case of UB transitioned to an error state. Under the framework we established, the program we wrote earlier would be considered type-safe; yet nothing about the actual execution would have changed! Merely changing that doesn't affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
 
 This tells us that type safety, as a property of a language, doesn't automatically translate into practical safety guarantees. Matklad has a nice article that talks more about this and deals with a term often seen alongside type safety, [memory safety](https://matklad.github.io/2025/12/30/memory-safety-is.html).
 

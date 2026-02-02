@@ -120,6 +120,7 @@
     }
 
     hr::after {
+        font-family: 'Ornaments';
         content: '🙦  🙥';
         display: block;
         text-align: center;
