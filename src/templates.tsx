@@ -192,6 +192,7 @@ export function Page(name: string, content: HtmlString) {
   );
 }
 
+
 export function PostList({ posts }: { posts: PostData[] }) {
   const list_items = posts.map((post) => (
     <li>

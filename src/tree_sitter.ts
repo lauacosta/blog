@@ -10,6 +10,18 @@ const LANG_CONFIGS = {
     wasmPath: new URL("../contents/assets/tree-sitter-rust.wasm", import.meta.url),
     queryPath: new URL("../contents/assets/queries/highlights-rust.scm", import.meta.url),
   },
+  java: {
+    wasmPath: new URL("../contents/assets/tree-sitter-java.wasm", import.meta.url),
+    queryPath: new URL("../contents/assets/queries/highlights-java.scm", import.meta.url),
+  },
+  go: {
+    wasmPath: new URL("../contents/assets/tree-sitter-go.wasm", import.meta.url),
+    queryPath: new URL("../contents/assets/queries/highlights-go.scm", import.meta.url),
+  },
+  typescript: {
+    wasmPath: new URL("../contents/assets/tree-sitter-typescript.wasm", import.meta.url),
+    queryPath: new URL("../contents/assets/queries/highlights-typescript.scm", import.meta.url),
+  },
   c: {
     wasmPath: new URL("../contents/assets/tree-sitter-c.wasm", import.meta.url),
     queryPath: new URL("../contents/assets/queries/highlights-c.scm", import.meta.url),

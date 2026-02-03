@@ -229,10 +229,133 @@ The first theorem is called _Preservation_ and it can be read as _"if under the 
 
 _Safety is the conjunction of Preservation and Progress_.
 
-Now that we have these tools, we can revisit the C example and see that the type system is considered _unsound_ because, while it is well-typed, the dynamics do not specify a valid evaluation step for division by zero (it violates _Progress_).
+Now that we have these tools, we can revisit the C example and see that the type system is considered _unsound_ because, while it is well-typed, during evaluation it reaches a configuration for which no evaluation rule applies (it violates _Progress_).
+
+## Where Do Dynamic Languages Fit?
+
+After all of this, you may be left wondering what's the case for languages like Javascript or Python, the so-called _dynamic languages_.
+
+Fortunately, Harper can help us. He argues that the distinction between static and dynamic languages is illusory; instead, dynamic languages embrace a model of computation where multiple _classes_ of values exist for a *single recursive type*.
+
+> Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety.
+>
+> — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
+
+The trick of it is on understanding what he calls "type discipline"; turns out that in this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically typed language; this is called _Class Checking_ and uses the tags each value is forced to have. This is what Harper refers to as "type discipline".
+
+::: info
+    Keep in mind that when I say "well-formed" here I refer not to type-checking, here that doesn't happen before runtime, instead I am talking about well-formed in regards to the syntax.
+:::
+
+To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found  in the [CPython Language Reference](https://docs.python.org/3/). In there it defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *All object types are extensions of this type* and one of its fields is called `ob_type` which is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong.
+
+Now that we introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in these kinds of language? Bear with me, we are close.
+
+Harper presents the theorem of _Progress_ as:
+
+``` bash
+If d ok, then (d val) ∨ (d err) ∨ (∃ d' . d->d')
+```
+
+Which reads as "If `d` is a closed expression, then it's either a value, results in a runtime error or it can be further evaluated". He also defines _Exclusivity_, which states that for any `d` in the language _exactly one_ of these outcomes must be true at any given time.
+
+The key difference is that, in the previous model, these kinds of errors were guaranteed to not occur for well-typed programs. But since catching those before evaluation requires a static language, now they have become part of the semantics of the language! This way, evaluation never becomes _stuck_. I think it's relevant to notice how now catching these errors falls upon the dynamics of the language, adding a non-negligible overhead.
+
+And since there only exists one singular recursive type, _Preservation_ takes a lesser role here: there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
+
+## Hybrid Typing?
+
+Nearing our journey's end, let's briefly talk about what this is. Before reading Harper's chapter on it I never heard the term, but it refers to something a lot of us are familiar with!
+
+He describes a hybrid language as:
+
+> A hybrid language is one that combines static and dynamic typing by enriching a statically typed language with a distinguished type, *dyn*, of dynamic values ... This shows that static and dynamic types are not opposed to one another, but may coexist harmoniously.
+>
+> The notion of a hybrid language, however, is itself illusory, because the type dyn is really a particular recursive type. This shows that there is no need for any special mechanisms to support dynamic typing. Rather, they may be derived from the more general concept of a recursive type. Moreover, this shows that dynamic typing is but a mode of use of static typing. The supposed opposition between dynamic and static typing is, therefore, a fallacy: dynamic typing can hardly be opposed to that of which it is but a special case.
+>
+> — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
+
+He makes the interesting case that essentially, there is nothing about dynamic typing that can't be expressed with static typing! 
+
+Examples of these `dyn` types in mainstream languages can be the `Object` class in Java:
+
+``` java
+public class Example {
+    public static void main(String[] args) {
+        // Since all classes inherit from `Object`,
+        // it can hold any value!
+        Object value = "hello";
+        value = 42;
+        value = new ArrayList<>();
+        
+        // To use it safely, we have to do type assertions
+        // and cast it to the correct type!
+        if (value instanceof String) {
+            String str = (String) value;
+            System.out.println(str.toUpperCase());
+        }
+    }
+}
+```
+
+or the empty interface `interface{}` in Go:
+
+``` go
+package main
+
+import "fmt"
+
+func printAnything(value interface{}) {
+    fmt.Printf("Value: %v, Type: %T\n", value, value)
+}
+
+func main() {
+    // Since Go uses structural typing to determine if a value satisfies
+    // an interface, any value implements the empty interface since
+    // it has no requirements!
+    printAnything("hello")
+    printAnything(42)
+    printAnything([]int{1, 2, 3})
+    
+    // Same as the java example we must do type assertions to
+    // recover specific types
+    var x interface{} = "hello"
+    str, ok := x.(string)
+    if ok {
+        fmt.Println("It's a string:", str)
+    }
+}
+```
+
+Another notable example is the [`any`](https://www.typescriptlang.org/play/?#code/PTAEEEDsE9QSwM6gC4AsCmoAq0AO6BlAYwCc5dlR0EiBDfUIgG1oFcF0A6UATQHtWjWpFDtMw2Mj4AoEFThp0JUABN0zWiXGgORZHD4i+AM1DQByonzUo+oAEaYV0SLQC2cIqGErZYAFK0AG60xGQUoExwANboADSgfMpSoADuSdHeJAKQKpFwHsi0+oZIcCKKfih4mAjQCMjobpzSVeCgAOZ81kIcoMZJ3jDwSP4EAPIAcqC4mgjlHQBcrVaQDaBu0OP2AFbqlAC8oGNTnLMkHAAUAEQA3gC+1wCUANytclCwahpaSCk4+DC5EoKWQJHYlHMrEs1nESEcCyqCFoxkwjjoYjMAlA0UgfFSGyS4nsAkoCm4AFEgugRHBTGhiiMqnjKA0yHomJJwVxQAAxQboAAe7lwTHiKFQiEYsLSAiYeVItAQqGW0k22z2ek4gs40E4AC83lUAKrzSAdIZDWAdODUpBQiXEuBRZCSOypMiNaU2Zh8DjJGRyJJwG2uJjHYKhUjAtIKVCOlAkWhqAC0JlMJmqDGRqNdLSqEhGG1YRHjUVi3lAAHJXQxUs6VHQSCoq2lJaWsYI6CItKLaER0FV62grVnMJchQOIpB0NSSE9bBtaBXDJha3D5h1XPYxVVQRhEooSPnviwtP1WJA9AYRGp7KwOpcQkxWOhFlanu+gnw4CojXeHxuWgdDBBZnjeADHwAJgAZleaRIMuW5pSYJJ32uHdX2uUB7ngqoKX7eM6CYcMUkgotaBI-F0DydE2D6B0rFYeVQF7FgB0dAthmHeNFDHRJ6QPTQOlYNwaRBOw3GKUt8zkAFCGjCJ6xIlBl0wcoUn7JjIBBA9cD9BQbwEzi5AkMpbzpVEtB0-okjcBAEgGZQhRFMVYxHRQ+mQVhRWoKonITYxL2vQwshEsSdJPdQz0wIKrxKEQEFSehLkFd8AG1IFExwSASNkFgAXU-UB0vy80EiytwcoK-9os0TBVnWWY4BIDKJASCQaukJKUua+cjTkg9iNIuwetwCiqNSGiHHUei1yEkhwvEoQREcKopOQUtpvsWA2P7BZApa9ZC3KGZaBa9z40qnKuLyPjdEMPIAAMJCey6QLIc1ZLAABJekfLFJB6tAGcCRSKE8vQN8qGFNxfMWbzfIQd4wGNSBcXxWkgZ0OAdwO9dF3a+BTBOoGSVYVlaGgRE5GuH6cTxAlUlQYoq3hahkGuBJFBES8MdSLHK2St0dCp0A6arNxmT4VloUwZnGSlRwGjyuwHRnabQXQFSsAIBN12uKoXLhsVFj5xnIBTHwUxnOdpCAA) type in Typescript!
+
+It's in this chapter that he clears a common misconception that I have read many times about the difference between static and dynamic languages:
+
+> *Dynamic languages check types at run-time, whereas static language check types at compile time.* This, too, is erroneous. Dynamic languages are just as surely statically typed as static languages, albeit for a degenerate type system with only one type. As we have seen, dynamic languages do perform class checks at run-time, but so too do static languages that admit sum types. *The difference is only the extent to which we must use classification: always in a dynamic language, only as necessary in a static language*.
+>
+> — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
+
+A very brief example to drive the point home would be this little rust program:
+
+```rust
+fn main() {
+    match 10i32.checked_div(0i32) {
+        Some(res) => println!("{res}"),
+        None => println!("The division results in overflow or the second operand is 0"),
+    };
+}
+```
+
+Where, even when it is a static language, we class check if the result of an operation is either the variant `None` or `Some(T)` of the [`Option`](https://doc.rust-lang.org/std/option/enum.Option.html) sum type, also called a _tagged_ union.
+
+
+::: info
+As a bonus, I find it interesting that there has been efforts towards introducing static typing to dynamic languages. In Python there are external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for performing static analysis on annotations. [Typescript](https://www.typescriptlang.org/) plays a similar role by adding a static type system whose types are erased when compiling to Javascript. More recently [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) has been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf) to the language itself.
+:::
 
 ## A Note On Soundness
 
+We have discussed what soundness is and what is it there for: it makes programs easier to reason about and helps avoid a whole class of bugs and foot-guns. 
 
 However, I want to point out a limitation on the formal definition we borrowed from Harper. Up until now, we have mainly concerned ourselves with language design and the _abstract_ model of execution, but that is hardly all there is, we haven't talked about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience.
 

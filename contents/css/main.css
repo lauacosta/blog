@@ -203,7 +203,6 @@
             }
         }
     }
-
 }
 
 
@@ -214,7 +213,6 @@
         align-items: baseline;
         flex-wrap: wrap;
     }
-
 
     .theme-toggle::before {
         content: "Dark";
@@ -374,11 +372,14 @@
         font-weight: bold;
     }
 
+    .hl-type,
+    .hl-constructor,
     .hl-type-builtin {
         color: #d8ab1d;
     }
 
     .hl-function,
+    .hl-function-method,
     .hl-function-call {
         color: var(--accent);
         font-weight: bold;
