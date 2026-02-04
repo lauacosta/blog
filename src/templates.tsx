@@ -122,6 +122,13 @@ function Base({ children, description, title, path, extra_css, date, src }: {
         {extra_css && <link rel="stylesheet" href={`/css/${extra_css}`} />}
       </head>
       <body>
+
+        {date && (
+          <div class="progress-container">
+            <div class="progress-bar"></div>
+          </div>
+        )}
+
         <header>
           <nav>
             <a class="title" href="/">Lautaro's Coppermind</a>
@@ -191,7 +198,6 @@ export function Page(name: string, content: HtmlString) {
     </Base>
   );
 }
-
 
 export function PostList({ posts }: { posts: PostData[] }) {
   const list_items = posts.map((post) => (

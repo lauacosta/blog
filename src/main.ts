@@ -115,7 +115,7 @@ async function draft(name: string, priv: boolean) {
   if (priv) {
     await Deno.writeTextFile(
       path,
-      `---\n ${arch} \n---\n::: private \n If you found this you are a beta reader or really lucky! This article is not yet ready to be made public 😃\n::: \n\n # ${title}\n\n `,
+      `---\n ${arch} \n---\n::: private \n If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)\n::: \n\n # ${title}\n\n `,
     );
   } else {
     await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title}\n`);
