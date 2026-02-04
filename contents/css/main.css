@@ -1,6 +1,7 @@
 @layer base, layout, components, syntax;
 
 @layer base {
+
     :root {
         --line-height: 1.7rem;
         --background: #fffff8;
@@ -11,13 +12,51 @@
         --text-soft: rgba(0, 0, 0, .8);
     }
 
-    :root:has(#theme-toggle:checked) {
-        --background: #181a1b;
-        --text: #e8e6e3;
-        --accent: #279af1;
-        --emphasis: #f5f5f5;
-        --muted: #2a2f36;
-        --text-soft: rgba(255, 255, 255, .75);
+    @media (prefers-color-scheme: light) {
+        :root:has(#theme-toggle:checked) {
+            --background: #181a1b;
+            --text: #e8e6e3;
+            --accent: #279af1;
+            --emphasis: #f5f5f5;
+            --muted: #2a2f36;
+            --text-soft: rgba(255, 255, 255, .75);
+        }
+    }
+
+    .theme-toggle::before {
+        content: "Dark";
+    }
+
+    body:has(#theme-toggle:checked) .theme-toggle::before {
+        content: "Light";
+    }
+
+    @media (prefers-color-scheme: dark) {
+        :root {
+            --background: #181a1b;
+            --text: #e8e6e3;
+            --accent: #279af1;
+            --emphasis: #f5f5f5;
+            --muted: #2a2f36;
+            --text-soft: rgba(255, 255, 255, .75);
+        }
+
+        .theme-toggle::before {
+            content: "Light";
+        }
+
+        body:has(#theme-toggle:checked) .theme-toggle::before {
+            content: "Dark";
+        }
+
+        :root:has(#theme-toggle:checked) {
+            --background: #fffff8;
+            --text: #070600;
+            --muted: #dbdbd6;
+            --emphasis: #1a1a1a;
+            --accent: #279af1;
+            --text-soft: rgba(0, 0, 0, .8);
+        }
     }
 
     html {
@@ -281,13 +320,6 @@
         }
     }
 
-    .theme-toggle::before {
-        content: "Dark";
-    }
-
-    body:has(#theme-toggle:checked) .theme-toggle::before {
-        content: "Light";
-    }
 
     figure.code-block>pre>code {
         display: flex;
