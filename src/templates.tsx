@@ -122,7 +122,6 @@ function Base({ children, description, title, path, extra_css, date, src }: {
         {extra_css && <link rel="stylesheet" href={`/css/${extra_css}`} />}
       </head>
       <body>
-
         {date && (
           <div class="progress-container">
             <div class="progress-bar"></div>
@@ -222,13 +221,19 @@ export function PostList({ posts }: { posts: PostData[] }) {
 }
 
 export function Post({ post }: { post: PostData }) {
+  const match = post.content.value.match(/<p>(.*?)<\/p>/i);
+  const description = match
+    ? match[1].replace(/<[^>]+>/g, "")
+      .trim()
+    : blurb;
+
   return (
     <Base
       src={post.src}
       title={post.title}
       path={post.path}
       date={post.iso_date.toISOString()}
-      description={blurb}
+      description={description}
     >
       <article>
         <Raw unsafe={post.content.value} />

@@ -105,14 +105,20 @@
             text-decoration-color: var(--accent);
         }
 
-        :where(h1, h2, h3) a {
-            color: inherit;
-            text-decoration: none;
-        }
+    }
 
-        :where(h1, h2, h3) a:hover {
-            text-decoration: underline;
-        }
+    article :where(h1, h2, h3) a {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    article :where(h1, h2, h3) a:visited {
+        color: var(--accent);
+        text-decoration: none;
+    }
+
+    article :where(h1, h2, h3) a:hover {
+        text-decoration: underline;
     }
 
 
