@@ -235,6 +235,46 @@
         flex-wrap: wrap;
     }
 
+    .progress-container {
+        position: sticky;
+        top: 0;
+        left: 0;
+        right: 0;
+        width: 100vw;
+        height: 5px;
+        background: var(--background);
+        z-index: 10;
+        margin-left: calc(-50vw + 50%);
+        margin-right: calc(-50vw + 50%);
+    }
+
+
+    @supports not (animation-timeline: scroll()) {
+        .progress-container {
+            display: none;
+        }
+    }
+
+
+    .progress-bar {
+        width: 0%;
+        height: 100%;
+        background: var(--accent);
+
+        animation: progress linear both;
+        animation-timeline: scroll(root);
+    }
+
+    @keyframes progress {
+        0% {
+            width: 0%;
+        }
+
+        100% {
+            width: 100%;
+        }
+    }
+
     .theme-toggle::before {
         content: "Dark";
     }
