@@ -120,6 +120,12 @@ function Base({ children, description, title, path, extra_css, date, src }: {
         <Fonts />
         <link rel="stylesheet" href="/css/main.css" />
         {extra_css && <link rel="stylesheet" href={`/css/${extra_css}`} />}
+        <script
+          defer
+          src="https://cloud.umami.is/script.js"
+          data-website-id="1a3b8e55-3994-441d-91dd-046777264961"
+        >
+        </script>
       </head>
       <body>
         {date && (
