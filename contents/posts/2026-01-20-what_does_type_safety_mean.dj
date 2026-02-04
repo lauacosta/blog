@@ -159,33 +159,65 @@ Floating point exception   (core dumped) ./main
 
 We can use `gdb` to be able to see a backtrace of what happened:
 
-{highlight="7,17"}
+{highlight="3,6,13"}
 ```bash
-$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex disassemble -ex quit
-Reading symbols from ./main...
-Starting program: /home/lautaro/Documents/main
-[Thread debugging using libthread_db enabled]
-Using host libthread_db library "/usr/lib/libthread_db.so.1".
-
+$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" -ex disassemble -ex quit
+...
 Program received signal SIGFPE, Arithmetic exception.
 0x0000555555555147 in div (a=10, b=0) at main.c:4
-4	    return a / b;
+4           return a / b;
 Dump of assembler code for function div:
-   0x0000555555555139 <+0>:	push   %rbp
-   0x000055555555513a <+1>:	mov    %rsp,%rbp
-   0x000055555555513d <+4>:	mov    %edi,-0x4(%rbp)
-   0x0000555555555140 <+7>:	mov    %esi,-0x8(%rbp)
-   0x0000555555555143 <+10>:	mov    -0x4(%rbp),%eax
-   0x0000555555555146 <+13>:	cltd
-=> 0x0000555555555147 <+14>:	idivl  -0x8(%rbp)
-   0x000055555555514a <+17>:	pop    %rbp
-   0x000055555555514b <+18>:	ret
+   0x0000555555555139 <+0>:     push   rbp
+   0x000055555555513a <+1>:     mov    rbp,rsp
+   0x000055555555513d <+4>:     mov    DWORD PTR [rbp-0x4],edi
+   0x0000555555555140 <+7>:     mov    DWORD PTR [rbp-0x8],esi
+   0x0000555555555143 <+10>:    mov    eax,DWORD PTR [rbp-0x4]
+   0x0000555555555146 <+13>:    cdq
+=> 0x0000555555555147 <+14>:    idiv   DWORD PTR [rbp-0x8]
+   0x000055555555514a <+17>:    pop    rbp
+   0x000055555555514b <+18>:    ret
 End of assembler dump.
 ```
 
-Now we can see what the program got compiled to in assembly, and check how at address `x0000555555555147` the division is done via `idivl` on x86_64. When the divisor is zero, the CPU detects an invalid operation and raises a hardware exception. The operating system then delivers a `SIGFPE` signal to the program. 
+Now we can see that the fault came from our `div` function. Check how at address `0x0000555555555147` the division is performed with the `idiv` instruction on x86_64. Since the divisor is zero, the CPU raises a `#DE` (Division Error) exception. The OS handles it by sending a `SIGFPE` signal to the program. 
 
-The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) explicitly defines this behavior as undefined (UB). Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
+The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behaviour (UB), which results in a greenfield for compiler optimizations since they take full advantage on the fact that the C _abstract model_ states this is an undefined state. Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
+
+To showcase this optimizations, lets enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
+
+{highlight="3"}
+```bash
+$ gcc -g -O3 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" -ex disassemble -ex quit
+...
+Program received signal SIGILL, Illegal instruction.
+main () at main.c:8
+8           int res = div(10,0);
+Dump of assembler code for function main:
+=> 0x0000555555555020 <+0>:     ud2
+End of assembler dump.
+```
+
+Notice how the fault came directly from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a #UD (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
+
+{highlight="2, 10"}
+```bash
+$ clang -O3 -o main main.c && ./main 
+151705912
+
+$ clang -O3 -o main main.c && gdb -q ./main -ex "set disassembly-flavor intel" -ex "disassemble main" -ex quit
+...
+Dump of assembler code for function main:
+   0x0000000000001150 <+0>:     push   rax
+   0x0000000000001151 <+1>:     lea    rdi,[rip+0xeac]        # 0x2004
+   0x0000000000001158 <+8>:     xor    eax,eax
+   0x000000000000115a <+10>:    call   0x1030 <printf@plt>
+   0x000000000000115f <+15>:    xor    eax,eax
+   0x0000000000001161 <+17>:    pop    rcx
+   0x0000000000001162 <+18>:    ret
+End of assembler dump.
+```
+
+This is interesting, without optimizations it behaves similarly to the gcc compiled one. But with optimizations enabled, it too deletes `div` but it doesn't trap with `ud2`; it instead continues execution normally and prints an arbitrary value!
 
 ::: info
 One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
@@ -277,7 +309,7 @@ He describes a hybrid language as:
 
 He makes the interesting case that essentially, there is nothing about dynamic typing that can't be expressed with static typing! 
 
-Examples of these `dyn` types in mainstream languages can be the `Object` class in Java:
+Examples of these `dyn` types in mainstream languages can be the `Object` class in Java[^subtyping]:
 
 ``` java
 public class Example {
@@ -355,9 +387,9 @@ As a bonus, I find it interesting that there has been efforts towards introducin
 
 ## A Note On Soundness
 
-We have discussed what soundness is and what is it there for: it makes programs easier to reason about and helps avoid a whole class of bugs and foot-guns. 
+We have discussed what soundness is and what it is there for: it makes programs easier to reason about and helps avoid a whole class of bugs and foot-guns. 
 
-However, I want to point out a limitation on the formal definition we borrowed from Harper. Up until now, we have mainly concerned ourselves with language design and the _abstract_ model of execution, but that is hardly all there is, we haven't talked about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience.
+However, I want to point out a limitation on the formal definition we borrowed from Harper. Up until now, we have mainly concerned ourselves with language design and the _abstract model_ of execution, but that is hardly all there is. We haven't talked about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. This makes sense, since type safety is a property of a formal specification.
 
 To make this clearer: if we take C and change its specification so every case of UB transitioned to an error state. Under the framework we established, the program we wrote earlier would be considered type-safe; yet nothing about the actual execution would have changed! Merely changing the specification doesn't affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
 
@@ -375,9 +407,11 @@ In mainstream languages, the known consequences of unsoundness are generally wel
 
 It's totally possible to write type-safe programs in an unsound language by restricting oneself to use only the sound subset of the language. In fact, it may happen that, within the space of all possible programs written in the language, the features that make it unsound are never encountered in practice! 
 
-Even if I appreciate using a sound [type system](https://www.tedinski.com/2018/12/05/types-as-design-tool.html), I don't believe having an unsound type system makes a language worse than one that has a sound one or disqualifies it for use; after all, *languages are tools* and their usefulness is really dictated primarily from the context in which they are used.
+Even if I appreciate using a sound [type system](https://www.tedinski.com/2018/12/05/types-as-design-tool.html), I don't believe having an unsound type system makes a language worse than one that has a sound one or disqualifies it for use; after all, *languages are tools* and their usefulness is primarily dictated by the context in which they are used.
 
 ## References
 - [Harper, R. (2016). The practical foundations for programming languages. Cambridge University Press.](https://www.cs.cmu.edu/~rwh/pfpl.html)
 - OCaml Programming: Correct + Efficient + Beautiful. (n.d.). Type Checking. In Interpreters (Chapter 10.5). Retrieved January 20, 2026, from <https://cs3110.github.io/textbook/chapters/interp/typecheck.html>
+
+[^subtyping]: This is actually the first example of [subtyping](https://en.wikipedia.org/wiki/Subtyping) in the whole article. Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is a particular definiton of it usually taught at college (at least in mine). In languages that have these, _proving_ type safety becomes more delicate so I decided to omit it. Nonetheless, the principles of _Preservartion_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
 

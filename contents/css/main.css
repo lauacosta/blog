@@ -417,6 +417,7 @@
     }
 
     .hl-line {
-        background-color: #d8ab1d;
+        background-color: #d8ab1d4D;
+        color: var(--text);
     }
 }
