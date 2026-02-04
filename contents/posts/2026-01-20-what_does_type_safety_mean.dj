@@ -2,9 +2,9 @@
  {"title":"What Does Type Safety Mean","private": true} 
 ---
 
-::: private 
- If you found this you are a beta reader or really lucky! This article is not yet ready to be made public 😃
-::: 
+::: private
+    If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)
+:::
 
 # What Does Type Safety Mean
 
@@ -197,12 +197,12 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-Notice how the fault came directly from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a #UD (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
+Notice how the fault came directly from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a `#UD` (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
 
 {highlight="2, 10"}
 ```bash
 $ clang -O3 -o main main.c && ./main 
-151705912
+151705912 
 
 $ clang -O3 -o main main.c && gdb -q ./main -ex "set disassembly-flavor intel" -ex "disassemble main" -ex quit
 ...
@@ -217,7 +217,7 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-This is interesting, without optimizations it behaves similarly to the gcc compiled one. But with optimizations enabled, it also deletes `div` but it doesn't trap with `ud2`; it instead continues execution normally and prints an arbitrary value!
+This is interesting: without optimizations it behaves similarly to the GCC-compiled one. With optimizations enabled, Clang also deletes `div`; however, it doesn't replace main's body with a `ud2` and instead continues execution normally, printing an arbitrary value!
 
 ::: info
 One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
