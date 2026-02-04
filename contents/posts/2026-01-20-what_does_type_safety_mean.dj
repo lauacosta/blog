@@ -8,9 +8,9 @@
 
 # What Does Type Safety Mean
 
-Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you read it in a blog post somewhere on social media where programmers where fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language or in a announcement for the latest Typescript library, but you were never sure you _knew_ what it meant? 
+Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you read it in a blog post somewhere on social media where programmers were fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language, or in an announcement for the latest Typescript library, but you were never sure you _knew_ what it meant? 
 
-It has happened to me, at least. So I made an effort to try to explain to myself what it meant, hopefully it works for you too!.
+It has happened to me, at least. So I made an effort to try to explain to myself what it meant, hopefully it works for you too!
 
 ## What Are Sound Languages
 
@@ -22,7 +22,7 @@ We can learn what safe and unsafe languages are from:
 >
 > — Robert Harper, *The Practical Foundations for Programming Languages*, 2nd ed., 2016
 
-This tells us that types are defined by inference rules (the typing judgments) in the _statics_. And that the realm of how a program is evaluated belongs to the _dynamics_.
+This tells us that types are defined by inference rules (the typing judgments) in the _statics_, while that the realm of how a program is evaluated belongs to the _dynamics_.
 
 It introduces the concept of a well-formed program, which is one that has passed type checking, we'll call them _well-typed_.
 
@@ -81,7 +81,7 @@ let res = div(10, 0);
 This program is clearly well-typed but to state that the language is safe depends on the dynamics. We can decide according to how they handle the division by zero:
 
 - The dynamics do not define what happens in this failure case, undefined behavior creeps in, making the language unsound.
-- Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamics checks being the easiest to implement, these are mechanism such as throwing errors, exceptions, panicking, returning a special value, etc).
+- Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamic checks being the easiest to implement, these are mechanisms such as throwing errors, exceptions, panicking, returning a special value, etc).
 
 ### Case Study
 
@@ -183,7 +183,7 @@ Now we can see that the fault came from our `div` function. Check how at address
 
 The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behaviour (UB), which results in a greenfield for compiler optimizations since they take full advantage on the fact that the C _abstract model_ states this is an undefined state. Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
 
-To showcase this optimizations, lets enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
+To showcase this optimizations, let's enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
 
 {highlight="3"}
 ```bash
@@ -217,7 +217,7 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-This is interesting, without optimizations it behaves similarly to the gcc compiled one. But with optimizations enabled, it too deletes `div` but it doesn't trap with `ud2`; it instead continues execution normally and prints an arbitrary value!
+This is interesting, without optimizations it behaves similarly to the gcc compiled one. But with optimizations enabled, it also deletes `div` but it doesn't trap with `ud2`; it instead continues execution normally and prints an arbitrary value!
 
 ::: info
 One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
@@ -293,7 +293,7 @@ Which reads as "If `d` is a closed expression, then it's either a value, results
 
 The key difference is that, in the previous model, these kinds of errors were guaranteed to not occur for well-typed programs. But since catching those before evaluation requires a static language, now they have become part of the semantics of the language! This way, evaluation never becomes _stuck_. I think it's relevant to notice how now catching these errors falls upon the dynamics of the language, adding a non-negligible overhead.
 
-And since there only exists one singular recursive type, _Preservation_ takes a lesser role here: there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
+And since there exists only one singular recursive type, _Preservation_ plays a lesser role here: there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
 
 ## Hybrid Typing?
 
@@ -403,7 +403,7 @@ Languages can be unsound _by design_, trading type safety for goals like:
 - A simpler type system ([Go](https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang))
 - Prioritize compatibility and ease of adoption (Typescript)
 
-In mainstream languages, the known consequences of unsoundness are generally well documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html) for example); unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
+In mainstream languages, the known consequences of unsoundness are generally well documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), for example). Unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 
 It's totally possible to write type-safe programs in an unsound language by restricting oneself to use only the sound subset of the language. In fact, it may happen that, within the space of all possible programs written in the language, the features that make it unsound are never encountered in practice! 
 
@@ -413,5 +413,5 @@ Even if I appreciate using a sound [type system](https://www.tedinski.com/2018/1
 - [Harper, R. (2016). The practical foundations for programming languages. Cambridge University Press.](https://www.cs.cmu.edu/~rwh/pfpl.html)
 - OCaml Programming: Correct + Efficient + Beautiful. (n.d.). Type Checking. In Interpreters (Chapter 10.5). Retrieved January 20, 2026, from <https://cs3110.github.io/textbook/chapters/interp/typecheck.html>
 
-[^subtyping]: This is actually the first example of [subtyping](https://en.wikipedia.org/wiki/Subtyping) in the whole article. Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is a particular definiton of it usually taught at college (at least in mine). In languages that have these, _proving_ type safety becomes more delicate so I decided to omit it. Nonetheless, the principles of _Preservartion_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
+[^subtyping]: This is actually the first example of [subtyping](https://en.wikipedia.org/wiki/Subtyping) in the whole article. Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is a particular definiton of it usually taught at college (at least in mine). In languages that have these, _proving_ type safety becomes more delicate so I decided to omit it. Nonetheless, the principles of _Preservation_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
 
