@@ -66,7 +66,7 @@ let res = add(10, "Some");
 The program may or may not be well-typed depending on the statics of the language.
 
 - There is a rule defined for `+` given `Int` and `Str`, the program is well-typed and guaranteed not to get stuck.
-- No rule exists, the program is ill-typed and executing it would break the language guarantees (its statics).
+- No rule exists, the program is ill-typed and executing it would break the language guarantees (the statics).
 
 Now to showcase when a language is unsound, let's first drop the assumption that the language we are using is sound and take a look at this example:
 
@@ -403,7 +403,7 @@ Languages can be unsound _by design_, trading type safety for goals like:
 - A simpler type system ([Go](https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang))
 - Prioritize compatibility and ease of adoption (Typescript)
 
-In mainstream languages, the known consequences of unsoundness are generally well documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), for example). Unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
+In mainstream languages, known cases of unsoundness are generally well-documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), for example). Unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 
 It's totally possible to write type-safe programs in an unsound language by restricting oneself to use only the sound subset of the language. In fact, it may happen that, within the space of all possible programs written in the language, the features that make it unsound are never encountered in practice! 
 
