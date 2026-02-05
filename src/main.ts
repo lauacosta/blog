@@ -13,7 +13,6 @@ import { initTreeSitter } from "./tree_sitter.ts";
 import { to_lower_snake_case, to_title_case } from "./utils.ts";
 
 const ARCHETYPE_REGEX = /^---\s*([\s\S]*?)\s*---\s*/;
-await initTreeSitter();
 
 const cli_schema = defineCli({
   description: "Tool to make my life better",
@@ -30,10 +29,15 @@ const cli_schema = defineCli({
     }),
     watch: defineCommand({
       name: "watch",
+      description: "spawns miniserver to preview the results of the build. Rebuilds on change",
       options: {
         profile: boolean({ default: false }),
         clean: boolean({ default: false }),
       },
+    }),
+    spell: defineCommand({
+      name: "spell",
+      description: "Spell checks the newest post with `wiz`",
     }),
     build: defineCommand({
       name: "build",
@@ -56,6 +60,7 @@ async function main() {
   }
 
   if (cli.command === "build") {
+    await initTreeSitter();
     const profile = cli.options.profile ?? false;
     const clean = cli.options.clean ?? true;
     await build(clean, profile);
@@ -63,9 +68,15 @@ async function main() {
   }
 
   if (cli.command === "watch") {
+    await initTreeSitter();
     const profile = cli.options.profile ?? false;
     const clean = cli.options.clean ?? true;
     await watch(clean, profile);
+    return;
+  }
+
+  if (cli.command === "spell") {
+    await spell();
     return;
   }
 
@@ -98,6 +109,51 @@ class Ctx {
 
     console.log(`\n${parts.join(" ")}`);
   }
+}
+
+async function spell() {
+  const postsDir = "./contents/posts";
+  const entries: { path: string; date: Date }[] = [];
+
+  for await (const entry of Deno.readDir(postsDir)) {
+    if (entry.isFile && entry.name.endsWith(".dj")) {
+      const match = entry.name.match(/^(\d{4}-\d{2}-\d{2})-/);
+      if (match) {
+        entries.push({
+          path: `${postsDir}/${entry.name}`,
+          date: new Date(match[1]),
+        });
+      }
+    }
+  }
+
+  if (entries.length === 0) {
+    console.error("No dated posts found in content/posts");
+    return;
+  }
+
+  entries.sort((a, b) => b.date.getTime() - a.date.getTime());
+
+  const newest = entries[0].path;
+
+  console.log(`Running wiz spell on: ${newest}\n`);
+
+  const cmd = new Deno.Command("wiz", {
+    args: ["spell", newest],
+    stdout: "piped",
+    stderr: "piped",
+  });
+
+  const { code, stdout, stderr } = await cmd.output();
+
+  const decoder = new TextDecoder();
+
+  if (code !== 0) {
+    console.error(decoder.decode(stderr));
+    return;
+  }
+
+  console.log(decoder.decode(stdout));
 }
 
 async function draft(name: string, priv: boolean) {

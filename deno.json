@@ -7,7 +7,8 @@
         "draft": "deno run --lock --cached-only --allow-write=./contents/posts --allow-read ./src/main.ts draft",
         "build": "deno run --lock --cached-only  --allow-write=./dist --allow-read --allow-run --allow-net --allow-import  ./src/main.ts build",
         "watch": "rm -rf ./dist && deno run --lock=deno.lock --allow-write=./dist --allow-read --allow-run --allow-net --allow-import --watch ./src/main.ts watch",
-        "serve": "deno task watch --clean --profile & miniserve -p 8080 --index index.html ./dist & xdg-open http://127.0.0.1:8080"
+        "serve": "deno task watch --clean --profile & miniserve -p 8080 --index index.html ./dist & xdg-open http://127.0.0.1:8080",
+        "spell": "deno run --lock --cached-only  --allow-read=./contents/posts --allow-write=./content/posts --allow-env --allow-run ./src/main.ts spell"
     },
     "imports": {
         "@djot/": "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/",
@@ -21,7 +22,7 @@
         "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/parse": "https://raw.githubusercontent.com/jgm/djot.js/@djot/djot@0.3.2/src/parse.ts",
         "@std/assert": "jsr:@std/assert@1",
         "@highlightjs/": "https://unpkg.com/@highlightjs/cdn-assets@11.6.0/es/",
-        "@std/async/debounce": "https://raw.githubusercontent.com/denoland/std/refs/tags/release-2025.03.04/async/debounce.ts",
+        "@std/async/debounce": "https://raw.githubusercontent.com/denoland/std/refs/tags/release-2025.03.04/async/debounce.ts"
     },
     "fmt": {
         "lineWidth": 100
