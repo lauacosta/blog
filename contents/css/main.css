@@ -72,6 +72,27 @@
         line-height: var(--line-height);
     }
 
+    main {
+
+        a {
+            color: var(--text);
+            text-decoration: underline;
+            text-decoration-color: var(--text);
+            text-decoration-thickness: 1px;
+            text-underline-offset: 2px;
+        }
+
+        a:visited {
+            color: var(--text);
+            text-decoration-color: var(--text);
+        }
+
+        a:hover {
+            color: var(--accent);
+            text-decoration-color: var(--accent);
+        }
+    }
+
     code,
     pre {
         font-family: 'Iosevka', monospace;
@@ -285,181 +306,183 @@
         top: 0;
         left: 0;
         right: 0;
-        width: 100vw;
+        /* I'm too lazy to fix the reason why the horizontal scroll bar appears. */
+        width: 98vw;
         height: 5px;
         background: var(--background);
         z-index: 10;
-        margin-left: calc(-50vw + 50%);
-        margin-right: calc(-50vw + 50%);
+        margin-left: calc(-49vw + 50%);
+        margin-right: calc(-49vw + 50%);
     }
+}
 
 
-    @supports not (animation-timeline: scroll()) {
-        .progress-container {
-            display: none;
-        }
+@supports not (animation-timeline: scroll()) {
+    .progress-container {
+        display: none;
     }
+}
 
 
-    .progress-bar {
+.progress-bar {
+    width: 0%;
+    height: 100%;
+    background: var(--accent);
+
+    animation: progress linear both;
+    animation-timeline: scroll(root);
+}
+
+@keyframes progress {
+    0% {
         width: 0%;
-        height: 100%;
-        background: var(--accent);
-
-        animation: progress linear both;
-        animation-timeline: scroll(root);
     }
 
-    @keyframes progress {
-        0% {
-            width: 0%;
-        }
-
-        100% {
-            width: 100%;
-        }
+    100% {
+        width: 100%;
     }
+}
 
 
-    figure.code-block>pre>code {
-        display: flex;
-        flex-direction: column;
-        overflow-x: auto;
-        overflow-y: clip;
-        counter-reset: line;
-        line-height: 1.2;
-    }
+figure.code-block>pre>code {
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+    overflow-y: clip;
+    counter-reset: line;
+    line-height: 1.2;
+}
 
-    figure.code-block>pre>code>.line {
-        counter-increment: line;
-    }
+figure.code-block>pre>code>.line {
+    counter-increment: line;
+}
 
-    figure.code-block>pre>code>.line:before {
-        content: counter(line);
-        display: inline-block;
-        width: 3ch;
-        padding-right: 0.5ch;
-        margin-right: 1ch;
-        text-align: right;
-        opacity: .4;
-        border-right: 1px solid var(--emphasis);
-    }
+figure.code-block>pre>code>.line:before {
+    content: counter(line);
+    display: inline-block;
+    width: 3ch;
+    padding-right: 0.5ch;
+    margin-right: 1ch;
+    text-align: right;
+    opacity: .4;
+    border-right: 1px solid var(--emphasis);
+}
 
-    figure.blockquote {
-        padding: 1em 1.25em;
-        margin: 1.5em 0;
-        background: var(--background);
-        border-left: 3px solid var(--accent);
+figure.blockquote {
+    padding: 1em 1.25em;
+    margin: 1.5em 0;
+    background: var(--background);
+    border-left: 3px solid var(--accent);
 
-        box-shadow:
-            0 1px 0 rgba(0, 0, 0, 0.08),
-            0 4px 10px rgba(0, 0, 0, 0.06);
-    }
+    box-shadow:
+        0 1px 0 rgba(0, 0, 0, 0.08),
+        0 4px 10px rgba(0, 0, 0, 0.06);
+}
 
-    .post-list {
-        margin-left: 0;
-        list-style: none;
-    }
+.post-list {
+    margin-left: 0;
+    list-style: none;
+}
 
-    .post-list>li {
-        margin-top: 1em;
-    }
+.post-list>li {
+    margin-top: 1em;
+}
 
-    .post-list h2 {
-        margin-top: 0;
-    }
+.post-list h2 {
+    margin-top: 0;
+}
 
-    .post-list a {
-        color: #279af1;
-        text-decoration: none;
-        display: block;
-    }
+.post-list a {
+    color: #279af1;
+    text-decoration: none;
+    display: block;
+}
 
-    .post-list a:hover {
-        color: #279af1;
-        text-decoration: underline;
-    }
+.post-list a:hover {
+    color: #279af1;
+    text-decoration: underline;
+}
 
-    .emphasis {
-        color: var(--emphasis);
-        font-style: italic;
-    }
+.emphasis {
+    color: var(--emphasis);
+    font-style: italic;
+}
 
-    .emphasis:hover {
-        text-decoration: underline;
-    }
+.emphasis:hover {
+    text-decoration: underline;
+}
 
-    kbd {
-        font-family: "Iosevka", monospace;
-        font-variant-ligatures: none;
-        line-height: 1;
-    }
+kbd {
+    font-family: "Iosevka", monospace;
+    font-variant-ligatures: none;
+    line-height: 1;
+}
 
-    kbd>kbd {
-        display: inline-block;
-        background: #e6e0c8;
-        color: var(--text);
+kbd>kbd {
+    display: inline-block;
+    background: #e6e0c8;
+    color: var(--text);
 
-        border-top: 2px solid #ffffff;
-        border-left: 2px solid #ffffff;
-        border-right: 2px solid #7a7a7a;
-        border-bottom: 2px solid #7a7a7a;
+    border-top: 2px solid #ffffff;
+    border-left: 2px solid #ffffff;
+    border-right: 2px solid #7a7a7a;
+    border-bottom: 2px solid #7a7a7a;
 
-        border-radius: 0;
-        padding: 0.25em 0.5em;
-        margin: 0 0.15em;
+    border-radius: 0;
+    padding: 0.25em 0.5em;
+    margin: 0 0.15em;
 
-        box-shadow: none;
-        position: relative;
-        top: -1px;
-    }
+    box-shadow: none;
+    position: relative;
+    top: -1px;
+}
 
-    aside.admn {
-        display: flex;
-        flex-direction: row;
-        align-items: center;
-    }
+aside.admn {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
 
-    aside.admn>svg.icon {
-        flex-shrink: 0;
-        width: 4rem;
-        height: 4rem;
-        fill: var(--accent);
-    }
+aside.admn>svg.icon {
+    flex-shrink: 0;
+    width: 4rem;
+    height: 4rem;
+    fill: var(--accent);
+}
 
-    aside.admn>div {
-        flex: 1;
-        min-width: 0;
+aside.admn>div {
+    flex: 1;
+    min-width: 0;
 
-        padding-inline-start: 1ch;
-        margin-inline-start: 1ch;
-        border-inline-start: 1px solid var(--muted);
+    padding-inline-start: 1ch;
+    margin-inline-start: 1ch;
+    border-inline-start: 1px solid var(--muted);
 
-        &> :last-child {
-            margin-bottom: 0;
-        }
-    }
-
-    aside.block {
-        border: 1px solid var(--muted);
-        border-radius: 4px;
-        border-color: var(--muted);
-        padding: 1em;
-        background: #f3f3f2;
-    }
-
-    aside.block> :where(:last-child) {
+    &> :last-child {
         margin-bottom: 0;
     }
+}
 
-    aside.block> :where(.title) {
-        font-family: "Inter", sans-serif;
-        font-size: 1.5rem;
-        color: var(--accent);
-        text-align: center;
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-    }
+aside.block {
+    border: 1px solid var(--muted);
+    border-radius: 4px;
+    border-color: var(--muted);
+    padding: 1em;
+    background: #f3f3f2;
+}
+
+aside.block> :where(:last-child) {
+    margin-bottom: 0;
+}
+
+aside.block> :where(.title) {
+    font-family: "Inter", sans-serif;
+    font-size: 1.5rem;
+    color: var(--accent);
+    text-align: center;
+    margin-top: 0;
+    margin-bottom: 0.5rem;
+}
 
 }
 
