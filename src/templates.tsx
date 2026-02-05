@@ -99,7 +99,7 @@ function Base({ children, description, title, path, extra_css, date, src }: {
 
         <meta property="og:type" content="article" />
         <meta property="og:title" content={def_title} />
-        <meta property="og:image" content={`https://lautaroacosta.com/${og_image_path}`} />
+        <meta property="og:image" content={`https://cdn.lautaroacosta.com/${og_image_path}`} />
         <meta property="og:image:width" content="1260" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en-us" />
@@ -108,15 +108,15 @@ function Base({ children, description, title, path, extra_css, date, src }: {
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={def_title} />
-        <meta name="twitter:image" content={`https://lautaroacosta.com/${og_image_path}`} />
+        <meta name="twitter:image" content={`https://cdn.lautaroacosta.com/${og_image_path}`} />
 
         <meta name="twitter:description" content={description} />
 
         {date && <meta property="article:published_time" content={date} />}
         <meta name="author" content="Lautaro Acosta Quintana" />
 
-        <link rel="icon" href="/favicon.png" type="image/png" />
-        <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+        <link rel="icon" href="https://cdn.lautaroacosta.com/favicon.png" type="image/png" />
+        <link rel="icon" href="https://cdn.lautaroacosta.com/favicon.svg" type="image/svg+xml" />
         <link
           rel="alternate"
           type="application/rss+xml"
