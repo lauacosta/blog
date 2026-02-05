@@ -10,6 +10,7 @@ import {
 import * as djot from "./djot.ts";
 import { feed_xml, html_ugly, HtmlString, Page, Post, PostList } from "./templates.tsx";
 import { initTreeSitter } from "./tree_sitter.ts";
+import { to_lower_snake_case, to_title_case } from "./utils.ts";
 
 const ARCHETYPE_REGEX = /^---\s*([\s\S]*?)\s*---\s*/;
 await initTreeSitter();
@@ -216,25 +217,6 @@ async function update_path(path: string) {
       await Deno.readFile(`contents/${path}`),
     );
   }
-}
-
-function to_lower_snake_case(input: string): string {
-  return input
-    .normalize("NFKD")
-    .replace(/[\u0300-\u036f]/g, "")
-    .replace(/([a-z0-9])([A-Z])/g, "$1_$2")
-    .replace(/[^a-zA-Z0-9]+/g, "_")
-    .replace(/_+/g, "_")
-    .replace(/^_|_$/g, "")
-    .toLowerCase();
-}
-
-function to_title_case(input: string): string {
-  return input
-    .toLowerCase()
-    .split(/\s+/)
-    .map((word) => word.length > 0 ? word[0].toUpperCase() + word.slice(1) : word)
-    .join(" ");
 }
 
 type Archetype = { title: string; private: boolean };

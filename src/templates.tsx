@@ -3,6 +3,7 @@
 /** @jsxFrag Fragment */
 // deno-lint-ignore-file no-explicit-any
 import { escapeHtml, h, Raw, render, VNode } from "./tsx.ts";
+import { to_lower_snake_case } from "./utils.ts";
 import { Post as PostData } from "./main.ts";
 
 const site_url = "https://lautaroacosta.com";
@@ -83,18 +84,22 @@ function Base({ children, description, title, path, extra_css, date, src }: {
   date?: string;
   extra_css?: string;
 }) {
+  const snake_case_title = to_lower_snake_case(title);
+  const og_image_path = date ? `og-${snake_case_title}.png` : "og.png";
+  const def_title = date ? `${title} - Lautaro Acosta Quintana` : title;
+
   return (
     <html lang="en-US">
       <head>
         <meta charset="utf-8" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <title>{title}</title>
+        <title>{def_title}</title>
         <meta name="description" content={description} />
         <link rel="canonical" href={`${site_url}${path}`} />
 
         <meta property="og:type" content="article" />
-        <meta property="og:title" content={title} />
-        <meta property="og:image" content="https://lautaroacosta.com/og.png" />
+        <meta property="og:title" content={def_title} />
+        <meta property="og:image" content={`https://lautaroacosta.com/${og_image_path}`} />
         <meta property="og:image:width" content="1260" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en-us" />
@@ -102,8 +107,9 @@ function Base({ children, description, title, path, extra_css, date, src }: {
         <meta property="og:description" content={description} />
 
         <meta name="twitter:card" content="summary_large_image" />
-        <meta name="twitter:title" content={title} />
-        <meta name="twitter:image" content="https://lautaroacosta.com/og.png" />
+        <meta name="twitter:title" content={def_title} />
+        <meta name="twitter:image" content={`https://lautaroacosta.com/${og_image_path}`} />
+
         <meta name="twitter:description" content={description} />
 
         {date && <meta property="article:published_time" content={date} />}
@@ -305,7 +311,7 @@ function Feed({ posts }: { posts: PostData[] }) {
       <link href={site_url} rel="alternate" type="text/html" />
       <updated>{new Date().toISOString()}</updated>
       <id>{`${site_url}/feed.xml`}</id>
-      <title type="html">Lautaro Acosta Quintana</title>
+      <title type="html">{blurb}</title>
       <subtitle>{blurb}</subtitle>
       <author>
         <name>Lautaro Acosta Quintana</name>
