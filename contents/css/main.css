@@ -137,6 +137,7 @@
     article {
         display: flex;
         flex-direction: column;
+        text-align: justify;
         gap: 0.5rem;
 
         >* {
@@ -482,8 +483,6 @@ aside.block> :where(.title) {
     text-align: center;
     margin-top: 0;
     margin-bottom: 0.5rem;
-}
-
 }
 
 @layer syntax {
