@@ -14,7 +14,7 @@ It has happened to me. So I made an effort to try to explain to myself what it m
 
 ## What Is A Type
 
-Albeit this may be unnecessary for some, it makes sense to set an understanding from the start so we can all move forward with the same framework in mind.
+Although this may be unnecessary for some, it makes sense to establish a shared understanding from the start so we can all move forward with the same framework in mind.
 
 I _thought_ I knew what types are, after all, I use them all the time! But when I sat down to write this part, I realize I would be hard-pressed to give a confident answer. So let's fix that.
 
@@ -22,7 +22,7 @@ Let's start by recognizing that it's not just a me problem. From what I could ga
 
 ### Types Are Representations Of Memory
 
-My first encounter with types was in 2020 when doing the [CS50](https://www.edx.org/cs50) on Edx because I wanted to know _what was programming about_. I never finished it, but I did learn valuable lessons and it was enough to dip my toes.
+My first encounter with types was in 2020 when doing the [CS50](https://www.edx.org/cs50) on Edx because I wanted to know _what was programming about_. I never finished it, but I learn valuable lessons, and it was enough to dip my toes.
 
 There you were quickly introduced to C and its primitive _data types_ (types, in short): `int`, `float`, `char` and the bunch. This is key, because you end up seeing types as _representations_ of an underlying "_untyped_ universe", the _memory word_ of the concrete machine. The types encode _meaning_ over the stored value, determined by the typed expression we use to access it.
 
@@ -152,7 +152,7 @@ Harper highlights a key _use_ for types: they predict aspects of the execution t
 
 It also introduces the concept of a well-formed program: one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that they are _ill-behaved_ or can't be proven to be _well-behaved_.
 
-Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they only exhibit behavior predicted by the statics. This property is called _type soundness_: the statics are sound with respect to the dynamics.
+Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behavior predicted by the statics. This property is called _type soundness_: the statics are sound with respect to the dynamics.
 
 Therefore, a language may be described as either _sound_ or _unsound_ relative to the relationship between the statics and the dynamics and that's how we will refer to it throughout this article.
 
@@ -373,7 +373,7 @@ One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at run
 
 ## What Is Type Safety 
 
-Now we can define that _Type Safety_ expresses the coherence between the statics and the dynamics; where we say that the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. We'll refer to type safety and soundness interchangeably.
+Now we can define that _Type Safety_ expresses the coherence between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. We'll refer to type safety and soundness interchangeably.
 
 Consequently, evaluation of a well-typed expression cannot _get_ stuck! It can never reach a non-value state for which no evaluation rule applies. This can be achieved by proving two theorems named _Preservation_ and _Progress_.
 
@@ -425,7 +425,7 @@ The trick of it is on understanding what he calls "type discipline"; turns out t
     Keep in mind that when I say "well-formed" here I refer not to type-checking, here that doesn't happen before runtime, instead I am talking about well-formed in regards to the syntax.
 :::
 
-To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields is called `ob_type` which is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
+To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
 
 Now that we have introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in these kinds of language? Bear with me; we are close.
 
