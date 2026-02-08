@@ -312,10 +312,10 @@ Floating point exception   (core dumped) ./main
 
 We can use `gdb` to see a backtrace of what happened:
 
-{highlight="3,6,13"}
+{highlight="4,7,14"}
 ```bash
-$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" \
--ex disassemble -ex quit
+$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run \ 
+-ex "set disassembly-flavor intel" -ex disassemble -ex quit
 ...
 Program received signal SIGFPE, Arithmetic exception.
 0x0000555555555147 in div (a=10, b=0) at main.c:4
@@ -339,9 +339,10 @@ The latest publicly available [C language specification](https://www.open-std.or
 
 To showcase what can happen if we allow optimizations, let's enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
 
-{highlight="3"}
+{highlight="4, 8"}
 ```bash
-$ gcc -g -O3 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" -ex disassemble -ex quit
+$ gcc -g -O3 -o main main.c && gdb -q ./main -ex run \
+-ex "set disassembly-flavor intel" -ex disassemble -ex quit
 ...
 Program received signal SIGILL, Illegal instruction.
 main () at main.c:8
@@ -353,7 +354,7 @@ End of assembler dump.
 
 Notice how the fault came directly from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a `#UD` (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
 
-{highlight="2, 10"}
+{highlight="2, 11"}
 ```bash
 $ clang -O3 -o main main.c && ./main 
 151705912 
@@ -378,7 +379,7 @@ This is why I don't agree with the definition of a safe language that Cardelli g
 
 My point is that it doesn't make the _language_ safe. It is considered a trapped error because the OS caught a hardware-exception, _not_ because the language defined it as so. We can see that if we allow optimizations this accidental safety can even dissapear!
 
-It's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the statics of the program, even when it happens to be safe in practice.
+It's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the language, even when it happens to be safe in practice.
 
 ::: info
 One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
@@ -440,7 +441,7 @@ The trick of it is on understanding what he calls "type discipline"; turns out t
 
 To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
 
-Now that we have introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in these kinds of language? Bear with me; we are close.
+Now that we have introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in these kinds of language? 
 
 Harper presents the theorem of _Progress_ as:
 
@@ -573,6 +574,6 @@ In mainstream languages, known cases of unsoundness are generally well-documente
 
 Even though I appreciate working with a sound type system, I don't believe having an unsound type system makes a language worse or disqualifies it for use; after all, *languages are tools*, and their usefulness is primarily dictated by the context in which they are used.
 
-[^subtyping]: This is one way of describing [subtyping](https://en.wikipedia.org/wiki/Subtyping). Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is another particular definition of it usually mentioned in college (at least in mine). 
+[^subtyping]: This is one way of describing [subtyping](https://en.wikipedia.org/wiki/Subtyping). Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is another particular definition of it usually mentioned in university courses (at least in mine). 
 [^hardship]: In languages that have subtyping, _proving_ type safety becomes more delicate so I decided to omit it to avoid making the article even longer. Nonetheless, the principles of _Preservation_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
 [^erasure]: The example is only meant to illustrate the concept inside the type system. The fact that Java [erases](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) the `T` in the resulting bytecode and therefore doesn't have _true_ parametric polymorphism is an implementation detail.
