@@ -222,6 +222,14 @@
         text-align: center;
     }
 
+    section[role="doc-endnotes"]>hr {
+        all: revert;
+    }
+
+    section[role="doc-endnotes"]>hr::after {
+        content: none;
+    }
+
     svg {
         fill: currentColor;
     }
