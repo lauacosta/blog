@@ -10,21 +10,23 @@
 
 Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you read it in a blog post somewhere on social media where programmers were fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language, or in an announcement for the latest Typescript library, but you were never sure you _knew_ what it meant? 
 
-It has happened to me. So I made an effort to try to explain to myself what it meant, hopefully it works for you too! The article touches _many_ concepts but I try to keep it grounded and add examples where I feel they help illustrate a concept better for someone like me.
+It has happened to me. So I made an effort to try to explain to myself what it meant, hopefully it works for you too! The article touches _many_ concepts but I try to keep it grounded and add examples where I feel they help to illustrate a concept better for someone like me.
 
 ## What Is A Type
 
 Although this may be unnecessary for some, it makes sense to establish a shared understanding from the start so we can all move forward with the same framework in mind.
 
-I _thought_ I knew what types are, after all, I use them all the time! But when I sat down to write this part, I realize I would be hard-pressed to give a confident answer. So let's fix that.
+I _thought_ I knew what types are, after all, I use them all the time! But when I sat down to write this part, I realized I would be hard-pressed to give you a confident answer. So let's fix that.
 
-Let's start by recognizing that it's not just a me problem. From what I could gather, the definition of what a type _is_ depends on the level of abstraction you are working on and the tools you are working with and none of them are particularly _false_. Therefore, we'll look at some different postures, with no intention on being exhaustive.
+Let's start by recognizing that it's not just a me problem. From what I could gather, the definition of what a type _is_ depends on the level of abstraction you are working on and the tools you are working with and none of them are _false_.
+
+Therefore, we'll look at some different points of view, with no intention on being exhaustive.
 
 ### Types Are Representations Of Memory
 
-My first encounter with types was in 2020 when doing the [CS50](https://www.edx.org/cs50) on Edx because I wanted to know _what was programming about_. I never finished it, but I learn valuable lessons, and it was enough to dip my toes.
+My first encounter with types was in 2020 when doing the [CS50](https://www.edx.org/cs50) on Edx because I wanted to know _what was programming about_. I never finished it, but I learned valuable lessons, and it was enough to dip my toes.
 
-There you were quickly introduced to C and its primitive _data types_ (types, in short): `int`, `float`, `char` and the bunch. This is key, because you end up seeing types as _representations_ of an underlying "_untyped_ universe", the _memory word_ of the concrete machine. The types encode _meaning_ over the stored value, determined by the typed expression we use to access it.
+There you were quickly introduced to C and its primitive _data types_ (types, in short): `int`, `float`, `char` and the bunch. This is key because you end up seeing types as _representations_ of an underlying "_untyped_ universe", the [_memory word_](https://en.wikipedia.org/wiki/Word_\(computer_architecture\)) of the concrete machine. The types encode _meaning_ over the stored value, determined by the typed expression we use to access it.
 
 If that didn't click, let me show you a little example:
 
@@ -54,7 +56,7 @@ As float: 1.000000
 
 Evidently, types allow us to somewhat abstract away from the raw memory (you never _really_ can) and operate on it more easily by *enforcing constraints and guarantees over them*. 
 
-This actually holds _everywhere_, since every running program is constrained to reality, your favorite language may be handling it somewhere you don't often see, but it's there. 
+This actually holds _everywhere_, since every running program is constrained to reality; that is, it runs on a concrete machine. Your favorite language may be handling it somewhere you don't often see, but it is there. 
 
 The [On Understanding Types, Data Abstraction, and Polymorphism](http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf) paper by Luca Cardelli and Peter Wegner, says something similar:
 
@@ -62,15 +64,17 @@ The [On Understanding Types, Data Abstraction, and Polymorphism](http://lucacard
 
 Enforcing this protection is the job of a _type system_, we'll talk more about it later.
 
-So... that's it? Types are only constraints enforced by a type system over memory? 
+So... that's it? Types are just constraints over memory enforced by a type system? 
 
 ### Types As Sets
 
-You would be clever to answer: *_no_*. This definition does not account for ways to express more powerful relationships in the type system, for example, where a value can have multiple types. For example, many mainstream languages have _universal polymorphism_, which has two common kinds: _parametric polymorphism_ and _inclusion polymorphism_. In the words of Cardelli and Wegner:
+You would be clever to answer: *_no_*. This definition doesn't naturally express relationships _between_ types, like when the same value can have multiple types. For example, many mainstream languages express this by having _universal polymorphism_, which presents itself in two kinds: _parametric polymorphism_ and _inclusion polymorphism_.
+
+In the words of Cardelli and Wegner:
 
 > In parametric polymorphism, a polymorphic function has an implicit or explicit type parameter, which determines the type of the argument for each application of that function. In inclusion polymorphism an object can be viewed as belonging to many different classes which need not be disjoint, i.e. there may be inclusion of classes.
 
-Read carefully and recognize that these two features are something very common in modern programming. Let's see an example of both:
+Read carefully and recognize that these two features are very common in modern programming. Let's see an example of both[^erasure]:
 
 ``` java
 interface Animal {
@@ -85,15 +89,22 @@ class Dog implements Animal {
 
 public class Main {
     // This has both kinds at play.
-    // This _generic_ function is defined with a type parameter `T`.
-    // And constrained to belong to the `Animal` class.
+
+    // This function has parametric polymorphism, it
+    // is _generic_ over the type parameter `T`.
+
+    // `T` is _constrained_ or _bounded_ to `Animal`.
     public static <T extends Animal> void speak_twice(T a) {
         a.speak();
         a.speak();
     }
 
     public static void main(String[] args) {
-        speak_twice(new Dog());
+        // Here, we can call the function with `dog` 
+        // because we declared it a subclass of `Animal`.
+        // So now the value `dog` has two types: `Dog` and `Animal`
+        Dog dog = new Dog();
+        speak_twice(dog);
     }
 }
 ```
@@ -104,7 +115,7 @@ It is so that Cardelli and Wegner propose thinking of types as _sets of values_ 
 v : T ⟺  v ∈ T
 ```
 
-Let `V` be the universe of possible values (arrays, ints, etc.). A type is a subset of `V` that satisfies technical properties. Since these sets can overlap,
+Let `V` be the universe of possible values (arrays, ints, etc.). A type is a subset of `V` that satisfies certain technical properties. Since these sets can overlap,
 
 ```bash
 T1 ∩ T2 ≠ ∅
@@ -130,9 +141,9 @@ This resembles the example, where I enforce the type parameter `T` (`T1`) to be 
 
 ### Closing On Types
 
-I have only scraped the tiniest bit of ice from the iceberg; PL theory goes well beyond what I understand right now so that's enough of that for this article. See that in both approaches, the idea of a type being used for defining properties and behavior remains.
+I have only scraped the tiniest bit of ice off the iceberg; programming language theory goes well beyond what I understand so that's enough of that for this article. See that in both approaches, the idea of a type being used for defining properties and behavior remains.
 
-Ultimately, the question of what a type _is_ seems to me less interesting than what a type is _useful for_, which is the whole point of why I am writing this.
+Ultimately, the question of what a type _is_ seems to me less interesting than what a type is [_useful for_](https://www.tedinski.com/2018/12/05/types-as-design-tool.html), for example, how they help ensure safety, which is one of the reasons why I am writing this.
 
 ::: info
 The textbook for Cornell's University [CS 3110](https://cs3110.github.io/textbook/cover.html) has a chapter dedicated to the [Curry-Howard Correspondence](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions) in OCaml, it proposes a third view which I found really interesting. The Correspondence claims that types can be thought of as _propositions_: values dont _have_ a type, they are _evidence_ for said type. And since computing with evidence _is_ constructing valid logical proofs, one can take advantage of types to write proofs (programs) that are evaluated and simplified by the type system. This way one can write programs that prove to have properties _by construction_.
@@ -152,7 +163,7 @@ Harper highlights a key _use_ for types: they predict aspects of the execution t
 
 It also introduces the concept of a well-formed program: one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that they are _ill-behaved_ or can't be proven to be _well-behaved_.
 
-Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behavior predicted by the statics. This property is called _type soundness_: the statics are sound with respect to the dynamics.
+Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behaviors predicted by the statics. This property is called _type soundness_: the statics are sound with respect to the dynamics.
 
 Therefore, a language may be described as either _sound_ or _unsound_ relative to the relationship between the statics and the dynamics and that's how we will refer to it throughout this article.
 
@@ -164,7 +175,7 @@ The [Type Systems](https://courses.grainger.illinois.edu/cs421/fa2018/CS421A/res
 >
 > A program fragment is safe if it does not cause untrapped errors to occur. Languages where all program fragments are safe are called safe languages. 
 
-This definition is, in a way, more permissive. In the paper, Cardelli classifies division by zero as a trapped error since many architectures catch it. However, I argue that a _language_ shouldn't be deemed safe because the architecture the _program_ happens to execute in catches certain kinds of errors. Later we'll explore a case study that illustrates this.
+This definition is, in a way, more permissive. In the paper, Cardelli classifies division by zero as a trapped error since many architectures catch it. However, I argue that a _language_ shouldn't be deemed safe because the architecture the _program_ happens to execute on catches certain kinds of errors. Later we'll explore a case study that illustrates this.
 
  ****
 
@@ -174,9 +185,9 @@ Harper states that the role of a type system is:
 
 > The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur.
 
-[Mmmhmm](https://youtu.be/oK3yTGtxOPY?t=35), I am not convinced by that one. I get what he is trying to say but I think we can find another.
+[Mmmhmm](https://youtu.be/oK3yTGtxOPY?t=35), it makes sense but it does not tell me much. I get what he is trying to say but I think we can find a more practical definition.
 
-Let's look at what Cardelli says:
+Cardelli says:
 
 > The primary goal of a type system is to ensure language safety by ruling out all untrapped errors in all program runs. However, most type systems are designed to ensure the more general good behavior property, and implicitly safety. Thus, the declared goal of a type system is usually to ensure good behavior of all programs, by distinguishing between well typed and ill typed programs.
 
@@ -208,7 +219,7 @@ let res = add(10, "Some");
 The program may or may not be well-typed depending on the statics of the language.
 
 - There is a rule defined for `+` given `Int` and `Str`, the program is well-typed and guaranteed not to get stuck.
-- No rule exists, the program is ill-typed and executing it would break the language guarantees (the statics).
+- No rule exists; the program is ill-typed and executing it would break the language guarantees (the statics).
 
 Now, to showcase when a language is unsound, let's first drop the assumption that the language we are using is sound and take a look at this example:
 
@@ -220,10 +231,10 @@ fn div(a: Int, b: Int) : Int {
 let res = div(10, 0);
 ```
 
-This program is clearly well-typed but stating that the language is safe depends on the dynamics. We can decide according to how they handle the division by zero:
+This program is clearly well-typed, but stating that the language is safe depends on the dynamics. We can decide according to how they handle the division by zero:
 
 - The dynamics do not define what happens in this failure case, undefined behavior creeps in, making the language unsound.
-- Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamic checks being the easiest to implement; these are mechanisms such as throwing errors, exceptions, panicking, returning a special value, etc.).
+- If Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamic checks being the easiest to implement; these are mechanisms such as throwing errors, exceptions, panicking, returning a special value, etc.).
 
 ### Case Study
 
@@ -271,7 +282,7 @@ stack backtrace:
    5: core::ops::function::FnOnce::call_once
 ```
 
-Rust does not yet have a formal specification; the closest thing is the [Rust Reference](https://doc.rust-lang.org/reference/) and in there we can see that this behavior is [*defined by the language*](https://doc.rust-lang.org/nightly/reference/expressions/operator-expr.html?highlight=division#arithmetic-and-logical-binary-operators:~:text=%E2%80%A0%20For%20integer%20types%2C%20division%20by%20zero%20panics): division by zero does not result in undefined behavior, but instead transitions the program to a specified error state where computation is stopped immediately. Even though the program ends abruptly, it doesn't reach an undefined state, panicking is a defined outcome. This is why Rust remains sound in the presence of such an error.
+Rust does not yet have a formal specification; the closest thing is the [Rust Reference](https://doc.rust-lang.org/reference/), and in there we can see that this behavior is [*defined by the language*](https://doc.rust-lang.org/nightly/reference/expressions/operator-expr.html?highlight=division#arithmetic-and-logical-binary-operators:~:text=%E2%80%A0%20For%20integer%20types%2C%20division%20by%20zero%20panics): division by zero does not result in undefined behavior, but instead transitions the program to a specified error state where computation is stopped immediately. Even though the program ends abruptly, it doesn't reach an undefined state, panicking is a defined outcome. This is why Rust remains sound in the presence of such an error.
 
 ::: info
 Recovering from a panic like this can be done by using [`catch_unwind`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html), but that is the wrong tool for expected failures. Instead, one should favor more idiomatic approaches, such as [`checked_div`](https://doc.rust-lang.org/std/primitive.u32.html#method.checked_div), which returns an `Option` instead of panicking, or encoding the [invariants](https://matklad.github.io/2023/10/06/what-is-an-invariant.html) in the function's type signature.
@@ -303,7 +314,8 @@ We can use `gdb` to see a backtrace of what happened:
 
 {highlight="3,6,13"}
 ```bash
-$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" -ex disassemble -ex quit
+$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run -ex "set disassembly-flavor intel" \
+-ex disassemble -ex quit
 ...
 Program received signal SIGFPE, Arithmetic exception.
 0x0000555555555147 in div (a=10, b=0) at main.c:4
@@ -323,7 +335,7 @@ End of assembler dump.
 
 Now we can see that the fault came from our `div` function. Check how at address `0x0000555555555147` the division is performed with the `idiv` instruction on x86_64. Since the divisor is zero, the CPU raises a `#DE` (Division Error) exception. The OS handles it by sending a `SIGFPE` signal to the program. 
 
-The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB), which results in a greenfield for compiler optimizations since they take full advantage on the fact that the C _abstract model_ states this is an undefined state. Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
+The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB). This results in a greenfield for compiler optimizations since they take full advantage on the fact that the C _abstract model_ states this is an undefined state. Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
 
 To showcase what can happen if we allow optimizations, let's enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
 
@@ -346,7 +358,8 @@ Notice how the fault came directly from our `main` function. Inspecting the asse
 $ clang -O3 -o main main.c && ./main 
 151705912 
 
-$ clang -O3 -o main main.c && gdb -q ./main -ex "set disassembly-flavor intel" -ex "disassemble main" -ex quit
+$ clang -O3 -o main main.c && gdb -q ./main -ex "set disassembly-flavor intel" \
+-ex "disassemble main" -ex quit
 ...
 Dump of assembler code for function main:
    0x0000000000001150 <+0>:     push   rax
@@ -361,11 +374,11 @@ End of assembler dump.
 
 This is interesting: without optimizations it behaves similarly to the GCC-compiled one. With optimizations enabled, Clang also deletes `div`; however, it doesn't replace main's body with a `ud2` and instead continues execution normally, printing an arbitrary value!
 
-This is why I don't agree with the definition of a safe language that Cardelli gave. In Rust, division by zero is handled _by the language_, making both the program and the language sound. In C with optimizations disabled, this particular program _is_ safe in practice according to Cardelli, it doesn't have untrapped errors. 
+This is why I don't agree with the definition of a safe language that Cardelli gave. In Rust, division by zero is handled _by the language_, making both the program and the language sound. In C with optimizations disabled, turns out this particular program _is_ safe in practice and matches Cardelli, it doesn't have untrapped errors. 
 
-My point is that I think it doesn't make the _language_ safe, because it crashed because the OS caught a hardware-exception. And we can see that if we allow optimizations this accidental safety can even dissapear!
+My point is that it doesn't make the _language_ safe. It is considered a trapped error because the OS caught a hardware-exception, _not_ because the language defined it as so. We can see that if we allow optimizations this accidental safety can even dissapear!
 
-I also think it's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the statics of the program, even when it happens to be safe in practice.
+It's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the statics of the program, even when it happens to be safe in practice.
 
 ::: info
 One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
@@ -415,7 +428,7 @@ Now that we have these tools, we can revisit the C example and see that the type
 
 After all of this, you may be left wondering what's the case for languages like Javascript or Python, the so-called _dynamic languages_.
 
-Fortunately, Harper can help us. He argues that the distinction between static and dynamic languages is illusory; instead, dynamic languages embrace a model of computation where multiple _classes_ of values exist for a *single recursive type*.
+Fortunately, Harper can help. He argues that the distinction between static and dynamic languages is illusory; instead, dynamic languages embrace a model of computation where multiple _classes_ of values exist for a *single recursive type*.
 
 > Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety.
 
@@ -439,7 +452,7 @@ This reads as "If `d` is a closed expression, then it's either a value, results 
 
 The key difference is that, in the previous model, these kinds of errors were guaranteed to not occur for well-typed programs. But, since catching those before evaluation requires a static language, now they have become part of the semantics of the language! This way, evaluation never becomes _stuck_. I think it's relevant to notice how now catching these errors falls upon the dynamics of the language, adding a non-negligible overhead.
 
-And since there exists only one singular recursive type, _Preservation_ plays a lesser role here: there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
+And since there exists only one singular recursive type, _Preservation_ plays a lesser role here; there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
 
 ## Hybrid Typing?
 
@@ -453,7 +466,7 @@ He describes a hybrid language as:
 
 He makes the interesting case that essentially, there is nothing about dynamic typing that can't be expressed with static typing! 
 
-Examples of these `dyn` types in mainstream languages can be the `Object` class in Java[^hardship]:
+Examples of these `dyn` types in mainstream languages include the `Object` class in Java[^hardship]:
 
 ``` java
 public class Example {
@@ -530,25 +543,25 @@ As a bonus, I find it interesting that there have been efforts towards introduci
 
 ## A Note On Soundness
 
-At last, we enter the last section of the article. It's been a long journey to write and I bet it was to read too.
+At last, we enter the final section of the article. It's been a long journey to write and I bet it was to read too.
 
 We have discussed what soundness is and what it is there for: it makes programs written in languages that have it easier to reason about and helps avoid whole classes of bugs and foot-guns. 
 
 However, I want to express some opinions I have been saving in order to not muddle the explanations of the sections before.
 
-From what I read, both Harper and Cardelli seem to heavily focus on the _abstract semantics_ of the languages to determine if they are sound or not which could very well make sense for the work they do. In contrast, I am but a humble programmer; I read these criteria and find them _somewhat_ useful. I hinted at this in the conclusion of the case study, sometimes I find these definitions not useful for defining if a program is safe or not.
+From what I read, both Harper and Cardelli seem to heavily focus on the _abstract semantics_ of the languages to determine if they are sound or not which could very well make sense for the work they do. In contrast, I am but a humble programmer; I read these criteria and find them _somewhat_ useful. I hinted at this in the conclusion of the case study; I find these definitions not enough for defining if a program is safe for execution or not. Maybe it makes sense, since soundness is a _property_ of the abstract semantics of the language.
 
-I have not yet found where they talk about how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. And maybe it makes sense, since soundness safety _is_ a property of the abstract semantics of the language.
-
-It is so that if we took C and changed its specification so every case of UB transitioned to an error state. Under the framework we established, the program we wrote earlier would be considered safe; yet, nothing about the actual execution would have changed! Merely changing the specification doesn't affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
-
-Now, remember that It's totally possible to write programs, that are sound in practice, in unsound languages by restricting oneself to use only the sound subset of the language. In fact, it may happen that, within the space of all possible programs written in the language, the unsound features are never encountered in practice! 
-
-This obviously moves the bulk of the work that could be done by proper semantics and a type system to the user, since they will have to rely on their own experience and the maturity of the community to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to navigate these waters.
+It is so that if we took C and changed its specification so every case of UB transitioned to an error state, or we defined UB as as belonging to the set of "trapped errors", under the frameworks we saw, the program we wrote earlier would be considered safe; yet, nothing about the actual execution would have changed! Merely changing that doesn't immediately affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
 
 This tells me that soundness, as a property of a language, doesn't automatically translate into practical safety guarantees. Matklad has a nice article that talks more about this and that deals with a term often seen alongside type safety, [memory safety](https://matklad.github.io/2025/12/30/memory-safety-is.html).
 
-Also, soundness is not by itself indicative of a language's usefulness. Many widely used languages have had unsound type systems for decades yet programmers continue writing critical software with them (just think about all the software written in [C](https://blog.regehr.org/archives/213) and [Java](https://dl.acm.org/doi/10.1145/2983990.2984004)). 
+Note that now I am broadening the discussion beyond soundness. I would _always_ want to know if a program I run is safe, not _only_ in the sense of soundness, but memory safety. To do so I can't ignore  how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. 
+
+Now, remember that it's totally possible to write programs, that are sound in practice, in unsound languages by restricting oneself to use only the sound subset of the language. In fact, it may happen that within the space of all possible programs written in the language, the unsound features are never encountered in practice! It is possible too, to write seemingly unsafe programs that turn out  to be safe in practice due to the infrastructure where they run.
+
+This obviously moves the bulk of the work that could be done by proper semantics and a type system to the user since they will have to rely on their own experience and the maturity of the community to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to navigate these waters.
+
+Also, history clearly tells us that soundness is not by itself indicative of a language's usefulness. Many widely used languages have had unsound type systems for decades yet programmers continue writing critical software with them (just think about all the software written in [C](https://blog.regehr.org/archives/213) and [Java](https://dl.acm.org/doi/10.1145/2983990.2984004)). 
 
 Languages can be unsound _by design_, trading soundness for goals like:
 
@@ -558,8 +571,8 @@ Languages can be unsound _by design_, trading soundness for goals like:
 
 In mainstream languages, known cases of unsoundness are generally well-documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), for example). Unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 
-Even though I appreciate using a sound [type system](https://www.tedinski.com/2018/12/05/types-as-design-tool.html), I don't believe having an unsound type system makes a language worse than one that has a sound one or disqualifies it for use; after all, *languages are tools*, and their usefulness is primarily dictated by the context in which they are used.
+Even though I appreciate working with a sound type system, I don't believe having an unsound type system makes a language worse or disqualifies it for use; after all, *languages are tools*, and their usefulness is primarily dictated by the context in which they are used.
 
 [^subtyping]: This is one way of describing [subtyping](https://en.wikipedia.org/wiki/Subtyping). Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is another particular definition of it usually mentioned in college (at least in mine). 
 [^hardship]: In languages that have subtyping, _proving_ type safety becomes more delicate so I decided to omit it to avoid making the article even longer. Nonetheless, the principles of _Preservation_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
-
+[^erasure]: The example is only meant to illustrate the concept inside the type system. The fact that Java [erases](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) the `T` in the resulting bytecode and therefore doesn't have _true_ parametric polymorphism is an implementation detail.
