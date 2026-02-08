@@ -303,6 +303,16 @@
 
 
 @layer components {
+    .meta-links {
+        display: block;
+        text-align: center;
+    }
+
+    .meta-links a {
+        display: inline;
+    }
+
+
     ::-webkit-scrollbar {
         width: 12px;
         height: 12px;

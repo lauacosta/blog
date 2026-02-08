@@ -155,14 +155,14 @@ function Base({ children, description, title, path, extra_css, date, src }: {
         </main>
 
         <footer>
-          <p>
-            {date && (
-              <a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>
-                (revision history)
-              </a>
-            )}
-          </p>
-
+          {date && (
+            <p class="meta-links">
+              (<a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>
+                revision history
+              </a>{" "}
+              & <a class="emphasis" href="/ai_transparency.html">AI transparency</a>)
+            </p>
+          )}
           <p>
             <a href="/feed.xml">
               <FooterIcon name="rss" />
