@@ -24,6 +24,7 @@ import {
   Url,
   Visitor,
 } from "@djot/ast.ts";
+import { Toc } from "./main.ts";
 
 export function parse(source: string): Doc {
   return djot_parse(source);
@@ -67,6 +68,45 @@ export function estimate_reading_time(doc: Doc): number {
       images * 0.17 +
       code_blocks * 0.5,
   );
+}
+
+export function build_table_contents(doc: Doc): Toc {
+  let counter = 1;
+  const headings: { id: string; title: string; level: number }[] = [];
+
+  function visit(node: AstNode) {
+    switch (node.tag) {
+      case "heading": {
+        const level = node.level;
+        let title = "";
+        if (level > 1) {
+          title = get_string_content(node);
+        }
+
+        if (title) {
+          const slug = title
+            .replace(/\s+/g, "-")
+            .replace(/[^\w\-]+/g, "")
+            .replace(/\-\-+/g, "-")
+            .replace(/^-+/, "")
+            .replace(/-+$/, "");
+
+          headings.push({ id: slug, title, level });
+          counter++;
+        }
+
+        break;
+      }
+    }
+
+    if ("children" in node) {
+      for (const c of node.children) visit(c);
+    }
+  }
+
+  visit(doc);
+
+  return { titles: headings };
 }
 
 export function render(
@@ -176,15 +216,15 @@ export function render(
       let admon_icon = "";
       if (has_class(node, "info")) admon_icon = "info";
       if (has_class(node, "warn")) admon_icon = "warn";
-      if (has_class(node, "private")) admon_icon = "private";
+      // if (has_class(node, "private")) admon_icon = "private";
       if (has_class(node, "danger")) admon_icon = "danger";
 
       if (admon_icon) {
-        return `<div class="div_icon"><aside${
+        return `<aside${
           r.renderAttributes(node, { "class": "admn" })
         }><svg class="icon"><use href="/assets/icons.svg#${admon_icon}"/></svg><div>${
           r.renderChildren(node)
-        }</div></aside>`;
+        }</aside>`;
       }
 
       if (has_class(node, "block")) {

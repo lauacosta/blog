@@ -2,10 +2,6 @@
  {"title":"What Does Type Safety Mean","private": true} 
 ---
 
-::: private
-    If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)
-:::
-
 # What Does Type Safety Mean
 
 Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you read it in a blog post somewhere on social media where programmers were fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language, or in an announcement for the latest Typescript library, but you were never sure you _knew_ what it meant? 

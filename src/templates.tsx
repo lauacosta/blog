@@ -9,6 +9,8 @@ import { Post as PostData } from "./main.ts";
 const site_url = "https://lautaroacosta.com";
 const github_url = "https://github.com/lauacosta";
 const blurb = "Lautaro's Coppermind";
+const private_html =
+  `<aside class="admn private"><svg class="icon"><use href="/assets/icons.svg#private"></use></svg><div><p>If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)</p></div></aside>`;
 
 export function html_ugly(node: VNode, doctype = "<!DOCTYPE html>"): string {
   return `${doctype}\n${render(node)}`;
@@ -75,11 +77,12 @@ function Fonts() {
   );
 }
 
-function Base({ children, description, title, path, extra_css, date, src }: {
+function Base({ children, published, description, title, path, extra_css, date, src }: {
   children?: VNode[];
   src: string;
   description: string;
   title: string;
+  published?: boolean;
   path: string;
   date?: string;
   extra_css?: string;
@@ -145,10 +148,14 @@ function Base({ children, description, title, path, extra_css, date, src }: {
             <a class="title" href="/">Lautaro's Coppermind</a>
             <a href="/about.html">About</a>
             <a href="/blogroll.html">Blogroll</a>
+            <a id="home-page-top" href="#home-page-top"></a>
             <input type="checkbox" id="theme-toggle" hidden />
             <label for="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></label>
           </nav>
         </header>
+
+        {published &&
+          <Raw unsafe={private_html} />}
 
         <main>
           {children}
@@ -239,17 +246,34 @@ export function Post({ post }: { post: PostData }) {
       .trim()
     : blurb;
 
+  let tocHtml = "";
+  if (post.toc) {
+    const titles = post.toc.titles;
+    tocHtml =
+      '<nav class="table-of-contents"><menu><a class="toc-entry" href="#home-page-top"><h2 class="toc-header">Contents</h2></a>' +
+      titles.map(({ id, level, title }) =>
+        `<li data-level=${level}>
+          ${id ? `<a href="#${id}">${title}</a>` : title}
+        </li>`
+      ).join("") +
+      "</menu></nav>";
+  }
+
   return (
     <Base
       src={post.src}
       title={post.title}
       path={post.path}
+      published={post.private}
       date={post.iso_date.toISOString()}
       description={description}
     >
-      <article>
-        <Raw unsafe={post.content.value} />
-      </article>
+      {tocHtml && <Raw unsafe={tocHtml} />}
+      <div>
+        <article>
+          <Raw unsafe={post.content.value} />
+        </article>
+      </div>
     </Base>
   );
 }

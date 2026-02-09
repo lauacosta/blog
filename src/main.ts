@@ -169,14 +169,7 @@ async function draft(name: string, priv: boolean) {
     private: priv,
   });
 
-  if (priv) {
-    await Deno.writeTextFile(
-      path,
-      `---\n ${arch} \n---\n::: private \n If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)\n::: \n\n # ${title}\n\n `,
-    );
-  } else {
-    await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title}\n`);
-  }
+  await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title}\n`);
 }
 
 async function build(clean: boolean, profile: boolean) {
@@ -286,6 +279,14 @@ function parse_archetype(text: string): { arch: Archetype; body: string } {
   return { arch, body };
 }
 
+export type Toc = {
+  titles: {
+    id: string;
+    level: number;
+    title: string;
+  }[];
+};
+
 export type Post = {
   title: string;
   year: number;
@@ -293,6 +294,7 @@ export type Post = {
   day: number;
   reading_time_mins: number;
   iso_date: Date;
+  toc?: Toc;
   private: boolean;
   slug: string;
   content: HtmlString;
@@ -328,6 +330,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
     const render_ctx = { date, summary: undefined, title: undefined };
 
     const reading_time_mins = djot.estimate_reading_time(ast);
+    // const toc = djot.build_table_contents(ast);
     const html = djot.render(ast, render_ctx, reading_time_mins);
 
     ctx.render_ms += performance.now() - t;
@@ -341,6 +344,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
       reading_time_mins,
       day,
       slug,
+      // toc,
       iso_date: date,
       title: arch.title,
       private: arch.private,
