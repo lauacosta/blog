@@ -29,7 +29,7 @@
 
         & a:hover {
             color: var(--text-soft);
-            text-decoration: underline;
+            text-decoration: none;
         }
 
         & .title {
@@ -92,6 +92,7 @@
 
     .theme-toggle:hover {
         cursor: pointer;
+        color: var(--text-soft);
     }
 
     body:has(#theme-toggle:checked) .theme-toggle::before {
@@ -156,7 +157,7 @@
         }
 
         a:hover {
-            background: #fbf3f3;
+            background: var(--muted);
             transition-property: background;
             transition-duration: 0.2s;
             border-radius: 8px;
@@ -313,11 +314,11 @@
     }
 
     h1 {
-        font-size: 2.5rem;
+        font-size: 2rem;
     }
 
     h2 {
-        font-size: 2rem;
+        font-size: 1.8rem;
     }
 
     h3 {
@@ -353,6 +354,14 @@
 }
 
 @layer components {
+    .internal-link {
+        font-variant: small-caps;
+    }
+
+    a.internal-link::after {
+        content: none;
+    }
+
     .meta-links {
         display: block;
         text-align: center;
@@ -385,12 +394,12 @@
         font-size: 0.8rem;
         top: -0.5rem;
         left: 0.1rem;
-        color:var(--accent);
+        color: var(--accent);
     }
 
     .sidenote-content:before {
         content: counter(sidenote-counter) " ";
-        color:var(--accent);
+        color: var(--accent);
         font-size: 0.8rem;
         top: -0.5rem;
         position: relative;

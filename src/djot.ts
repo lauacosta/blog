@@ -15,6 +15,7 @@ import {
   HasAttributes,
   Heading,
   Image,
+  Link,
   OrderedList,
   Para,
   Section,
@@ -115,6 +116,24 @@ export function render(
     },
     ordered_list: (node: OrderedList, r: HTMLRenderer): string => {
       if (node.style === "1)") add_class(node, "callout");
+      return r.renderAstNodeDefault(node);
+    },
+    link: (node: Link, r: HTMLRenderer) => {
+      const destination = node.destination;
+      if (destination) {
+        const isInternal = destination.startsWith("/") ||
+          destination.startsWith("#") ||
+          destination.startsWith("./") ||
+          destination.startsWith("../") ||
+          (!destination.startsWith("http://") && !destination.startsWith("https://"));
+
+        if (isInternal) {
+          const attrs = node.attributes || {};
+          attrs.class = attrs.class ? `${attrs.class} internal-link` : "internal-link";
+          node.attributes = attrs;
+        }
+      }
+
       return r.renderAstNodeDefault(node);
     },
     para: (node: Para, r: HTMLRenderer) => {
