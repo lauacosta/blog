@@ -12,7 +12,7 @@ Have you ever doubted yourself when trying to explain what _type safety_ is? May
 
 It has happened to me. So I made an effort to try to explain to myself what it meant, hopefully it works for you too! The article touches _many_ concepts but I try to keep it grounded and add examples where I feel they help to illustrate a concept better for someone like me.
 
-## What Is A Type
+## What is a type
 
 Although this may be unnecessary for some, it makes sense to establish a shared understanding from the start so we can all move forward with the same framework in mind.
 
@@ -22,11 +22,11 @@ Let's start by recognizing that it's not just a me problem. From what I could ga
 
 Therefore, we'll look at some different points of view, with no intention on being exhaustive.
 
-### Types Are Representations Of Memory
+### Types are representations of memory
 
 My first encounter with types was in 2020 when doing the [CS50](https://www.edx.org/cs50) on Edx because I wanted to know _what was programming about_. I never finished it, but I learned valuable lessons, and it was enough to dip my toes.
 
-There you were quickly introduced to C and its primitive _data types_ (types, in short): `int`, `float`, `char` and the bunch. This is key because you end up seeing types as _representations_ of an underlying "_untyped_ universe", the [_memory word_](https://en.wikipedia.org/wiki/Word_\(computer_architecture\)) of the concrete machine. The types encode _meaning_ over the stored value, determined by the typed expression we use to access it.
+There you were quickly introduced to C and its primitive data types (types, in short): `int`, `float`, `char` and the bunch. This is key because you end up seeing types as _representations_ of an underlying "_untyped_ universe", the [_memory word_](https://en.wikipedia.org/wiki/Word_\(computer_architecture\)) of the concrete machine. The types encode _meaning_ over the stored value, determined by the typed expression we use to access it.
 
 If that didn't click, let me show you a little example:
 
@@ -46,7 +46,7 @@ int main(void) {
 }
 ```
 
-Here, we explicitly _cast_ bytes as different types and see how they represent it:
+Here, we explicitly _cast_ bytes as different types and see how they are represented:
 
 ```bash
 $ gcc -g -O0 -o main main.c && ./main
@@ -58,7 +58,7 @@ Evidently, types allow us to somewhat abstract away from the raw memory (you nev
 
 This actually holds _everywhere_, since every running program is constrained to reality; that is, it runs on a concrete machine. Your favorite language may be handling it somewhere you don't often see, but it is there. 
 
-The [On Understanding Types, Data Abstraction, and Polymorphism](http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf) paper by Luca Cardelli and Peter Wegner, says something similar:
+The _"[On Understanding Types, Data Abstraction, and Polymorphism](http://lucacardelli.name/Papers/OnUnderstanding.A4.pdf)"_ paper by Luca Cardelli and Peter Wegner, says something similar:
 
 > A type may be viewed as a set of clothes (or a suit of armor) that protects an underlying untyped representation from arbitrary or unintended use. It provides a protective covering that hides the underlying representation and constrains the way objects may interact with other objects. 
 
@@ -66,9 +66,9 @@ Enforcing this protection is the job of a _type system_, we'll talk more about i
 
 So... that's it? Types are just constraints over memory enforced by a type system? 
 
-### Types As Sets
+### Types as sets of values
 
-You would be clever to answer: *_no_*. This definition doesn't naturally express relationships _between_ types, like when the same value can have multiple types. For example, many mainstream languages express this by having _universal polymorphism_, which presents itself in two kinds: _parametric polymorphism_ and _inclusion polymorphism_.
+You would be clever to answer: *no*. This definition doesn't naturally express relationships _between_ types, like when the same value can have multiple types. For example, many mainstream languages express this by having _universal_ polymorphism, which presents itself in two kinds: _parametric_ polymorphism and _inclusion_ polymorphism.
 
 In the words of Cardelli and Wegner:
 
@@ -139,7 +139,7 @@ T1 ⊆ T2 ⟺  ∀ v (v ∈ T1 ⇒ v ∈ T2)
 
 This resembles the example, where I enforce the type parameter `T` (`T1`) to be a subtype of `Animal` (`T2`).
 
-### Closing On Types
+### Closing on types
 
 I have only scraped the tiniest bit of ice off the iceberg; programming language theory goes well beyond what I understand so that's enough of that for this article. See that in both approaches, the idea of a type being used for defining properties and behavior remains.
 
@@ -149,9 +149,9 @@ Ultimately, the question of what a type _is_ seems to me less interesting than w
 The textbook for Cornell's University [CS 3110](https://cs3110.github.io/textbook/cover.html) has a chapter dedicated to the [Curry-Howard Correspondence](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions) in OCaml, it proposes a third view which I found really interesting. The Correspondence claims that types can be thought of as _propositions_: values dont _have_ a type, they are _evidence_ for said type. And since computing with evidence _is_ constructing valid logical proofs, one can take advantage of types to write proofs (programs) that are evaluated and simplified by the type system. This way one can write programs that prove to have properties _by construction_.
 :::
 
-## Sound Languages
+## Sound languages
 
-I found two popular definitions for what a safe language is. First from [The Practical Foundations of Programming Languages](https://www.cs.cmu.edu/~rwh/pfpl.html) book by Robert Harper:
+I found two popular definitions for what a safe language is. The first is from _"[The Practical Foundations of Programming Languages](https://www.cs.cmu.edu/~rwh/pfpl.html)"_ book by Robert Harper:
 
 > Most programming languages exhibit a phase distinction between the static and dynamic phases of processing. The static phase consists of parsing and type checking to ensure that the program is well-formed; the dynamic phase consists of execution of well-formed programs. A language is said to be safe exactly when well-formed programs are well-behaved when executed.
 >
@@ -163,15 +163,15 @@ Harper highlights a key _use_ for types: they predict aspects of the execution t
 
 It also introduces the concept of a well-formed program: one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that they are _ill-behaved_ or can't be proven to be _well-behaved_.
 
-Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behaviors predicted by the statics. This property is called _type soundness_: the statics are sound with respect to the dynamics.
+Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behaviors predicted by the statics. This property is called type soundness: the statics are _sound_ with respect to the dynamics.
 
-Therefore, a language may be described as either _sound_ or _unsound_ relative to the relationship between the statics and the dynamics and that's how we will refer to it throughout this article.
+Therefore, a language may be described as either "safe/sound" or "unsafe/unsound" relative to the relationship between the statics and the dynamics. We'll use them interchangeably throughout the article, unless explicitly said otherwise.
 
-The [Type Systems](https://courses.grainger.illinois.edu/cs421/fa2018/CS421A/resources/cardelli.pdf) paper by Luca Cardelli says something similar:
+The _"[Type Systems](https://courses.grainger.illinois.edu/cs421/fa2018/CS421A/resources/cardelli.pdf)"_ paper by Luca Cardelli says something similar:
 
 > It is useful to distinguish between two kinds of execution errors: the ones that cause the computation to stop immediately, and the ones that go unnoticed (for a while) and later cause arbitrary behavior. The former are called trapped errors, whereas the latter are untrapped errors.
 >
-> [...]
+> …
 >
 > A program fragment is safe if it does not cause untrapped errors to occur. Languages where all program fragments are safe are called safe languages. 
 
@@ -236,7 +236,7 @@ This program is clearly well-typed, but stating that the language is safe depend
 - The dynamics do not define what happens in this failure case, undefined behavior creeps in, making the language unsound.
 - If Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamic checks being the easiest to implement; these are mechanisms such as throwing errors, exceptions, panicking, returning a special value, etc.).
 
-### Case Study
+## Case study
 
 Now let's look at how two real languages handle the same error case. One in Rust and the other in C:
 
@@ -375,23 +375,19 @@ End of assembler dump.
 
 This is interesting: without optimizations it behaves similarly to the GCC-compiled one. With optimizations enabled, Clang also deletes `div`; however, it doesn't replace main's body with a `ud2` and instead continues execution normally, printing an arbitrary value!
 
-This is why I don't agree with the definition of a safe language that Cardelli gave. In Rust, division by zero is handled _by the language_, making both the program and the language sound. In C with optimizations disabled, turns out this particular program _is_ safe in practice and matches Cardelli, it doesn't have untrapped errors. 
+This is why I don't agree with the definition of a safe language that Cardelli gave. In Rust, division by zero is handled _by the language_, making both the program and the language sound. In C with optimizations disabled, turns out this particular program _is_ safe in practice and matches what Cardelli says since it doesn't have untrapped errors. 
 
-My point is that it doesn't make the _language_ safe. It is considered a trapped error because the OS caught a hardware-exception, _not_ because the language defined it as so. We can see that if we allow optimizations this accidental safety can even dissapear!
+My point is that it doesn't make the _language_ safe. It is considered a trapped error because the OS caught a hardware-exception, _not_ because the language defined it as so [^UBSan]. We can see that if we allow optimizations this accidental safety can even dissapear!
 
 It's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the language, even when it happens to be safe in practice.
 
-::: info
-One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
-:::
-
-## What Is Type Safety 
+## What is type safety 
 
 Now we can define that _Type Safety_ expresses the coherence between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. We'll refer to type safety and soundness interchangeably.
 
 Consequently, evaluation of a well-typed expression cannot _get_ stuck! It can never reach a non-value state for which no evaluation rule applies. This can be achieved by proving two theorems named _Preservation_ and _Progress_.
 
-### Preservation And Progress
+### Preservation and progress
 
 Let's first introduce some notation to express these theorems precisely:
 
@@ -425,7 +421,7 @@ _Safety is the conjunction of Preservation and Progress_.
 
 Now that we have these tools, we can revisit the C example and see that the type system is considered _unsound_ because, while it is well-typed, during evaluation it reaches a configuration for which no evaluation rule applies (it violates _Progress_).
 
-## Where Do Dynamic Languages Fit?
+## Where do dynamic languages fit?
 
 After all of this, you may be left wondering what's the case for languages like Javascript or Python, the so-called _dynamic languages_.
 
@@ -433,11 +429,9 @@ Fortunately, Harper can help. He argues that the distinction between static and 
 
 > Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety.
 
-The trick of it is on understanding what he calls "type discipline"; turns out that in this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is forced to have. This is what Harper refers to as "type discipline".
+The trick of it is on understanding what he calls "type discipline"; turns out that in this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed[^dynamic-well-formed] and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is forced to have. This is what Harper refers to as "type discipline".
 
-::: info
-    Keep in mind that when I say "well-formed" here I refer not to type-checking, here that doesn't happen before runtime, instead I am talking about well-formed in regards to the syntax.
-:::
+[^dynamic-well-formed]: Here "well-formed" stands for parsing not type-checking.
 
 To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
 
@@ -455,7 +449,7 @@ The key difference is that, in the previous model, these kinds of errors were gu
 
 And since there exists only one singular recursive type, _Preservation_ plays a lesser role here; there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
 
-## Hybrid Typing?
+## Hybrid typing?
 
 Nearing our journey's end, let's briefly talk about what this is. Before reading Harper's chapter on it I had never heard the term, but it refers to something a lot of us are familiar with!
 
@@ -465,9 +459,9 @@ He describes a hybrid language as:
 >
 > The notion of a hybrid language, however, is itself illusory, because the type dyn is really a particular recursive type. This shows that there is no need for any special mechanisms to support dynamic typing. Rather, they may be derived from the more general concept of a recursive type. Moreover, this shows that dynamic typing is but a mode of use of static typing. The supposed opposition between dynamic and static typing is, therefore, a fallacy: dynamic typing can hardly be opposed to that of which it is but a special case.
 
-He makes the interesting case that essentially, there is nothing about dynamic typing that can't be expressed with static typing! 
+He makes the case that essentially, there is nothing about dynamic typing that can't be expressed with static typing! 
 
-Examples of these `dyn` types in mainstream languages include the `Object` class in Java[^hardship]:
+Examples of these `dyn` types in static languages include the `Object` class in Java[^hardship]:
 
 ``` java
 public class Example {
@@ -519,7 +513,7 @@ func main() {
 
 Another notable example is the [`any`](https://www.typescriptlang.org/play/?#code/PTAEEEDsE9QSwM6gC4AsCmoAq0AO6BlAYwCc5dlR0EiBDfUIgG1oFcF0A6UATQHtWjWpFDtMw2Mj4AoEFThp0JUABN0zWiXGgORZHD4i+AM1DQByonzUo+oAEaYV0SLQC2cIqGErZYAFK0AG60xGQUoExwANboADSgfMpSoADuSdHeJAKQKpFwHsi0+oZIcCKKfih4mAjQCMjobpzSVeCgAOZ81kIcoMZJ3jDwSP4EAPIAcqC4mgjlHQBcrVaQDaBu0OP2AFbqlAC8oGNTnLMkHAAUAEQA3gC+1wCUANytclCwahpaSCk4+DC5EoKWQJHYlHMrEs1nESEcCyqCFoxkwjjoYjMAlA0UgfFSGyS4nsAkoCm4AFEgugRHBTGhiiMqnjKA0yHomJJwVxQAAxQboAAe7lwTHiKFQiEYsLSAiYeVItAQqGW0k22z2ek4gs40E4AC83lUAKrzSAdIZDWAdODUpBQiXEuBRZCSOypMiNaU2Zh8DjJGRyJJwG2uJjHYKhUjAtIKVCOlAkWhqAC0JlMJmqDGRqNdLSqEhGG1YRHjUVi3lAAHJXQxUs6VHQSCoq2lJaWsYI6CItKLaER0FV62grVnMJchQOIpB0NSSE9bBtaBXDJha3D5h1XPYxVVQRhEooSPnviwtP1WJA9AYRGp7KwOpcQkxWOhFlanu+gnw4CojXeHxuWgdDBBZnjeADHwAJgAZleaRIMuW5pSYJJ32uHdX2uUB7ngqoKX7eM6CYcMUkgotaBI-F0DydE2D6B0rFYeVQF7FgB0dAthmHeNFDHRJ6QPTQOlYNwaRBOw3GKUt8zkAFCGjCJ6xIlBl0wcoUn7JjIBBA9cD9BQbwEzi5AkMpbzpVEtB0-okjcBAEgGZQhRFMVYxHRQ+mQVhRWoKonITYxL2vQwshEsSdJPdQz0wIKrxKEQEFSehLkFd8AG1IFExwSASNkFgAXU-UB0vy80EiytwcoK-9os0TBVnWWY4BIDKJASCQaukJKUua+cjTkg9iNIuwetwCiqNSGiHHUei1yEkhwvEoQREcKopOQUtpvsWA2P7BZApa9ZC3KGZaBa9z40qnKuLyPjdEMPIAAMJCey6QLIc1ZLAABJekfLFJB6tAGcCRSKE8vQN8qGFNxfMWbzfIQd4wGNSBcXxWkgZ0OAdwO9dF3a+BTBOoGSVYVlaGgRE5GuH6cTxAlUlQYoq3hahkGuBJFBES8MdSLHK2St0dCp0A6arNxmT4VloUwZnGSlRwGjyuwHRnabQXQFSsAIBN12uKoXLhsVFj5xnIBTHwUxnOdpCAA) type in Typescript!
 
-It's in this chapter that he clears a common misconception that I have read many times about the difference between static and dynamic languages (emphasis added):
+It's in this chapter that he clears a common misconception that I have read many times about the difference between static and dynamic languages (emphasis added)[^harpers-dislike]:
 
 > *Dynamic languages check types at run-time, whereas static language check types at compile time.* This, too, is erroneous. Dynamic languages are just as surely statically-typed as static languages, albeit for a degenerate type system with only one type. As we have seen, dynamic languages do perform class checks at run-time, but so do static languages that admit sum types. *The difference is only the extent to which we must use classification: always in a dynamic language, only as necessary in a static language*.
 
@@ -542,7 +536,7 @@ So, well, now you know. I hope it proves useful for you.
 As a bonus, I find it interesting that there have been efforts towards introducing static typing to dynamic languages. In Python there are external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for performing static analysis on annotations. [Typescript](https://www.typescriptlang.org/) plays a similar role by adding a static type system whose types are erased when compiling to Javascript. More recently [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) have been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf) to the language itself.
 :::
 
-## A Note On Soundness
+## A note on soundness
 
 At last, we enter the final section of the article. It's been a long journey to write and I bet it was to read too.
 
@@ -556,7 +550,7 @@ It is so that if we took C and changed its specification so every case of UB tra
 
 This tells me that soundness, as a property of a language, doesn't automatically translate into practical safety guarantees. Matklad has a nice article that talks more about this and that deals with a term often seen alongside type safety, [memory safety](https://matklad.github.io/2025/12/30/memory-safety-is.html).
 
-Note that now I am broadening the discussion beyond soundness. I would _always_ want to know if a program I run is safe, not _only_ in the sense of soundness, but memory safety. To do so I can't ignore  how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. 
+Note that now I am broadening the discussion beyond soundness. I would _always_ want to know if a program I run is safe, not _only_ in the sense of soundness. To do so I can't ignore  how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. 
 
 Now, remember that it's totally possible to write programs, that are sound in practice, in unsound languages by restricting oneself to use only the sound subset of the language. In fact, it may happen that within the space of all possible programs written in the language, the unsound features are never encountered in practice! It is possible too, to write seemingly unsafe programs that turn out  to be safe in practice due to the infrastructure where they run.
 
@@ -574,6 +568,10 @@ In mainstream languages, known cases of unsoundness are generally well-documente
 
 Even though I appreciate working with a sound type system, I don't believe having an unsound type system makes a language worse or disqualifies it for use; after all, *languages are tools*, and their usefulness is primarily dictated by the context in which they are used.
 
-[^subtyping]: This is one way of describing [subtyping](https://en.wikipedia.org/wiki/Subtyping). Most mainstream languages include some form of it, [Barbara Liskov](https://en.wikipedia.org/wiki/Barbara_Liskov)'s [substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is another particular definition of it usually mentioned in university courses (at least in mine). 
-[^hardship]: In languages that have subtyping, _proving_ type safety becomes more delicate so I decided to omit it to avoid making the article even longer. Nonetheless, the principles of _Preservation_ and _Progress_ still apply. If you are interested read it at Chapter 23 of Harper's book.
-[^erasure]: The example is only meant to illustrate the concept inside the type system. The fact that Java [erases](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) the `T` in the resulting bytecode and therefore doesn't have _true_ parametric polymorphism is an implementation detail.
+[^subtyping]: This is one way of [subtyping](https://en.wikipedia.org/wiki/Subtyping). \
+    [Barbara Liskov's substitution principle](https://en.wikipedia.org/wiki/Liskov_substitution_principle) is another popular definition, usually mentioned in university courses (at least in mine). 
+[^erasure]: Java eventually [erases the `T`](https://docs.oracle.com/javase/tutorial/java/generics/erasure.html) so it doesn't have _true_ parametric polymorphism but that's an implementation detail.
+[^hardship]: _Preservation_ and _Progress_ still apply when proving type safety, but they are more delicate. If you are interested read Chapter 23 of Harper's book.
+[^harpers-dislike]: The man truly doesn't seem to like dynamic languages.
+
+[^UBSan]: One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.

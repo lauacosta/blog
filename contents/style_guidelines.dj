@@ -1,0 +1,12 @@
+## Style Guidelines
+
+For all my typography-mindend readers, this is the guideline the site follows:
+
+- [`Iosevka`](http://be5invis.github.io/Iosevka) for everything code related.
+- [et-book](https://edwardtufte.github.io/et-book/) for everything else.
+- Hyperlinks that redirect outside this site are [like this](https://github.com/lauacosta/).
+- Hyperlinks that redirect to a page inside this site are [like this](/about.html).
+- Point size is the web default 16px. 
+- H1, H2 and H3 are 250%, 200% and 150% the point size, respectively.
+- Line spacing is 200% the point size.
+- The handling of sidenotes is the same as [Tufte CSS](https://edwardtufte.github.io/tufte-css/).

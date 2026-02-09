@@ -10,6 +10,8 @@ import {
   CodeBlock,
   Div,
   Doc,
+  Footnote,
+  FootnoteReference,
   HasAttributes,
   Heading,
   Image,
@@ -72,6 +74,7 @@ export function render(
   reading_time_mins?: number,
 ): HtmlString {
   let section: Section | undefined = undefined;
+  let documentSideNotes: Record<string, Footnote> = {};
 
   const overrides: Visitor<HTMLRenderer, string> = {
     section: (node: Section, r: HTMLRenderer): string => {
@@ -158,7 +161,7 @@ export function render(
       if (has_class(node, "danger")) admon_icon = "danger";
 
       if (admon_icon) {
-        return `<aside${
+        return `<div class="div_icon"><aside${
           r.renderAttributes(node, { "class": "admn" })
         }><svg class="icon"><use href="/assets/icons.svg#${admon_icon}"/></svg><div>${
           r.renderChildren(node)
@@ -238,6 +241,44 @@ export function render(
     url: (node: Url, r: HTMLRenderer) => {
       add_class(node, "url");
       return r.renderAstNodeDefault(node);
+    },
+
+    doc: (node: Doc, r: HTMLRenderer) => {
+      documentSideNotes = node.footnotes;
+      return r.renderAstNodeDefault(node);
+    },
+
+    footnote_reference: (node: FootnoteReference, r: HTMLRenderer) => {
+      let result = "";
+      const label = node.text;
+      if (documentSideNotes[label]) {
+        // I track the footnote but don't increment the next index so the endnotes are not rendered when `doc` is rendered.
+        let index = r.footnoteIndex[label];
+        if (!index) {
+          index = Object.keys(r.footnoteIndex).length + 1;
+          r.footnoteIndex[label] = index;
+        }
+
+        const refId = `sn-${index}`;
+        result += `<label for="${refId}" class="margin-toggle sidenote-number"></label>`;
+        result += `<input type="checkbox" id="${refId}" class="margin-toggle"/>`;
+        result += `<span class="sidenote-content">`;
+        const footnoteNode = documentSideNotes[label];
+        if (footnoteNode.children) {
+          for (const child of footnoteNode.children) {
+            let childContent = r.renderAstNode(child);
+            childContent = childContent.replace(/<\/?p>/g, "");
+            result += childContent;
+          }
+        }
+        result += `</span>`;
+      }
+
+      return result;
+    },
+
+    footnote: (_node: Footnote, _r: HTMLRenderer) => {
+      return "";
     },
   };
 

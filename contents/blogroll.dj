@@ -3,75 +3,75 @@
 
 Here are some of my favourite blogs. Even though it was painful to choose, I picked just one post from each based on how fun or interesting I found it, in no particular order.
 
-: [Dan Luu](https://danluu.com/)
+: Dan Luu
 
-    [What to learn](https://danluu.com/learn-what/)
+    "[What to learn](https://danluu.com/learn-what/)"
 
-: [Julia Evans](https://jvns.ca/)
+: Julia Evans
 
-    [Why do we use the Linux kernel's TCP stack?](https://jvns.ca/blog/2016/06/30/why-do-we-use-the-linux-kernels-tcp-stack/)
+    "[Why do we use the Linux kernel's TCP stack?](https://jvns.ca/blog/2016/06/30/why-do-we-use-the-linux-kernels-tcp-stack/)"
 
-: [Antirez](https://antirez.com/latest/0)
+: Antirez
 
-    [Don't fall into the anti-AI hype](https://antirez.com/news/158)
+    "[Don't fall into the anti-AI hype](https://antirez.com/news/158)"
 
-: [Alex Kladov](https://matklad.github.io/)
+: Alex Kladov
 
-    [Comptime Zig ORM](https://matklad.github.io/2025/03/19/comptime-zig-orm.html)
+    "[Comptime Zig ORM](https://matklad.github.io/2025/03/19/comptime-zig-orm.html)"
 
-: [Amos Wenger](https://fasterthanli.me/)
+: Amos Wenger
 
-    [The HTTP crash course nobody asked for](https://fasterthanli.me/articles/the-http-crash-course-nobody-asked-for)
+    "[The HTTP crash course nobody asked for](https://fasterthanli.me/articles/the-http-crash-course-nobody-asked-for)"
 
-: [Without Boats](https://without.boats/)
+: Without Boats
 
-    [Let futures be futures](https://without.boats/blog/let-futures-be-futures/)
+    "[Let futures be futures](https://without.boats/blog/let-futures-be-futures/)"
 
-: [Rain](https://sunshowers.io/)
+: Rain
 
-    [How (and why) nextest uses tokio](https://sunshowers.io/posts/nextest-and-tokio/#what-are-heterogenous-selects)
+    "[How (and why) nextest uses tokio](https://sunshowers.io/posts/nextest-and-tokio/#what-are-heterogenous-selects)"
 
-: [Nathaniel J. Smith](https://vorpus.org/)
+: Nathaniel J. Smith
 
-    [Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)
+    "[Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)"
 
-: [Bob Nystrom](https://journal.stuffwithstuff.com/)
+: Bob Nystrom
 
-    [The Value of Things](https://journal.stuffwithstuff.com/2026/01/24/the-value-of-things/)
+    "[The Value of Things](https://journal.stuffwithstuff.com/2026/01/24/the-value-of-things/)"
 
-: [Jamie Brandon](https://www.scattered-thoughts.net/)
+: Jamie Brandon
 
-    [Reflections on a decade of coding](https://www.scattered-thoughts.net/writing/reflections-on-a-decade-of-coding)
+    "[Reflections on a decade of coding](https://www.scattered-thoughts.net/writing/reflections-on-a-decade-of-coding)"
 
-: [Eliza Weisman](https://www.elizas.website/)
+: Eliza Weisman
 
-    [On Beginner's Mind in Software Engineering](https://www.elizas.website/on-beginners-mind.html)
+    "[On Beginner's Mind in Software Engineering](https://www.elizas.website/on-beginners-mind.html)"
 
-: [Graydon Hoare](https://graydon2.dreamwidth.org/)
+: Graydon Hoare
 
-    ["What next?"](https://graydon2.dreamwidth.org/253769.html)
+    "[What next?](https://graydon2.dreamwidth.org/253769.html)"
 
-: [Ted Kaminski](https://www.tedinski.com/)
+: Ted Kaminski
 
-    [Programmer as wizard, programmer as engineer](https://www.tedinski.com/2018/03/20/wizarding-vs-engineering.html)
+    "[Programmer as wizard, programmer as engineer](https://www.tedinski.com/2018/03/20/wizarding-vs-engineering.html)"
 
-: [Casey Muratori](https://www.computerenhance.com/)
+: Casey Muratori
 
-    [The Big OOPs: Anatomy of a Thirty-Five Year Mistake](https://www.computerenhance.com/p/the-big-oops-anatomy-of-a-thirty)
+    "[The Big OOPs: Anatomy of a Thirty-Five Year Mistake](https://www.computerenhance.com/p/the-big-oops-anatomy-of-a-thirty)"
 
-: [Oleg Kiselyov](https://okmij.org/ftp/)
+: Oleg Kiselyov
 
-    [Tagless-final style](https://okmij.org/ftp/tagless-final/)
+    "[Tagless-final style](https://okmij.org/ftp/tagless-final/)"
 
-: [Ryan Fleury](https://www.rfleury.com/)
+: Ryan Fleury
     
-    [Untangling Lifetimes: The Arena Allocator](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator)
+    "[Untangling Lifetimes: The Arena Allocator](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator)"
 
-: [Ian Henry](https://ianthehenry.com/)
+: Ian Henry
 
-    [My Kind of REPL](https://ianthehenry.com/posts/my-kind-of-repl/)
+    "[My Kind of REPL](https://ianthehenry.com/posts/my-kind-of-repl/)"
 
-: [Will Crichton](https://willcrichton.net/notes/)
+: Will Crichton
 
-    [What is Systems Programming, Really?](https://willcrichton.net/notes/systems-programming)
+    "[What is Systems Programming, Really?](https://willcrichton.net/notes/systems-programming)"
     

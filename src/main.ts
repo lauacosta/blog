@@ -206,7 +206,7 @@ async function build(clean: boolean, profile: boolean) {
   await update_file("./dist/index.html", html_ugly(PostList({ posts: public_posts })));
   await update_file("./dist/feed.xml", feed_xml(public_posts));
 
-  const pages = ["about", "blogroll", "ai_transparency"];
+  const pages = ["about", "blogroll", "ai_transparency", "style_guidelines"];
   for (const page of pages) {
     const text = await Deno.readTextFile(`contents/${page}.dj`);
     const ast = djot.parse(text);
