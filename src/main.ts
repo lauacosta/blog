@@ -196,8 +196,8 @@ async function build(clean: boolean, profile: boolean) {
   }
   const public_posts = posts.filter((p) => !p.private);
 
-  await update_file("./dist/index.html", html_ugly(PostList({ posts: public_posts })));
   await update_file("./dist/feed.xml", feed_xml(public_posts));
+  await update_file("./dist/index.html", html_ugly(PostList({ posts: public_posts })));
 
   const pages = ["about", "blogroll", "ai_transparency", "style_guidelines"];
   for (const page of pages) {
