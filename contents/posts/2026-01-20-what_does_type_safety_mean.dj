@@ -1,57 +1,66 @@
 ---
- {"title":"What Does Type Safety Mean","private": true} 
+ {"title":"What Does Type Safety Mean","published": false} 
 ---
 
 # What Does Type Safety Mean
 
-Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you read it in a blog post somewhere on social media where programmers were fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language, or in an announcement for the latest Typescript library, but you were never sure you _knew_ what it meant? 
+Have you ever doubted yourself when trying to explain what _type safety_ is? Maybe you first heard of it in a post on X or Reddit where programmers were fighting on behalf of their [blessed](https://blog.aurynn.com/2015/12/16-contempt-culture/) language, or you saw the term "type safe" in some Typescript library, but you were never sure you _knew_ what it meant? 
 
-It has happened to me. So I made an effort to try to explain to myself what it meant, hopefully it works for you too! The article touches _many_ concepts but I try to keep it grounded and add examples where I feel they help to illustrate a concept better for someone like me.
+It has happened to me. So I made an effort to try and explain to myself what it is and what it is not; hopefully it works for you too!
+
+For that, I'll review definitions of others, contrasting them with the hypothesis that: *type safety is a property of a _language_ and not its _implementation_*.
+
 {% But, wait. What even _is_ a type? [Glad you ask](/what_is_a_type.html) %}
 
 ## Sound languages
 
 I found two popular definitions for what a safe language is. The first is from _"[The Practical Foundations of Programming Languages](https://www.cs.cmu.edu/~rwh/pfpl.html)"_ book by Robert Harper:
 
-> Most programming languages exhibit a phase distinction between the static and dynamic phases of processing. The static phase consists of parsing and type checking to ensure that the program is well-formed; the dynamic phase consists of execution of well-formed programs. A language is said to be safe exactly when well-formed programs are well-behaved when executed.
+> _"Most programming languages exhibit a phase distinction between the static and dynamic phases of processing. The static phase consists of parsing and type checking to ensure that the program is well-formed; the dynamic phase consists of execution of well-formed programs. A language is said to be safe exactly when well-formed programs are well-behaved when executed._
 >
-> The static phase is specified by a statics comprising a collection of rules for deriving typing judgments stating that an expression is well-formed of a certain type. Types mediate the interaction between the constituent parts of a program by “predicting” some aspects of the execution behavior of the parts so that we may ensure they fit together properly at run-time. Type safety tells us that these predictions are accurate; if not, the statics is considered to be improperly defined, and the language is deemed unsafe for execution.
+> _The static phase is specified by a statics comprising a collection of rules for deriving typing judgments stating that an expression is well-formed of a certain type. Types mediate the interaction between the constituent parts of a program by “predicting” some aspects of the execution behavior of the parts so that we may ensure they fit together properly at run-time. Type safety tells us that these predictions are accurate; if not, the statics is considered to be improperly defined, and the language is deemed unsafe for execution."_
 
-This tells us that the _statics_ uses typing judgments to verify that the program satisfies the constraints encoded in the type system. While the realm of how a program is evaluated belongs to the _dynamics_.
+Well, this tells us a _lot_ of things:
 
-Harper highlights a key _use_ for types: they predict aspects of the execution to ensure they will fit together at runtime.
+- Processing can be divided in two stages, the statics: it derives typing judgments to check if what you said is of a certain type actually is that type; and the dynamics which concerns itself with the evaluation of those programs. 
+- Types predict aspects of the execution to ensure they make sense at runtime. 
+- It gives us our first mention on what type safety means: it _guarantees_ us that the predictions made by the types are right.
 
-It also introduces the concept of a well-formed program: one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that they are _ill-behaved_ or can't be proven to be _well-behaved_.
+It then introduces the concept of a well-formed program: which is one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that they are _ill-behaved_ or can't be proven to be _well-behaved_.
 
-Harper defines a language as _safe_ if _all_ well-typed programs are well-behaved: meaning they exhibit only behaviors predicted by the statics. This property is called type soundness: the statics are _sound_ with respect to the dynamics.
+Finally, it defines a language as safe if *all* well-typed programs are well-behaved, meaning they exhibit only behaviors predicted by the statics. This property defines the *soundness* of a language, that is, if it has type safety or not. Therefore, you can often see languages described as being sound or unsound relative to this. [^disclaimer]
 
-Therefore, a language may be described as either "safe/sound" or "unsafe/unsound" relative to the relationship between the statics and the dynamics. We'll use them interchangeably throughout the article, unless explicitly said otherwise.
+[^disclaimer]: Unless explicitly said otherwise, we'll use "safe" and "sound" interchangeably when referring to a language.
+
+****
 
 The _"[Type Systems](https://courses.grainger.illinois.edu/cs421/fa2018/CS421A/resources/cardelli.pdf)"_ paper by Luca Cardelli says something similar:
 
-> It is useful to distinguish between two kinds of execution errors: the ones that cause the computation to stop immediately, and the ones that go unnoticed (for a while) and later cause arbitrary behavior. The former are called trapped errors, whereas the latter are untrapped errors.
+> _"A program fragment is safe if it does not cause untrapped errors to occur. Languages where all program fragments are safe are called safe languages."_
+
+He quickly defines trapped errors as the ones that stop computation immediately, and untrapped errors as the ones who don't and come back to bite you later.
+
+We can even find that he defines type safety differently than soundness:
+
+> _"*Type safety*: The property stating that programs do not cause untrapped errors."_
 >
-> …
->
-> A program fragment is safe if it does not cause untrapped errors to occur. Languages where all program fragments are safe are called safe languages. 
+> _"*Type soundness*: The property stating that programs do not cause forbidden errors."_
 
-This definition is, in a way, more permissive. In the paper, Cardelli classifies division by zero as a trapped error since many architectures catch it. However, I argue that a _language_ shouldn't be deemed safe because the architecture the _program_ happens to execute on catches certain kinds of errors. Later we'll explore a case study that illustrates this.
+Okay at first this seems pretty aligned with what we read from Harper's work. Type safety is consistently explained as a property of the _language_ semantics. 
 
- ****
+But then, Cardelli goes and gives division by zero as an example of a trapped error because it is caught on multiple computer architectures[^ext]. That is an odd reason to put it in that category, since that could happen even if the abstract semantics of the language didn't specify what to do in those situations.
 
-Remember I said we'll look at the role of a _type system_? Well, now is the time. Let's look at some acceptions.
+Maybe he did it in the efforts of being pragmatic, since no language is used first without an implementation, but it kind of makes the classification seem arbitrary, since the concept of type safety refers to the language, which is in itself abstract.
 
-Harper states that the role of a type system is:
+[^ext]: It's the same logic as with languages that compile to bytecode. Prime examples are Java with the [JVM](https://en.wikipedia.org/wiki/Java_virtual_machine) or C# with the [CLR](https://learn.microsoft.com/en-us/dotnet/standard/clr).
 
-> The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur.
+We'll showcase this difference later[^note]. Instead, let's see some examples to illustrate what we have introduced until now.
 
-[Mmmhmm](https://youtu.be/oK3yTGtxOPY?t=35), it makes sense but it does not tell me much. I get what he is trying to say but I think we can find a more practical definition.
+[^note]: If you don't want to wait, [read it now](/2026/01/20/what_does_type_safety_mean.html#Case-study).
 
-Cardelli says:
+**** 
 
-> The primary goal of a type system is to ensure language safety by ruling out all untrapped errors in all program runs. However, most type systems are designed to ensure the more general good behavior property, and implicitly safety. Thus, the declared goal of a type system is usually to ensure good behavior of all programs, by distinguishing between well typed and ill typed programs.
-
-To showcase what this means, imagine this function defined in a fictitious language which has the property of being sound, meaning that well-typed programs are well-behaved at runtime.
+Imagine this function defined in a fictitious language which has the property of being sound, meaning that well-typed programs are well-behaved at runtime.
 
 ``` rust
 fn add(a: Int, b: Int) Int {
@@ -91,14 +100,105 @@ fn div(a: Int, b: Int) : Int {
 let res = div(10, 0);
 ```
 
-This program is clearly well-typed, but stating that the language is safe depends on the dynamics. We can decide according to how they handle the division by zero:
+This program is clearly well-typed, but stating that the language is sound depends on the dynamics. We can decide according to how they handle the division by zero:
 
 - The dynamics do not define what happens in this failure case, undefined behavior creeps in, making the language unsound.
 - If Division by zero as a behavior is accounted for in the dynamics of the language, then the language is considered sound. This could be handled by static or dynamic checks (dynamic checks being the easiest to implement; these are mechanisms such as throwing errors, exceptions, panicking, returning a special value, etc.).
 
+### The role of a type system
+
+By now you may have asked yourself _"who checks that the types are right?"_ That's the role of a _type system_.
+
+As a brief exposition, let's see again what Harper and Cardelli have to say.
+
+- Harper states that the role of a type system is:
+
+    > The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur.
+
+    [Mmmhmm](https://youtu.be/oK3yTGtxOPY?t=35), it makes sense but it does not tell me much. I get what he is trying to say but I think we can find a more practical definition.
+
+- Cardelli says:
+
+    > The primary goal of a type system is to ensure language safety by ruling out all untrapped errors in all program runs. However, most type systems are designed to ensure the more general good behavior property, and implicitly safety. Thus, the declared goal of a type system is usually to ensure good behavior of all programs, by distinguishing between well typed and ill typed programs.
+
+
+That's better! Think of it as the analysis we made before.
+
+## What is type safety 
+
+Now we kind of have a sense of what type safety _is_; we now know it expresses the _coherence_ between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. 
+
+Consequently, evaluation of a well-typed expression cannot _get_ stuck! It can never reach a non-value state for which no evaluation rule applies. 
+
+But how is that expressed? 
+
+### Preservation and Progress
+
+Let's first introduce some notation to express these theorems precisely:
+
+```bash
+'Γ'     the static environment or typing context. 
+'⊢'     the turnstile; reads as "under the assumption of".
+'τ'     the type in question.
+':'     the typing relation.
+'->'    single step evaluation.
+'∧'     is logical "and".
+'∅'     the empty typing context.
+'∃'     existential quantifier.
+'∨'     is logical "or".
+'val'   denotes that e is a value.
+'.'     the binder operator and reads as “such that”.
+```
+Where Γ represents all the variables that are in the scope alongside their types. It's used in the relation Γ ⊢ e : τ that can be read as "the typing context _shows_ that `e` has type τ".
+
+Now, the theorems can be expressed as:
+
+```bash
+1. If Γ ⊢ e : τ ∧ e -> e', then Γ ⊢ e': τ       # Preservation
+2. If ∅ ⊢ e : τ then (e val) ∨ (∃ e'. e -> e')  # Progress
+```
+
+The first theorem is called _Preservation_ and it can be read as _"if under the typing context Γ, e has type τ, and e steps to e' in one step, then e' also has type τ under Γ"_. It ensures that the steps of evaluation preserve typing.
+
+ The second is called _Progress_ and it can be read as _"if under the empty typing context ∅, e has type, τ then e is either a value or there exists an expression e' reachable by a single step from e"_. It ensures that well-typed closed expressions are either values or can be further evaluated. As you could have guessed by now, a term is "stuck" when it fails to satisfy these conditions.
+
+*Safety is the conjunction of Preservation and Progress.*
+
+## Where do dynamic languages fit?
+
+After all of this, you may be left wondering what's the case for languages like Javascript or Python, the so-called _dynamic languages_.
+
+Fortunately, Harper can help. He argues that the distinction between static and dynamic languages is illusory; instead, dynamic languages embrace a model of computation where multiple _classes_ of values exist for a *single recursive type*.
+
+> _"Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety."_
+
+The trick of it is on understanding what he calls "type discipline"; turns out that in this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed[^dynamic-well-formed] and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is forced to have. This is what Harper refers to as "type discipline".
+
+[^dynamic-well-formed]: Here "well-formed" stands for parsing not type-checking.
+
+To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
+
+Now that we have introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in this kind of language? 
+
+Harper presents the theorem of _Progress_ as:
+
+``` bash
+If d ok, then (d val) ∨ (d err) ∨ (∃ d' . d->d')
+```
+
+This reads as "If `d` is a closed expression, then it's either a value, results in a runtime error or it can be further evaluated". He also defines _Exclusivity_, which states that, for any `d` in the language, _exactly one_ of these outcomes must be true at any given time.
+
+The key difference is that, in the previous model, these kinds of errors were guaranteed not to occur for well-typed programs. But, since catching those before evaluation requires a static language, now they have become part of the semantics of the language! This way, evaluation never becomes _stuck_. I think it's relevant to notice how now catching these errors falls upon the dynamics of the language, adding non-negligible overhead.
+
+And since there exists only one singular recursive type, _Preservation_ now plays a lesser role here; there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
+
+::: info
+There have been efforts made towards introducing static typing to dynamic languages. In Python there are external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for performing static analysis on annotations. [Typescript](https://www.typescriptlang.org/) plays a similar role by adding a static type system whose types are erased when compiling to Javascript. More recently [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) has been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf) to the language itself.
+:::
+
 ## Case study
 
-Now let's look at how two real languages handle the same error case. One in Rust and the other in C:
+Let's look at how real languages implementations handle the same error case and what their specifications have to say. First in Rust, then in C:
 
 ``` rust
 fn div(a: u32, b: u32) -> u32 {
@@ -110,8 +210,7 @@ fn main() {
     println!("{res}");
 }
 ```
-
-Results in a panic:
+Here we are using [`rustc`](https://doc.rust-lang.org/rustc/what-is-rustc.html) and executing the output binary results in a panic:
 
 ```bash 
 $ rustc -o main main.rs; ./main
@@ -142,11 +241,9 @@ stack backtrace:
    5: core::ops::function::FnOnce::call_once
 ```
 
-Rust does not yet have a formal specification; the closest thing is the [Rust Reference](https://doc.rust-lang.org/reference/), and in there we can see that this behavior is [*defined by the language*](https://doc.rust-lang.org/nightly/reference/expressions/operator-expr.html?highlight=division#arithmetic-and-logical-binary-operators:~:text=%E2%80%A0%20For%20integer%20types%2C%20division%20by%20zero%20panics): division by zero does not result in undefined behavior, but instead transitions the program to a specified error state where computation is stopped immediately. Even though the program ends abruptly, it doesn't reach an undefined state, panicking is a defined outcome. This is why Rust remains sound in the presence of such an error.
+Rust does not yet have a formal specification; the closest thing is the [Rust Reference](https://doc.rust-lang.org/reference/), and in there we can see that this behavior is [*defined by the language*](https://doc.rust-lang.org/nightly/reference/expressions/operator-expr.html?highlight=division#arithmetic-and-logical-binary-operators:~:text=%E2%80%A0%20For%20integer%20types%2C%20division%20by%20zero%20panics): division by zero does not result in undefined behavior but instead transitions the program to a specified error state where computation is stopped immediately. Even though the program ends abruptly, it doesn't reach an undefined state, panicking is a defined outcome[^alternative-api]. This is why Rust is considered sound in the presence of such an error.
 
-::: info
-Recovering from a panic like this can be done by using [`catch_unwind`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html), but that is the wrong tool for expected failures. Instead, one should favor more idiomatic approaches, such as [`checked_div`](https://doc.rust-lang.org/std/primitive.u32.html#method.checked_div), which returns an `Option` instead of panicking, or encoding the [invariants](https://matklad.github.io/2023/10/06/what-is-an-invariant.html) in the function's type signature.
-:::
+[^alternative-api]: Recovering from a panic like this can be done by using [`catch_unwind`](https://doc.rust-lang.org/std/panic/fn.catch_unwind.html) or avoided by using more idiomatic approaches, such as [`checked_div`](https://doc.rust-lang.org/std/primitive.u32.html#method.checked_div) or encoding the [invariants](https://matklad.github.io/2023/10/06/what-is-an-invariant.html) in the function's type signature.
 
 Now on the C program:
 
@@ -162,20 +259,23 @@ int main() {
     printf("%d", res);
 }
 ```
+```bash
+$ gcc -Wall -Wextra -Wpedantic -O0 -o main main.c
+```
 
-The program successfully compiles, so it is considered to be well-typed by this implementation of the C language, but when executed:
+The program successfully compiles, so it is considered to be well-typed by this implementation of the C language (in this case, GCC). When executed:
 
 ``` bash
-$ gcc -g -O0 -o main main.c && ./main
+$ ./main
 Floating point exception   (core dumped) ./main
 ```
 
-We can use `gdb` to see a backtrace of what happened:
+We can use `gdb` to learn more about what happened:
 
 {highlight="4,7,14"}
 ```bash
-$ gcc -g -O0 -o main main.c && gdb -q ./main -ex run \ 
--ex "set disassembly-flavor intel" -ex disassemble -ex quit
+$ gdb -q ./main -ex run -ex "set disassembly-flavor intel" \
+     -ex disassemble -ex quit
 ...
 Program received signal SIGFPE, Arithmetic exception.
 0x0000555555555147 in div (a=10, b=0) at main.c:4
@@ -193,11 +293,17 @@ Dump of assembler code for function div:
 End of assembler dump.
 ```
 
-Now we can see that the fault came from our `div` function. Check how at address `0x0000555555555147` the division is performed with the `idiv` instruction on x86_64. Since the divisor is zero, the CPU raises a `#DE` (Division Error) exception. The OS handles it by sending a `SIGFPE` signal to the program. 
+We see that the fault came from our `div` function. Check how at address `0x0000555555555147` the division is performed with the `idiv` instruction on x86_64. Since the divisor is zero, the CPU raises a `#DE` (Division Error) exception. The OS handles it by sending a `SIGFPE` signal to the program. 
 
-The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB). This results in a greenfield for compiler optimizations since they take full advantage on the fact that the C _abstract model_ states this is an undefined state. Whether the program crashes, hangs, or produces unpredictable results depends on compiler optimizations and the target architecture and OS. This illustrates one way C's type system is unsound: even well-typed programs can reach runtime states that the language does not account for.
+The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB), which is to say, anything goes.
 
-To showcase what can happen if we allow optimizations, let's enable them in both [`gcc`](https://gcc.gnu.org/) and [`clang`](https://clang.llvm.org/):
+Whether the program crashes, hangs, or produces unpredictable results depends on the implementation, the target architecture and OS. This illustrates one way the C language is unsound: even well-typed programs can reach runtime states that the language does not account for.
+
+Because I know how this is, I will clarify that this is not another take on _"Rust > C, you should never use it again"_[^rust-ub], this behavior is a *design decision*. It allows compilers more freedom to do optimizations, which can be for the better or worse, since they end up producing what's basically a black box.
+
+[^rust-ub]: Rust is not [free of UB](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), although it is a lot less pervasive than in C.
+
+To showcase these optimizations, lets see different implementations of C: [`GCC`](https://gcc.gnu.org/), [`Clang`](https://clang.llvm.org/) and [`Fil-C`](https://fil-c.org/):
 
 {highlight="4, 8"}
 ```bash
@@ -212,7 +318,7 @@ Dump of assembler code for function main:
 End of assembler dump.
 ```
 
-Notice how the fault came directly from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a `#UD` (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
+Now the fault comes from our `main` function. Inspecting the assembly we see that the compiler optimized the whole program to a `ud2` instruction which generates a `#UD` (Invalid Opcode) exception. Now the program receives a `SIGILL` from the OS.
 
 {highlight="2, 11"}
 ```bash
@@ -235,115 +341,71 @@ End of assembler dump.
 
 This is interesting: without optimizations it behaves similarly to the GCC-compiled one. With optimizations enabled, Clang also deletes `div`; however, it doesn't replace main's body with a `ud2` and instead continues execution normally, printing an arbitrary value!
 
-This is why I don't agree with the definition of a safe language that Cardelli gave. In Rust, division by zero is handled _by the language_, making both the program and the language sound. In C with optimizations disabled, turns out this particular program _is_ safe in practice and matches what Cardelli says since it doesn't have untrapped errors. 
+Fil-C[^Fil-C] is a fork of `Clang 20.1.8` that adds static and runtime memory safety features to C:
 
-My point is that it doesn't make the _language_ safe. It is considered a trapped error because the OS caught a hardware-exception, _not_ because the language defined it as so [^UBSan]. We can see that if we allow optimizations this accidental safety can even dissapear!
-
-It's important to repeat what I said above about well-typed programs reaching undefined states. That clearly violates the framework Harper promotes. For him, the C program would _never_ be considered safe because the behavior is not specified in the language, even when it happens to be safe in practice.
-
-## What is type safety 
-
-Now we can define that _Type Safety_ expresses the coherence between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. We'll refer to type safety and soundness interchangeably.
-
-Consequently, evaluation of a well-typed expression cannot _get_ stuck! It can never reach a non-value state for which no evaluation rule applies. This can be achieved by proving two theorems named _Preservation_ and _Progress_.
-
-### Preservation and progress
-
-Let's first introduce some notation to express these theorems precisely:
+[^Fil-C]: At the time of writing, it is at version 0.678. 
 
 ```bash
-'Γ'     the static environment or typing context. 
-'⊢'     the turnstile; reads as "under the assumption of".
-'τ'     the type in question.
-':'     the typing relation.
-'->'    single step evaluation.
-'∧'     is logical "and".
-'∅'     the empty typing context.
-'∃'     existential quantifier.
-'∨'     is logical "or".
-'val'   denotes that e is a value.
-'.'     the binder operator and reads as “such that”.
+$ ./build/bin/clang -g -O3 -o main main.c && ./main
+0
 ```
-Where Γ represents all the variables that are in the scope alongside their types. It's used in the relation Γ ⊢ e : τ that can be read as "the typing context _shows_ that `e` has type τ".
+Again, this implementation does something different! Now it always returns `0`.
 
-Now, the theorems can be expressed as:
+****
 
-```bash
-1. If Γ ⊢ e : τ ∧ e -> e', then Γ ⊢ e': τ       # Preservation
-2. If ∅ ⊢ e : τ then (e val) ∨ (∃ e'. e -> e')  # Progress
-```
+With this, I hope to illustrate why I don't agree with the definition of a safe language that Cardelli gave. Remember, he defines a language as safe if all programs written in it are safe, meaning they don't cause untrapped errors. And he defines this exact case as a trapped error. So it would make sense to consider, given this example, that C is a safe language no?
 
-The first theorem is called _Preservation_ and it can be read as _"if under the typing context Γ, e has type τ and e steps to e' in one step, then e' also has type τ under Γ"_. It ensures that the steps of evaluation preserve typing.
+But we know that is not true.
 
- The second is called _Progress_ and it can be read as _"if under the empty typing context ∅, e has type τ then e is either a value or there exists a expression e' reachable by a single step from e"_. It ensures that well-typed closed expressions are either values or can be further evaluated. As you could have guessed by now, a term is "stuck" when it fails to satisfy these conditions.
+This obviously stems from the fact that the definition of what a trapped error _is_ seems to be defined arbitrarily. It makes sense, but it's not very useful when evaluating a program is actually safe in practice.
 
-_Safety is the conjunction of Preservation and Progress_.
+Also, it's important to repeat what I said above about well-typed programs reaching undefined states. The C example clearly violates the definitions given by Harper. For him, the C program would *never* be considered safe because the behavior is not defined by the language.
 
-Now that we have these tools, we can revisit the C example and see that the type system is considered _unsound_ because, while it is well-typed, during evaluation it reaches a configuration for which no evaluation rule applies (it violates _Progress_).
+But what if we defined it? Let's take C and change its specification so every case of UB transitioned to an error state so UB ends up belonging to the set of "trapped errors". 
 
-## Where do dynamic languages fit?
+Say we achieve it, under the frameworks we saw, the program would be considered safe. Yet, just doing that wouldn't have changed anything about the actual execution! 
 
-After all of this, you may be left wondering what's the case for languages like Javascript or Python, the so-called _dynamic languages_.
-
-Fortunately, Harper can help. He argues that the distinction between static and dynamic languages is illusory; instead, dynamic languages embrace a model of computation where multiple _classes_ of values exist for a *single recursive type*.
-
-> Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety.
-
-The trick of it is on understanding what he calls "type discipline"; turns out that in this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed[^dynamic-well-formed] and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is forced to have. This is what Harper refers to as "type discipline".
-
-[^dynamic-well-formed]: Here "well-formed" stands for parsing not type-checking.
-
-To illustrate the concepts, it's useful to look at an example in the wild. A case of this single recursive type we mentioned earlier can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
-
-Now that we have introduced all of this. What happens to the theorems of Preservation and Progress? How do we talk about type safety in these kinds of language? 
-
-Harper presents the theorem of _Progress_ as:
-
-``` bash
-If d ok, then (d val) ∨ (d err) ∨ (∃ d' . d->d')
-```
-
-This reads as "If `d` is a closed expression, then it's either a value, results in a runtime error or it can be further evaluated". He also defines _Exclusivity_, which states that, for any `d` in the language, _exactly one_ of these outcomes must be true at any given time.
-
-The key difference is that, in the previous model, these kinds of errors were guaranteed to not occur for well-typed programs. But, since catching those before evaluation requires a static language, now they have become part of the semantics of the language! This way, evaluation never becomes _stuck_. I think it's relevant to notice how now catching these errors falls upon the dynamics of the language, adding a non-negligible overhead.
-
-And since there exists only one singular recursive type, _Preservation_ plays a lesser role here; there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
-
-::: info
-There have been efforts towards introducing static typing to dynamic languages. In Python there are external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for performing static analysis on annotations. [Typescript](https://www.typescriptlang.org/) plays a similar role by adding a static type system whose types are erased when compiling to Javascript. More recently [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) has been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/00lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf) to the language itself.
-:::
+Because it is _not a property of the implementation_.
 
 ## A note on soundness
 
-At last, we enter the final section of the article. It's been a long journey to write and I bet it was to read too.
+We have discussed what soundness is and what it is there for: it makes programs easier to reason about and helps avoid whole classes of bugs and foot-guns.
 
-We have discussed what soundness is and what it is there for: it makes programs written in languages that have it easier to reason about and helps avoid whole classes of bugs and foot-guns. 
+At the end of the case study, we pointed at something it is not: *Type safety it not a synonym of practical safety*.
 
-However, I want to express some opinions I have been saving in order to not muddle the explanations of the sections before.
+What I mean by _"practical safety"_ is the guarantees the users of the language will experience. Type safety is a key part of it, but not enough because, as we hinted throughout the article, that is also composed by what the implementation gives you, and that, is encompassed by another term called _"memory safety"_.
 
-From what I read, both Harper and Cardelli seem to heavily focus on the _abstract semantics_ of the languages to determine if they are sound or not which could very well make sense for the work they do. In contrast, I am but a humble programmer; I read these criteria and find them _somewhat_ useful. I hinted at this in the conclusion of the case study; I find these definitions not enough for defining if a program is safe for execution or not. Maybe it makes sense, since soundness is a _property_ of the abstract semantics of the language.
+Let's clear some misconceptions or questions I've read or you may have:
 
-It is so that if we took C and changed its specification so every case of UB transitioned to an error state, or we defined UB as as belonging to the set of "trapped errors", under the frameworks we saw, the program we wrote earlier would be considered safe; yet, nothing about the actual execution would have changed! Merely changing that doesn't immediately affect the optimizations the compiler could have done nor does it erase the danger UB represents. 
+- *It's not possible to write safe programs in unsound languages*:
+    It _is_ possible, by restricting oneself to use only the sound subset of the language.
 
-This tells me that soundness, as a property of a language, doesn't automatically translate into practical safety guarantees. Matklad has a nice article that talks more about this and that deals with a term often seen alongside type safety, [memory safety](https://matklad.github.io/2025/12/30/memory-safety-is.html).
+- *A language being unsound is a design flaw*:
+    No, it is a design decision. Many trade this property for other goals:
 
-Note that now I am broadening the discussion beyond soundness. I would _always_ want to know if a program I run is safe, not _only_ in the sense of soundness. To do so I can't ignore  how the _implementation_ of a language that has to run on a _concrete_ machine affects the practical safety guarantees the users of the language experience. 
+    - Prioritize compatibility and ease of adoption (Typescript)[^type-safe].
+    - Squeezing max performance by allowing optimizations (C or C++).
+    - A "simpler" type system (Go).
 
-Now, remember that it's totally possible to write programs, that are sound in practice, in unsound languages by restricting oneself to use only the sound subset of the language. In fact, it may happen that within the space of all possible programs written in the language, the unsound features are never encountered in practice! It is possible too, to write seemingly unsafe programs that turn out  to be safe in practice due to the infrastructure where they run.
+- *Type safety and memory safety are the same*:
+    Again, no. Type safety is a property of a _language_ meanwhile memory safety is a property of an _implementation_.
 
-This obviously moves the bulk of the work that could be done by proper semantics and a type system to the user since they will have to rely on their own experience and the maturity of the community to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to navigate these waters.
+- *Safe languages are always safe*:
+    Well, this is tricky. It's true if we consider only the language semantics (after all it is a requirement for being safe in the first place). But it falls apart quickly in practice, since many implementations offer escape hatches from the type system. A few examples are [`Obj.magic`](https://ocaml.org/manual/5.4/api/Obj.html) in OCaml, [`std::mem::transmute`](https://doc.rust-lang.org/std/mem/fn.transmute.html) in unsafe Rust or [`sun.misc.Unsafe`](https://mishadoff.com/blog/java-magic-part-4-sun-dot-misc-dot-unsafe/) in Java.
 
-Also, history clearly tells us that soundness is not by itself indicative of a language's usefulness. Many widely used languages have had unsound type systems for decades yet programmers continue writing critical software with them (just think about all the software written in [C](https://blog.regehr.org/archives/213) and [Java](https://dl.acm.org/doi/10.1145/2983990.2984004)). 
+Why should you care about type safety? 
 
-Languages can be unsound _by design_, trading soundness for goals like:
+- *It strenghtens local reasoning*: You can reason about parts of a system without knowing all of it. This impacts code reviewing[^code-review], makes refactoring easier and lets you explore a codebase faster.
+- *It reduces mental overhead*: Somewhat related to the last point; in unsound languages you have to work harder and rely more on your experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) for avoiding the unsound features. In mainstream languages, known cases of unsoundness are generally well-documented. Unknown unsoundness, by contrast, could cause correctness and security problems or even [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 
-- Squeezing max performance by allowing optimizations (C or C++)
-- A simpler type system ([Go](https://fasterthanli.me/articles/lies-we-tell-ourselves-to-keep-using-golang))
-- Prioritize compatibility and ease of adoption (Typescript)
+[^code-review]: Yours, your colleagues or your agent's.
+[^type-safe]: By now, you can see why the frontend community's use "type safe" is imprecise. Often it means that static checking is done during compilation, in contrast to Javascript, who just doesn't care about you.
 
-In mainstream languages, known cases of unsoundness are generally well-documented ([C++](https://en.cppreference.com/w/c/language/behavior.html) or [Rust](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), for example). Unknown unsoundness, by contrast, could cause correctness and security problems or [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
+As a closing note, remember that *languages are tools*, their usefulness is primarily dictated by the context in which they are used for; and type safety is just one of the *many* factors you would weigh when choosing one. 
 
-Even though I appreciate working with a sound type system, I don't believe having an unsound type system makes a language worse or disqualifies it for use; after all, *languages are tools*, and their usefulness is primarily dictated by the context in which they are used.
+## Further reading
 
+If you are interested, here are some good articles to follow up with:
 
-[^UBSan]: One can pass `-sanitize=undefined` to `gcc` or `clang` to catch the error at runtime but that is achieved using [UBSan](https://docs.kernel.org/dev-tools/ubsan.html) which is not something defined in the language.
+- _"[Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)"_ by Steve Klabnik.
+- _"[Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)"_ by Alex Klavod
