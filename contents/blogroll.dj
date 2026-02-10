@@ -3,79 +3,79 @@
 
 Here are some of my favourite blogs. Even though it was hard to choose, I picked just one post from each based on how fun or interesting I found it, in no particular order.
 
-: Steve Klabnik
+: *Steve Klabnik*
 
     "[Does unsafe undermine Rust's guarantees?](https://steveklabnik.com/writing/does-unsafe-undermine-rusts-guarantees/)"
 
-: Dan Luu
+: *Dan Luu*
 
     "[What to learn](https://danluu.com/learn-what/)"
 
-: Julia Evans
+: *Julia Evans*
 
     "[Why do we use the Linux kernel's TCP stack?](https://jvns.ca/blog/2016/06/30/why-do-we-use-the-linux-kernels-tcp-stack/)"
 
-: Antirez
+: *Antirez*
 
     "[Don't fall into the anti-AI hype](https://antirez.com/news/158)"
 
-: Alex Kladov
+: *Alex Kladov*
 
     "[Comptime Zig ORM](https://matklad.github.io/2025/03/19/comptime-zig-orm.html)"
 
-: Amos Wenger
+: *Amos Wenger*
 
     "[The HTTP crash course nobody asked for](https://fasterthanli.me/articles/the-http-crash-course-nobody-asked-for)"
 
-: Without Boats
+: *Without Boats*
 
     "[Let futures be futures](https://without.boats/blog/let-futures-be-futures/)"
 
-: Rain
+: *Rain*
 
     "[How (and why) nextest uses tokio](https://sunshowers.io/posts/nextest-and-tokio/#what-are-heterogenous-selects)"
 
-: Nathaniel J. Smith
+: *Nathaniel J. Smith*
 
     "[Notes on structured concurrency, or: Go statement considered harmful](https://vorpus.org/blog/notes-on-structured-concurrency-or-go-statement-considered-harmful/)"
 
-: Bob Nystrom
+: *Bob Nystrom*
 
     "[The Value of Things](https://journal.stuffwithstuff.com/2026/01/24/the-value-of-things/)"
 
-: Jamie Brandon
+: *Jamie Brandon*
 
     "[Reflections on a decade of coding](https://www.scattered-thoughts.net/writing/reflections-on-a-decade-of-coding)"
 
-: Eliza Weisman
+: *Eliza Weisman*
 
     "[On Beginner's Mind in Software Engineering](https://www.elizas.website/on-beginners-mind.html)"
 
-: Graydon Hoare
+: *Graydon Hoare*
 
     "[What next?](https://graydon2.dreamwidth.org/253769.html)"
 
-: Ted Kaminski
+: *Ted Kaminski*
 
     "[Programmer as wizard, programmer as engineer](https://www.tedinski.com/2018/03/20/wizarding-vs-engineering.html)"
 
-: Casey Muratori
+: *Casey Muratori*
 
     "[The Big OOPs: Anatomy of a Thirty-Five Year Mistake](https://www.computerenhance.com/p/the-big-oops-anatomy-of-a-thirty)"
 
-: Oleg Kiselyov
+: *Oleg Kiselyov*
 
     "[Tagless-final style](https://okmij.org/ftp/tagless-final/)"
 
-: Ryan Fleury
+: *Ryan Fleury*
     
     "[Untangling Lifetimes: The Arena Allocator](https://www.rfleury.com/p/untangling-lifetimes-the-arena-allocator)"
 
-: Ian Henry
+: *Ian Henry*
 
     "[My Kind of REPL](https://ianthehenry.com/posts/my-kind-of-repl/)"
 
-: Will Crichton
+: *Will Crichton*
 
     "[What is Systems Programming, Really?](https://willcrichton.net/notes/systems-programming)"
     
