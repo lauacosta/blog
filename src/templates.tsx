@@ -264,7 +264,7 @@ export function Post({ post }: { post: PostData }) {
       src={post.src}
       title={post.title}
       path={post.path}
-      published={post.private}
+      published={post.published}
       date={post.iso_date.toISOString()}
       description={description}
     >

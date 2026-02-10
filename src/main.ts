@@ -24,7 +24,7 @@ const cli_schema = defineCli({
         title: string(),
       },
       options: {
-        private: boolean({ default: true }),
+        published: boolean({ default: false }),
       },
     }),
     watch: defineCommand({
@@ -55,7 +55,7 @@ async function main() {
   console.debug(cli);
 
   if (cli.command === "draft") {
-    draft(cli.args.title, cli.options.private ?? true);
+    draft(cli.args.title, cli.options.published ?? true);
     return;
   }
 
@@ -156,7 +156,7 @@ async function spell() {
   console.log(decoder.decode(stdout));
 }
 
-async function draft(name: string, priv: boolean) {
+async function draft(name: string, published: boolean) {
   const title = to_title_case(name);
 
   const date = new Date().toISOString().split("T")[0];
@@ -166,7 +166,7 @@ async function draft(name: string, priv: boolean) {
   console.log(`drafted post ${path}`);
   const arch = JSON.stringify({
     title,
-    private: priv,
+    published,
   });
 
   await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title}\n`);
@@ -194,7 +194,7 @@ async function build(clean: boolean, profile: boolean) {
       html_ugly(Post({ post })),
     );
   }
-  const public_posts = posts.filter((p) => !p.private);
+  const public_posts = posts.filter((p) => p.published);
 
   await update_file("./dist/feed.xml", feed_xml(public_posts));
   await update_file("./dist/index.html", html_ugly(PostList({ posts: public_posts })));
@@ -265,7 +265,7 @@ async function update_path(path: string) {
   }
 }
 
-type Archetype = { title: string; private: boolean };
+type Archetype = { title: string; published: boolean };
 function parse_archetype(text: string): { arch: Archetype; body: string } {
   const match = text.match(ARCHETYPE_REGEX);
 
@@ -295,7 +295,7 @@ export type Post = {
   reading_time_mins: number;
   iso_date: Date;
   toc?: Toc;
-  private: boolean;
+  published: boolean;
   slug: string;
   content: HtmlString;
   path: string;
@@ -347,7 +347,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
       // toc,
       iso_date: date,
       title: arch.title,
-      private: arch.private,
+      published: arch.published,
       content: html,
       path: `/${y}/${m}/${d}/${slug}.html`,
       src: src,
