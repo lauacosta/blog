@@ -4,8 +4,9 @@
 // deno-lint-ignore-file no-explicit-any
 import { escapeHtml, h, Raw, render, VNode } from "./tsx.ts";
 import { to_lower_snake_case } from "./utils.ts";
-import { Post as PostData } from "./main.ts";
+import { Post as PostData } from "./Post.ts";
 import { FeedEntry as FeedEntryData } from "./blogroll.ts";
+import { HtmlString } from "./HtmlString.ts";
 
 const site_url = "https://lautaroacosta.com";
 const github_url = "https://github.com/lauacosta";
@@ -339,19 +340,6 @@ export function Post({ post }: { post: PostData }) {
       .trim()
     : blurb;
 
-  let tocHtml = "";
-  if (post.toc) {
-    const titles = post.toc.titles;
-    tocHtml =
-      '<nav class="table-of-contents"><menu><a class="toc-entry" href="#home-page-top"><h2 class="toc-header">Contents</h2></a>' +
-      titles.map(({ id, level, title }) =>
-        `<li data-level=${level}>
-          ${id ? `<a href="#${id}">${title}</a>` : title}
-        </li>`
-      ).join("") +
-      "</menu></nav>";
-  }
-
   return (
     <Base
       src={post.src}
@@ -361,7 +349,6 @@ export function Post({ post }: { post: PostData }) {
       date={post.iso_date.toISOString()}
       description={description}
     >
-      {tocHtml && <Raw unsafe={tocHtml} />}
       <div>
         <article>
           <Raw unsafe={post.content.value} />
@@ -474,12 +461,4 @@ export function html(
   return new HtmlString(
     String.raw({ raw: strings }, ...values.map((it) => content(it).join(""))),
   );
-}
-
-export class HtmlString {
-  constructor(public value: string) {
-  }
-  push(other: HtmlString) {
-    this.value = `${this.value}\n${other.value}`;
-  }
 }

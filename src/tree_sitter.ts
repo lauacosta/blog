@@ -1,4 +1,5 @@
-import { html, HtmlString } from "./templates.tsx";
+import { html } from "./templates.tsx";
+import { HtmlString } from "./HtmlString.ts";
 import { Language, Parser, Query } from "npm:web-tree-sitter";
 
 const parsers = new Map<string, Parser>();

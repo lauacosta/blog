@@ -1,6 +1,7 @@
 // Based on https://github.com/matklad/matklad.github.io/blob/caf0614156a379abffc4491b46aae8a872ac939f/src/djot.tsdjot
 import { highlight } from "./tree_sitter.ts";
-import { HtmlString, time_html } from "./templates.tsx";
+import { HtmlString } from "./HtmlString.ts";
+import { time_html } from "./templates.tsx";
 
 import { parse as djot_parse } from "@djot/parse.ts";
 import { HTMLRenderer, renderHTML } from "@djot/html.ts";
@@ -24,7 +25,6 @@ import {
   Url,
   Visitor,
 } from "@djot/ast.ts";
-import { Toc } from "./main.ts";
 
 export function parse(source: string): Doc {
   return djot_parse(source);
@@ -68,45 +68,6 @@ export function estimate_reading_time(doc: Doc): number {
       images * 0.17 +
       code_blocks * 0.5,
   );
-}
-
-export function build_table_contents(doc: Doc): Toc {
-  let counter = 1;
-  const headings: { id: string; title: string; level: number }[] = [];
-
-  function visit(node: AstNode) {
-    switch (node.tag) {
-      case "heading": {
-        const level = node.level;
-        let title = "";
-        if (level > 1) {
-          title = get_string_content(node);
-        }
-
-        if (title) {
-          const slug = title
-            .replace(/\s+/g, "-")
-            .replace(/[^\w\-]+/g, "")
-            .replace(/\-\-+/g, "-")
-            .replace(/^-+/, "")
-            .replace(/-+$/, "");
-
-          headings.push({ id: slug, title, level });
-          counter++;
-        }
-
-        break;
-      }
-    }
-
-    if ("children" in node) {
-      for (const c of node.children) visit(c);
-    }
-  }
-
-  visit(doc);
-
-  return { titles: headings };
 }
 
 export function render(

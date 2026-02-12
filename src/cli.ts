@@ -274,3 +274,5 @@ export type AssertAllCommandsHandled<T> = T extends never ? never
       T
     >}". Add a case for this command.`;
   };
+
+export function assertAllHandled(_cli: never): asserts _cli is never {}
