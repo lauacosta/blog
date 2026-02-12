@@ -1,7 +1,7 @@
 ---
 {
     "title":"What Does Type Safety Mean",
-    "published": true,
+    "published": false,
     "abstract": "We explore what Type Safety is and why it is more important today than ever before with the advent of agentic coding.",
     "tags": ["Type Systems", "Programming Languages"]
 } 
