@@ -1,4 +1,5 @@
 import * as debounce from "@std/async/debounce";
+import { serveDir } from "@std/http/file-server";
 import {
   AssertAllCommandsHandled,
   boolean,
@@ -29,10 +30,19 @@ const cli_schema = defineCli({
     }),
     watch: defineCommand({
       name: "watch",
-      description: "spawns miniserver to preview the results of the build. Rebuilds on change",
+      description: "Rebuilds the whole blog on change",
       options: {
         profile: boolean({ default: false }),
         clean: boolean({ default: false }),
+      },
+    }),
+    serve: defineCommand({
+      name: "serve",
+      description: "Spawns miniserver to preview the results of the build. Rebuilds on change",
+      options: {
+        profile: boolean({ default: false }),
+        clean: boolean({ default: false }),
+        port: string({ default: "8080" }),
       },
     }),
     spell: defineCommand({
@@ -73,6 +83,24 @@ async function main() {
     const clean = cli.options.clean ?? true;
     await watch(clean, profile);
     return;
+  }
+
+  if (cli.command === "serve") {
+    await initTreeSitter();
+    const profile = cli.options.profile ?? false;
+    const port = cli.options.port ? parseInt(cli.options.port) : 8080;
+    const clean = cli.options.clean ?? true;
+
+    watch(clean, profile);
+
+    console.log(`Serving dist/ at http://localhost:${port}`);
+
+    await Deno.serve((req) =>
+      serveDir(req, {
+        fsRoot: "dist",
+        urlRoot: "",
+      })
+    ).finished;
   }
 
   if (cli.command === "spell") {

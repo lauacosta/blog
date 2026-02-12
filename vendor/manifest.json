@@ -1,5 +1,18 @@
 {
   "folders": {
     "https://raw.githubusercontent.com/jgm/djot.js/": "raw.githubusercontent.com/jgm/#djot.js_af886"
+  },
+  "modules": {
+    "https://deno.land/std/http/file_server.ts": {
+      "headers": {
+        "location": "/std@0.224.0/http/file_server.ts",
+        "x-deno-warning": "Implicitly using latest version (0.224.0) for https://deno.land/std/http/file_server.ts"
+      }
+    },
+    "https://jsr.io/@std/http/1.0.24/unstable_formdata_decoder_stream.ts": {},
+    "https://jsr.io/@std/http/1.0.24/unstable_formdata_encoder_stream.ts": {},
+    "https://jsr.io/@std/http/1.0.24/unstable_server_sent_event_stream.ts": {},
+    "https://jsr.io/@std/net/1.0.6/unstable_get_network_address.ts": {},
+    "https://jsr.io/@std/streams/1.0.17/unstable_capped_delimiter_stream.ts": {}
   }
 }
