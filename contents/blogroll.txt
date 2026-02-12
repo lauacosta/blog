@@ -18,7 +18,8 @@ https://brooker.co.za/blog/rss.xml
 https://jack-vanlightly.com/?format=rss
 http://blog.hydromatic.net/feed.xml
 https://tanelpoder.com/posts/index.xml
-https://rachelbythebay.com/w/atom.xml 
 http://0x80.pl/feed.xml
 https://www.brendangregg.com/blog/rss.xml
 https://feeds.feedburner.com/AyendeRahien
+https://alperenkeles.com/atom.xml
+https://gazagnaire.org/feed.xml
