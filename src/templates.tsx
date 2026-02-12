@@ -334,12 +334,6 @@ export function PostList(
 }
 
 export function Post({ post }: { post: PostData }) {
-  const match = post.content.value.match(/<p>(.*?)<\/p>/i);
-  const description = match
-    ? match[1].replace(/<[^>]+>/g, "")
-      .trim()
-    : blurb;
-
   return (
     <Base
       src={post.src}
@@ -347,7 +341,7 @@ export function Post({ post }: { post: PostData }) {
       path={post.path}
       published={post.published}
       date={post.iso_date.toISOString()}
-      description={description}
+      description={post.abstract}
     >
       <div>
         <article>

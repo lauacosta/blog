@@ -33,6 +33,10 @@ async function blogroll_feed(
   const start = performance.now();
   let feed;
   try {
+    console.log(
+      `\x1b[90m${NowHHMMSS()}\x1b[0m ` +
+        `\x1b[33m├─\x1b[0m Fetching ${url}...\x1b[0m`,
+    );
     const response = await fetch(url);
     const xml = await response.text();
     feed = await parseFeed(xml);
