@@ -9,7 +9,7 @@ import { Post as PostData } from "./main.ts";
 const site_url = "https://lautaroacosta.com";
 const github_url = "https://github.com/lauacosta";
 const blurb = "Lautaro's Coppermind";
-const not_published__html =
+const not_published_html =
   `<aside class="admn private"><svg class="icon"><use href="/assets/icons.svg#private"></use></svg><div><p>If you found this you are a beta reader or really lucky! This article is not yet ready to be made public :)</p></div></aside>`;
 
 export function html_ugly(node: VNode, doctype = "<!DOCTYPE html>"): string {
@@ -154,8 +154,8 @@ function Base({ children, published, description, title, path, extra_css, date, 
           </nav>
         </header>
 
-        {!published &&
-          <Raw unsafe={not_published__html} />}
+        {published === false &&
+          <Raw unsafe={not_published_html} />}
 
         <main>
           {children}
