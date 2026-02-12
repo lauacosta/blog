@@ -1,5 +1,5 @@
 ---
- {"title":"What Does Type Safety Mean","published": false} 
+ {"title":"What Does Type Safety Mean","published": true} 
 ---
 
 # What Does Type Safety Mean
@@ -113,13 +113,13 @@ As a brief exposition, let's see again what Harper and Cardelli have to say.
 
 - Harper states that the role of a type system is:
 
-    > The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur.
+    > _"The role of a type system is to impose constraints on the formations of phrases that are sensitive to the context in which they occur."_
 
     [Mmmhmm](https://youtu.be/oK3yTGtxOPY?t=35), it makes sense but it does not tell me much. I get what he is trying to say but I think we can find a more practical definition.
 
 - Cardelli says:
 
-    > The primary goal of a type system is to ensure language safety by ruling out all untrapped errors in all program runs. However, most type systems are designed to ensure the more general good behavior property, and implicitly safety. Thus, the declared goal of a type system is usually to ensure good behavior of all programs, by distinguishing between well typed and ill typed programs.
+    > _"The primary goal of a type system is to ensure language safety by ruling out all untrapped errors in all program runs. However, most type systems are designed to ensure the more general good behavior property, and implicitly safety. Thus, the declared goal of a type system is usually to ensure good behavior of all programs, by distinguishing between well typed and ill typed programs."_
 
 
 That's better! Think of it as the analysis we made before.
@@ -371,7 +371,7 @@ Because it is _not a property of the implementation_.
 
 We have discussed what soundness is and what it is there for: it makes programs easier to reason about and helps avoid whole classes of bugs and foot-guns.
 
-At the end of the case study, we pointed at something it is not: *Type safety it not a synonym of practical safety*.
+At the end of the case study, we pointed at something it is not: *Type safety is not a synonym of practical safety*.
 
 What I mean by _"practical safety"_ is the guarantees the users of the language will experience. Type safety is a key part of it, but not enough because, as we hinted throughout the article, that is also composed by what the implementation gives you, and that, is encompassed by another term called _"memory safety"_.
 
@@ -390,16 +390,13 @@ Let's clear some misconceptions or questions I've read or you may have:
 - *Type safety and memory safety are the same*:
     Again, no. Type safety is a property of a _language_ meanwhile memory safety is a property of an _implementation_.
 
-- *Safe languages are always safe*:
-    Well, this is tricky. It's true if we consider only the language semantics (after all it is a requirement for being safe in the first place). But it falls apart quickly in practice, since many implementations offer escape hatches from the type system. A few examples are [`Obj.magic`](https://ocaml.org/manual/5.4/api/Obj.html) in OCaml, [`std::mem::transmute`](https://doc.rust-lang.org/std/mem/fn.transmute.html) in unsafe Rust or [`sun.misc.Unsafe`](https://mishadoff.com/blog/java-magic-part-4-sun-dot-misc-dot-unsafe/) in Java.
-
 Why should you care about type safety? 
 
-- *It strenghtens local reasoning*: You can reason about parts of a system without knowing all of it. This impacts code reviewing[^code-review], makes refactoring easier and lets you explore a codebase faster.
+- *It strengthens local reasoning*: You can reason about parts of a system without knowing all of it. This impacts code reviewing[^code-review], makes refactoring easier and lets you explore a codebase faster.
 - *It reduces mental overhead*: Somewhat related to the last point; in unsound languages you have to work harder and rely more on your experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) for avoiding the unsound features. In mainstream languages, known cases of unsoundness are generally well-documented. Unknown unsoundness, by contrast, could cause correctness and security problems or even [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 
 [^code-review]: Yours, your colleagues or your agent's.
-[^type-safe]: By now, you can see why the frontend community's use "type safe" is imprecise. Often it means that static checking is done during compilation, in contrast to Javascript, who just doesn't care about you.
+[^type-safe]: By now, you can see why the frontend community's use of "type safe" is imprecise. Often it means that static checking is done during compilation, in contrast to Javascript, who just doesn't care about you.
 
 As a closing note, remember that *languages are tools*, their usefulness is primarily dictated by the context in which they are used for; and type safety is just one of the *many* factors you would weigh when choosing one. 
 
