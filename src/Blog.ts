@@ -37,7 +37,9 @@ class Ctx {
       parts.push(`${label}=\x1b[36m${value.toFixed(2)}ms\x1b[0m`);
     }
 
-    console.log(`\n\x1b[33m[stats]\x1b[0m\n\x1b[90m  ${parts.join(" ")}\x1b[0m`);
+    console.log(
+      `\n\x1b[33m[stats]\x1b[0m\n\x1b[90m  ${parts.join(" ")}\x1b[0m`,
+    );
   }
 }
 
@@ -58,7 +60,7 @@ export const Blog = {
       abstract: "placeholder",
     });
 
-    await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title_case}\n`);
+    await Deno.writeTextFile(path, `---\n ${arch} \n---\n # ${title_case}\n`);
   },
 
   async build(

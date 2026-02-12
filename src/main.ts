@@ -41,7 +41,7 @@ Does a lot of things to publish
 
 Options:
   --profile          Enable profiling
-  --blogroll         Include blogroll
+  --Blogroll         Include blogroll
   --clean            Clean dist folder first (default: true)`);
       break;
     case "watch":
