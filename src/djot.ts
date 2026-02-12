@@ -150,9 +150,13 @@ export function render(
       const tag = `h${node.level}`;
       const id = node.level > 1 && section?.autoAttributes?.id;
       const children = r.renderChildren(node);
-      const children_anchored = id ? `<a href="#${id}">${children}</a>` : children;
+      const children_anchored = id
+        ? `<a href="#${id}">${children}</a>`
+        : children;
 
-      return `\n<${tag}${r.renderAttributes(node)}>${children_anchored}</${tag}>\n`;
+      return `\n<${tag}${
+        r.renderAttributes(node)
+      }>${children_anchored}</${tag}>\n`;
     },
     ordered_list: (node: OrderedList, r: HTMLRenderer): string => {
       if (node.style === "1)") add_class(node, "callout");
@@ -165,11 +169,14 @@ export function render(
           destination.startsWith("#") ||
           destination.startsWith("./") ||
           destination.startsWith("../") ||
-          (!destination.startsWith("http://") && !destination.startsWith("https://"));
+          (!destination.startsWith("http://") &&
+            !destination.startsWith("https://"));
 
         if (isInternal) {
           const attrs = node.attributes || {};
-          attrs.class = attrs.class ? `${attrs.class} internal-link` : "internal-link";
+          attrs.class = attrs.class
+            ? `${attrs.class} internal-link`
+            : "internal-link";
           node.attributes = attrs;
         }
       }
@@ -185,7 +192,9 @@ export function render(
           cap = "";
         }
 
-        return `<figure${r.renderAttributes(node)}>${cap}${r.renderChildren(node)}</figure>`;
+        return `<figure${r.renderAttributes(node)}>${cap}${
+          r.renderChildren(node)
+        }</figure>`;
       }
       const result = r.renderAstNodeDefault(node);
       if (!ctx.summary) ctx.summary = get_string_content(node);
@@ -205,7 +214,9 @@ export function render(
           node.children.pop();
         }
       }
-      const cite = source ? `<figcaption><cite>${r.renderAstNode(source)}</cite></figcaption>` : "";
+      const cite = source
+        ? `<figcaption><cite>${r.renderAstNode(source)}</cite></figcaption>`
+        : "";
 
       return `<figure class="blockquote"><blockquote>${
         r.renderChildren(node)
@@ -234,7 +245,9 @@ export function render(
         } else {
           cap = "";
         }
-        return `<aside${r.renderAttributes(node)}>${cap}${r.renderChildren(node)}</aside>`;
+        return `<aside${r.renderAttributes(node)}>${cap}${
+          r.renderChildren(node)
+        }</aside>`;
       }
 
       if (has_class(node, "details")) {
@@ -259,7 +272,7 @@ export function render(
         attr(node, "highlight"),
       ).value.trim();
 
-      return `<figure class="code-block">${cap}${pre}</figure>`;
+      return `<figure class="code-block" data-lang="${node.lang}">${cap}${pre}</figure>`;
     },
     image: (node: Image, r: HTMLRenderer): string => {
       if (has_class(node, "video")) {
@@ -310,6 +323,7 @@ export function render(
     footnote_reference: (node: FootnoteReference, r: HTMLRenderer) => {
       let result = "";
       const label = node.text;
+
       if (documentSideNotes[label]) {
         // I track the footnote but don't increment the next index so the endnotes are not rendered when `doc` is rendered.
         let index = r.footnoteIndex[label];
@@ -319,8 +333,10 @@ export function render(
         }
 
         const refId = `sn-${index}`;
-        result += `<label for="${refId}" class="margin-toggle sidenote-number"></label>`;
-        result += `<input type="checkbox" id="${refId}" class="margin-toggle"/>`;
+        result +=
+          `<label for="${refId}" class="margin-toggle sidenote-number"></label>`;
+        result +=
+          `<input type="checkbox" id="${refId}" class="margin-toggle"/>`;
         result += `<span class="sidenote-content">`;
         const footnoteNode = documentSideNotes[label];
         if (footnoteNode.children) {

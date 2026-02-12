@@ -7,28 +7,61 @@ let initialized = false;
 
 const LANG_CONFIGS = {
   rust: {
-    wasmPath: new URL("../contents/assets/tree-sitter-rust.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-rust.scm", import.meta.url),
+    wasmPath: new URL(
+      "../contents/assets/tree-sitter-rust.wasm",
+      import.meta.url,
+    ),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-rust.scm",
+      import.meta.url,
+    ),
   },
   java: {
-    wasmPath: new URL("../contents/assets/tree-sitter-java.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-java.scm", import.meta.url),
+    wasmPath: new URL(
+      "../contents/assets/tree-sitter-java.wasm",
+      import.meta.url,
+    ),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-java.scm",
+      import.meta.url,
+    ),
   },
   go: {
-    wasmPath: new URL("../contents/assets/tree-sitter-go.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-go.scm", import.meta.url),
+    wasmPath: new URL(
+      "../contents/assets/tree-sitter-go.wasm",
+      import.meta.url,
+    ),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-go.scm",
+      import.meta.url,
+    ),
   },
   typescript: {
-    wasmPath: new URL("../contents/assets/tree-sitter-typescript.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-typescript.scm", import.meta.url),
+    wasmPath: new URL(
+      "../contents/assets/tree-sitter-typescript.wasm",
+      import.meta.url,
+    ),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-typescript.scm",
+      import.meta.url,
+    ),
   },
   c: {
     wasmPath: new URL("../contents/assets/tree-sitter-c.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-c.scm", import.meta.url),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-c.scm",
+      import.meta.url,
+    ),
   },
   bash: {
-    wasmPath: new URL("../contents/assets/tree-sitter-bash.wasm", import.meta.url),
-    queryPath: new URL("../contents/assets/queries/highlights-bash.scm", import.meta.url),
+    wasmPath: new URL(
+      "../contents/assets/tree-sitter-bash.wasm",
+      import.meta.url,
+    ),
+    queryPath: new URL(
+      "../contents/assets/queries/highlights-bash.scm",
+      import.meta.url,
+    ),
   },
 };
 
@@ -49,8 +82,6 @@ export async function initTreeSitter() {
 
       parsers.set(langName, parser);
       queries.set(langName, query);
-
-      console.log(`✓ Loaded tree-sitter grammar for ${langName}`);
     } catch (e) {
       console.warn(`Failed to load tree-sitter grammar for ${langName}:`, e);
     }

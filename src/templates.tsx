@@ -5,6 +5,7 @@
 import { escapeHtml, h, Raw, render, VNode } from "./tsx.ts";
 import { to_lower_snake_case } from "./utils.ts";
 import { Post as PostData } from "./main.ts";
+import { FeedEntry as FeedEntryData } from "./blogroll.ts";
 
 const site_url = "https://lautaroacosta.com";
 const github_url = "https://github.com/lauacosta";
@@ -77,16 +78,18 @@ function Fonts() {
   );
 }
 
-function Base({ children, published, description, title, path, extra_css, date, src }: {
-  children?: VNode[];
-  src: string;
-  description: string;
-  title: string;
-  published?: boolean;
-  path: string;
-  date?: string;
-  extra_css?: string;
-}) {
+function Base(
+  { children, published, description, title, path, extra_css, date, src }: {
+    children?: VNode[];
+    src: string;
+    description: string;
+    title: string;
+    published?: boolean;
+    path: string;
+    date?: string;
+    extra_css?: string;
+  },
+) {
   const snake_case_title = to_lower_snake_case(title);
   const og_image_path = date ? `og-${snake_case_title}-d1d3.png` : "og.png";
   const def_title = date ? `${title} - Lautaro Acosta Quintana` : title;
@@ -102,7 +105,10 @@ function Base({ children, published, description, title, path, extra_css, date, 
 
         <meta property="og:type" content="article" />
         <meta property="og:title" content={def_title} />
-        <meta property="og:image" content={`https://cdn.lautaroacosta.com/${og_image_path}`} />
+        <meta
+          property="og:image"
+          content={`https://cdn.lautaroacosta.com/${og_image_path}`}
+        />
         <meta property="og:image:width" content="1260" />
         <meta property="og:image:height" content="630" />
         <meta property="og:locale" content="en-us" />
@@ -111,15 +117,26 @@ function Base({ children, published, description, title, path, extra_css, date, 
 
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={def_title} />
-        <meta name="twitter:image" content={`https://cdn.lautaroacosta.com/${og_image_path}`} />
+        <meta
+          name="twitter:image"
+          content={`https://cdn.lautaroacosta.com/${og_image_path}`}
+        />
 
         <meta name="twitter:description" content={description} />
 
         {date && <meta property="article:published_time" content={date} />}
         <meta name="author" content="Lautaro Acosta Quintana" />
 
-        <link rel="icon" href="https://cdn.lautaroacosta.com/favicon.png" type="image/png" />
-        <link rel="icon" href="https://cdn.lautaroacosta.com/favicon.svg" type="image/svg+xml" />
+        <link
+          rel="icon"
+          href="https://cdn.lautaroacosta.com/favicon.png"
+          type="image/png"
+        />
+        <link
+          rel="icon"
+          href="https://cdn.lautaroacosta.com/favicon.svg"
+          type="image/svg+xml"
+        />
         <link
           rel="alternate"
           type="application/rss+xml"
@@ -150,7 +167,12 @@ function Base({ children, published, description, title, path, extra_css, date, 
             <a href="/blogroll.html">Blogroll</a>
             <a id="home-page-top" href="#home-page-top"></a>
             <input type="checkbox" id="theme-toggle" hidden />
-            <label for="theme-toggle" class="theme-toggle" aria-label="Toggle theme"></label>
+            <label
+              for="theme-toggle"
+              class="theme-toggle"
+              aria-label="Toggle theme"
+            >
+            </label>
           </nav>
         </header>
 
@@ -164,10 +186,16 @@ function Base({ children, published, description, title, path, extra_css, date, 
         <footer>
           {date && (
             <p class="meta-links">
-              (<a class="emphasis" href={`${github_url}/blog/commits/master${src}`}>
+              (<a
+                class="emphasis"
+                href={`${github_url}/blog/commits/master${src}`}
+              >
                 revision history
               </a>{" "}
-              & <a class="emphasis" href="/ai_transparency.html">AI transparency</a>)
+              &{" "}
+              <a class="emphasis" href="/ai_transparency.html">
+                AI transparency
+              </a>)
             </p>
           )}
           <p>
@@ -175,9 +203,9 @@ function Base({ children, published, description, title, path, extra_css, date, 
               <FooterIcon name="rss" />
               RSS
             </a>
-            <a href="mailto:lautaro+blog@lautaroacosta.com">
+            <a href="mailto:me+blog@lautaroacosta.com">
               <FooterIcon name="email" />
-              Send an email
+              Reach out
             </a>
 
             <a href="https://linkedin.com/in/lautaro-acosta-quintana">
@@ -189,6 +217,9 @@ function Base({ children, published, description, title, path, extra_css, date, 
               <FooterIcon name="github" />
               lauacosta
             </a>
+          </p>
+          <p class="copyr">
+            © 2026 Lautaro Acosta Quintana. All rights reserved.
           </p>
         </footer>
       </body>
@@ -217,21 +248,83 @@ export function Page(name: string, content: HtmlString) {
   );
 }
 
-export function PostList({ posts }: { posts: PostData[] }) {
+export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
+  function domain(url: string): string {
+    return new URL(url).host;
+  }
+
   const list_items = posts.map((post) => (
     <li>
-      <Time className="meta" date={post.iso_date} />
-      <span class="reading-time">
-        {post.reading_time_mins} min read
-      </span>
       <h2>
-        <a href={post.path}>{post.title}</a>
+        <a href={post.url}>{post.title}</a>
       </h2>
+      <div class="meta-row">
+        <Time date={post.date} /> {domain(post.url)}
+      </div>
     </li>
   ));
 
   return (
-    <Base path="" title="Lautaro Acosta Quintana" description={blurb} src="/src/templates.tsx">
+    <Base
+      path=""
+      title="Lautaro Acosta Quintana"
+      description={blurb}
+      src="/src/templates.tsx"
+    >
+      <ul class="blogroll">
+        {list_items}
+      </ul>
+    </Base>
+  );
+}
+
+export function PostList(
+  { posts, title }: { posts: PostData[]; title?: string },
+) {
+  const list_items = posts.map((post, idx) => {
+    const tags = post.tags.map((tag) => {
+      const tag_slug = tag
+        .toLowerCase()
+        .trim()
+        .replace(/\s+/g, "-");
+
+      return (
+        <a href={`/t/${tag_slug}.html`} class="tag">
+          {tag}
+        </a>
+      );
+    });
+
+    return (
+      <li class={(!title && idx === 0) ? "latest-post" : ""}>
+        <h3>
+          <a href={post.path}>{post.title}</a>
+        </h3>
+
+        <div class="meta-row">
+          <Time className="meta" date={post.iso_date} />
+          <span class="reading-time">
+            {post.reading_time_mins} min read
+          </span>
+          <div class="tags">
+            {tags}
+          </div>
+        </div>
+        <div class="abstract">
+          <p>{post.abstract}</p>
+        </div>
+      </li>
+    );
+  });
+
+  return (
+    <Base
+      path=""
+      title="Lautaro Acosta Quintana"
+      description={blurb}
+      src="/src/templates.tsx"
+    >
+      {title && <h1>{title}</h1>}
       <ul class="post-list">
         {list_items}
       </ul>

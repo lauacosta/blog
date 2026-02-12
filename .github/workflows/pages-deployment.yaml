@@ -19,7 +19,7 @@ jobs:
         run: deno cache --frozen=false src/main.ts
 
       - name: Build
-        run: deno task build
+        run: deno task build --blogroll
 
       - name: Deploy
         uses: cloudflare/wrangler-action@v3

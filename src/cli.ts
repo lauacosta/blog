@@ -18,7 +18,10 @@ export function boolean(opts?: { default?: boolean }): ArgDef<boolean> {
   return { kind: "boolean", default: opts?.default };
 }
 
-type Command<A extends Record<string, ArgDef<any>>, O extends Record<string, ArgDef<any>>> = {
+type Command<
+  A extends Record<string, ArgDef<any>>,
+  O extends Record<string, ArgDef<any>>,
+> = {
   name: string;
   description?: string;
   args?: A;
@@ -39,7 +42,8 @@ type ParsedArgs<A> = {
 };
 
 type ParsedOptions<O> = {
-  [K in keyof O]: O[K] extends { default: infer D } ? ValueOf<O[K]> : ValueOf<O[K]> | undefined;
+  [K in keyof O]: O[K] extends { default: infer D } ? ValueOf<O[K]>
+    : ValueOf<O[K]> | undefined;
 };
 
 function coerce(value: string, kind: ArgKind): any {
@@ -56,7 +60,10 @@ function coerce(value: string, kind: ArgKind): any {
   }
 }
 
-function printHelp<A extends Record<string, ArgDef<any>>, O extends Record<string, ArgDef<any>>>(
+function printHelp<
+  A extends Record<string, ArgDef<any>>,
+  O extends Record<string, ArgDef<any>>,
+>(
   cmd: Command<A, O>,
 ) {
   console.log(
@@ -78,7 +85,9 @@ function printHelp<A extends Record<string, ArgDef<any>>, O extends Record<strin
     console.log("\nArguments:");
     for (const key in cmd.args) {
       const arg = cmd.args[key];
-      const defaultStr = arg.default !== undefined ? ` (default: ${arg.default})` : "";
+      const defaultStr = arg.default !== undefined
+        ? ` (default: ${arg.default})`
+        : "";
       console.log(`  ${key}\t\t${arg.kind}${defaultStr}`);
     }
   }
@@ -87,11 +96,14 @@ function printHelp<A extends Record<string, ArgDef<any>>, O extends Record<strin
     console.log("\nOptions:");
     for (const key in cmd.options) {
       const opt = cmd.options[key];
-      const defaultStr = opt.default !== undefined ? ` (default: ${opt.default})` : "";
+      const defaultStr = opt.default !== undefined
+        ? ` (default: ${opt.default})`
+        : "";
       console.log(`  --${key}\t\t${opt.kind}${defaultStr}`);
     }
   }
 }
+
 function parse<
   A extends Record<string, ArgDef<any>>,
   O extends Record<string, ArgDef<any>>,
@@ -138,7 +150,9 @@ function parse<
         }
       } else {
         const value = inlineValue ?? argv[++i];
-        if (value === undefined) throw new Error(`Option --${fullKey} requires a value`);
+        if (value === undefined) {
+          throw new Error(`Option --${fullKey} requires a value`);
+        }
         opts[fullKey] = coerce(value, def.kind);
       }
 
@@ -155,7 +169,9 @@ function parse<
         opts[key] = true;
       } else {
         const value = argv[++i];
-        if (value === undefined) throw new Error(`Option -${key} requires a value`);
+        if (value === undefined) {
+          throw new Error(`Option -${key} requires a value`);
+        }
         opts[key] = coerce(value, def.kind);
       }
       continue;
@@ -247,9 +263,14 @@ export function parseCli<Commands extends Record<string, Command<any, any>>>(
   } as ParseResult<Commands>;
 }
 
-type ExtractCommandName<T> = T extends { command: infer C } ? C extends string | number ? C
+type ExtractCommandName<T> = T extends { command: infer Cmd }
+  ? Cmd extends string | number ? Cmd
   : string
   : string;
 
 export type AssertAllCommandsHandled<T> = T extends never ? never
-  : { error: `ERROR: Unhandled command "${ExtractCommandName<T>}". Add a case for this command.` };
+  : {
+    error: `ERROR: Unhandled command "${ExtractCommandName<
+      T
+    >}". Add a case for this command.`;
+  };

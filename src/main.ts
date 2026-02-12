@@ -1,5 +1,5 @@
 import * as debounce from "@std/async/debounce";
-import { serveDir } from "@std/http/file-server";
+import { Archetype } from "./archetype.ts";
 import {
   AssertAllCommandsHandled,
   boolean,
@@ -9,18 +9,27 @@ import {
   string,
 } from "./cli.ts";
 import * as djot from "./djot.ts";
-import { feed_xml, html_ugly, HtmlString, Page, Post, PostList } from "./templates.tsx";
+import {
+  BlogRoll,
+  feed_xml,
+  html_ugly,
+  HtmlString,
+  Page,
+  Post,
+  PostList,
+} from "./templates.tsx";
 import { initTreeSitter } from "./tree_sitter.ts";
 import { to_lower_snake_case, to_title_case } from "./utils.ts";
-
-const ARCHETYPE_REGEX = /^---\s*([\s\S]*?)\s*---\s*/;
+import { ServeBlog } from "./http_server.ts";
+import { Blogroll } from "./blogroll.ts";
 
 const cli_schema = defineCli({
   description: "Tool to make my life better",
   commands: {
     draft: defineCommand({
       name: "draft",
-      description: "Create a new .dj file in the /posts folder to start writing an article",
+      description:
+        "Create a new .dj file in the /posts folder to start writing an article",
       args: {
         title: string(),
       },
@@ -38,10 +47,8 @@ const cli_schema = defineCli({
     }),
     serve: defineCommand({
       name: "serve",
-      description: "Spawns miniserver to preview the results of the build. Rebuilds on change",
+      description: "Spawns miniserver to preview the results of the build.",
       options: {
-        profile: boolean({ default: false }),
-        clean: boolean({ default: false }),
         port: string({ default: "8080" }),
       },
     }),
@@ -49,11 +56,13 @@ const cli_schema = defineCli({
       name: "spell",
       description: "Spell checks the newest post with `wiz`",
     }),
+
     build: defineCommand({
       name: "build",
       description: "Does a lot of things to publish",
       options: {
         profile: boolean({ default: false }),
+        blogroll: boolean({ default: false }),
         clean: boolean({ default: false }),
       },
     }),
@@ -73,7 +82,8 @@ async function main() {
     await initTreeSitter();
     const profile = cli.options.profile ?? false;
     const clean = cli.options.clean ?? true;
-    await build(clean, profile);
+    const blogroll = cli.options.blogroll ?? false;
+    await build(clean, profile, blogroll);
     return;
   }
 
@@ -87,20 +97,11 @@ async function main() {
 
   if (cli.command === "serve") {
     await initTreeSitter();
-    const profile = cli.options.profile ?? false;
     const port = cli.options.port ? parseInt(cli.options.port) : 8080;
-    const clean = cli.options.clean ?? true;
 
-    watch(clean, profile);
+    await ServeBlog(port, "localhost");
 
-    console.log(`Serving dist/ at http://localhost:${port}`);
-
-    await Deno.serve((req) =>
-      serveDir(req, {
-        fsRoot: "dist",
-        urlRoot: "",
-      })
-    ).finished;
+    return;
   }
 
   if (cli.command === "spell") {
@@ -192,15 +193,18 @@ async function draft(name: string, published: boolean) {
   const path = `./contents/posts/${date}-${slug}.dj`;
 
   console.log(`drafted post ${path}`);
+
   const arch = JSON.stringify({
-    title,
-    published,
+    title: title,
+    published: published,
+    tags: [""],
+    abstract: "placeholder",
   });
 
   await Deno.writeTextFile(path, `---\n ${arch} \n---\n #${title}\n`);
 }
 
-async function build(clean: boolean, profile: boolean) {
+async function build(clean: boolean, profile: boolean, blogroll: boolean) {
   const t = performance.now();
   const ctx = new Ctx();
 
@@ -213,21 +217,65 @@ async function build(clean: boolean, profile: boolean) {
       }
     }
   }
+
+  if (blogroll) {
+    const posts = await Blogroll.create();
+    await update_file(
+      "dist/blogroll.html",
+      html_ugly(BlogRoll({ posts })),
+    );
+  }
   await Deno.mkdir("./dist/", { recursive: true });
 
   const posts = await collect_posts(ctx);
+  console.log(`\n\x1b[34m[Building output]\x1b[0m`);
+
   for (const post of posts) {
     await update_file(
       `dist/${post.path}`,
       html_ugly(Post({ post })),
     );
   }
-  const public_posts = posts.filter((p) => p.published);
 
-  await update_file("./dist/feed.xml", feed_xml(public_posts));
-  await update_file("./dist/index.html", html_ugly(PostList({ posts: public_posts })));
+  const published = posts.filter((p) => p.published);
 
-  const pages = ["about", "blogroll", "ai_transparency", "style_guidelines"];
+  const map = new Map<string, Post[]>();
+  for (const post of published) {
+    for (const tag of post.tags) {
+      if (!tag) continue;
+
+      if (!map.has(tag)) {
+        map.set(tag, []);
+      }
+
+      map.get(tag)!.push(post);
+    }
+  }
+
+  for (const [tag, p] of map) {
+    const tag_slug = tag
+      .toLowerCase()
+      .trim()
+      .replace(/\s+/g, "-");
+
+    await update_file(
+      `dist/t/${tag_slug}.html`,
+      html_ugly(PostList({ posts: p, title: tag })),
+    );
+  }
+
+  await update_file("./dist/feed.xml", feed_xml(published));
+  await update_file(
+    "dist/index.html",
+    html_ugly(PostList({ posts: published })),
+  );
+
+  const pages = [
+    "about",
+    "404",
+    "ai_transparency",
+    "style_guidelines",
+  ];
   for (const page of pages) {
     const text = await Deno.readTextFile(`contents/${page}.dj`);
     const ast = djot.parse(text);
@@ -263,6 +311,8 @@ function dirname(path: string): string {
 }
 
 async function update_file(path: string, content: Uint8Array | string) {
+  const start = performance.now();
+
   if (!content) return;
   await Deno.mkdir(dirname(path), { recursive: true });
   await Deno.mkdir("./dist/tmp", { recursive: true });
@@ -273,6 +323,14 @@ async function update_file(path: string, content: Uint8Array | string) {
     await Deno.writeTextFile(temp, content);
   }
   await Deno.rename(temp, path);
+
+  const time = Temporal.Now.plainTimeISO()
+    .toLocaleString("en-gb", { hour12: false });
+  const ms = (performance.now() - start).toFixed(2);
+
+  console.log(
+    `\x1b[90m${time} \x1b[34m├─ \x1b[90m${path} (${ms} ms)`,
+  );
 }
 
 async function update_path(path: string) {
@@ -291,20 +349,6 @@ async function update_path(path: string) {
       await Deno.readFile(`contents/${path}`),
     );
   }
-}
-
-type Archetype = { title: string; published: boolean };
-function parse_archetype(text: string): { arch: Archetype; body: string } {
-  const match = text.match(ARCHETYPE_REGEX);
-
-  if (!match) {
-    throw new Error("The post is missing an archetype");
-  }
-
-  const arch: Archetype = JSON.parse(match[1]);
-  const body = text.slice(match[0].length);
-
-  return { arch, body };
 }
 
 export type Toc = {
@@ -326,6 +370,8 @@ export type Post = {
   published: boolean;
   slug: string;
   content: HtmlString;
+  tags: Array<string>;
+  abstract: string;
   path: string;
   src: string;
 };
@@ -334,6 +380,8 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
   const start = performance.now();
   const posts: Post[] = [];
 
+  console.log(`\n\x1b[34m[Collecting posts]`);
+
   for await (const path of walk_dir("./contents/posts/")) {
     if (!path.endsWith(".dj")) continue;
 
@@ -341,12 +389,12 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
       /^.*(\d\d\d\d)-(\d\d)-(\d\d)-(.*)\.dj$/,
     )!;
     const [year, month, day] = [y, m, d].map((it) => parseInt(it, 10));
-    const date = new Date(Date.UTC(year, month - 1, day));
+    const iso_date = new Date(Date.UTC(year, month - 1, day));
 
     let t = performance.now();
     const raw = await Deno.readFile(path);
     const text = new TextDecoder().decode(raw);
-    const { arch, body } = parse_archetype(text);
+    const { arch, body } = Archetype.parse(text);
 
     ctx.read_ms += performance.now() - t;
 
@@ -355,16 +403,24 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
     ctx.parse_ms += performance.now() - t;
 
     t = performance.now();
-    const render_ctx = { date, summary: undefined, title: undefined };
+    const render_ctx = { date: iso_date, summary: undefined, title: undefined };
 
     const reading_time_mins = djot.estimate_reading_time(ast);
-    // const toc = djot.build_table_contents(ast);
     const html = djot.render(ast, render_ctx, reading_time_mins);
 
-    ctx.render_ms += performance.now() - t;
+    const render_ms = performance.now() - t;
+    ctx.render_ms += render_ms;
+
+    const time = Temporal.Now.plainTimeISO()
+      .toLocaleString("en-gb", { hour12: false });
+
+    const ms = render_ms.toFixed(2);
+
+    console.log(
+      `\x1b[90m${time} \x1b[34m├─ \x1b[90m${path} (${ms} ms)`,
+    );
 
     const src = `/contents/posts/${y}-${m}-${d}-${slug}.dj`;
-    console.log(`Post collected: ${src}`);
 
     posts.push({
       year,
@@ -372,13 +428,14 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
       reading_time_mins,
       day,
       slug,
-      // toc,
-      iso_date: date,
+      iso_date,
       title: arch.title,
       published: arch.published,
+      tags: arch.tags,
+      abstract: arch.abstract,
       content: html,
       path: `/${y}/${m}/${d}/${slug}.html`,
-      src: src,
+      src,
     });
   }
   posts.sort((l, r) => l.path < r.path ? 1 : -1);
@@ -403,11 +460,12 @@ async function watch(clean: boolean, profile: boolean) {
     let build_id = 0;
     while (await signal.promise) {
       signal = Promise.withResolvers();
-      console.log(`rebuild #${build_id}`);
+      console.log(`\nRebuild \x1b[34m${"#" + build_id.toString()}`);
       build_id += 1;
       await build(
         clean,
         profile,
+        false,
       );
     }
   })();
@@ -421,7 +479,7 @@ async function watch(clean: boolean, profile: boolean) {
 
   for await (const event of Deno.watchFs("./contents", { recursive: true })) {
     if (event.kind == "access") continue;
-    await rebuild_debounced();
+    rebuild_debounced();
   }
   signal.resolve(false);
 }
