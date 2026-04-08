@@ -9,13 +9,16 @@
 
 # What Does Type Safety Mean
 
-The idea of this post was born from a situation I recently lived: I needed to communicate why I don't think Typescript types are the same as the ones in other static languages like C#, Rust or Java but I didn't have the knowledge to properly explain it. Now I know that this need naturally led me to learn about what sound languages are, so you can think of this article as what I would like to have known then.
+Recently, while talking to a friend I realized I couldn't explain why I think Typescript types don't offer the same guarantees as the ones in other static languages like C#, Rust or Java. To fix that, I learned a little bit about programming language theory to understand what sound languages are, so you can think of this article as what I would like to have known then.
 
-Ironically, this article doesn't focus on why Typescript is an unsound language [^docs], but by the end of it you will have an understanding of what sound languages are, what type safety is all about and why it is an error to associate it with memory safety.
+Funnily enough, it turned out to be the long road. To answer my original question it was enough to do two things:
 
-[^docs]: The Typescript documentation is really good and they showcase where the language is unsound.
+1. Read the documentation. [^docs]
+2. Remember it is still Javascript all the way down, so the types are just an illusion.
 
-For that purpose, this post can be thought of as divided in two parts. The first one where I introduce the core concepts and build a mental framework with which to discuss the idea. The second one where I show real world examples of it, and discuss why I think type safety is important, maybe more today than it was ever before.
+I don't regret it though. It ended up really fun to write about. By the end of it you will have an understanding of what sound languages are, what type safety is all about, why it is an error to think of it as another term for memory safety and why I believe it matters more today than ever.
+
+[^docs]: It shows how by choosing structural over nominal typing, Typescript has a highly expressive type system at the cost of having many useful patterns be emulated in an ad-hoc way (for example, branded types to approximate nominal distinctions).
 
 ## Sound languages
 
@@ -27,13 +30,13 @@ I found two popular definitions for what a safe language is. The first is from _
 
 From this extract, we can learn that:
 
-- Processing can be divided in two stages, the statics: it derives typing judgments to check if what you said is of a certain type actually is that type; and the dynamics which concerns itself with the evaluation of those programs. 
+- Processing can be divided in two stages, the statics: it derives typing judgments to check if what you said is of a certain type actually is that type; and the dynamics which concerns with the evaluation of those programs. 
 - Types predict aspects of the execution to ensure they make sense at runtime. 
-- It gives us our first mention on what type safety means: it _guarantees_ us that the predictions made by the types are right.
+- It gives us our first mention of what type safety means: it _guarantees_ us that the predictions made by the types are right.
 
 It mentions the notion of a well-formed program: one that has passed parsing and type checking. We'll refer to them as _well-typed_ programs, otherwise they are _ill-typed_ which means that we know they are _ill-behaved_ or can't be proven to be _well-behaved_.
 
-Lastly, it defines a language as safe if *all* well-typed programs are well-behaved, meaning they exhibit only behaviors predicted by the statics. The fullfilment of this property is what marks a language as *sound* or *unsound*.[^disclaimer]
+Lastly, it defines a language as safe if *all* well-typed programs are well-behaved, meaning they exhibit only behaviors predicted by the statics. The fulfillment of this property is what marks a language as *sound* or *unsound*.[^disclaimer]
 
 [^disclaimer]: We'll use "safe" and "sound" interchangeably.
 
@@ -95,18 +98,18 @@ fn div(a: Int, b: Int) : Int {
 let res = div(10, 0);
 ```
 
-This program is clearly well-typed, but stating that the language is sound now depends on the dynamics. More precisely, we can determine if it is sound by how it handles errors, in this a division by zero:
+This program is clearly well-typed, but stating that the language is sound now depends on the dynamics. More precisely, we can determine if it is sound by how it handles errors, in this case a division by zero:
 
 - The dynamics do not define what happens in this failure case, undefined behavior takes place: the language is unsound.
 - Division by zero is accounted for in the dynamics of the language: the language is considered sound. [^mechanisms]
 
-[^mechanisms]: The dynamics can verify this via static and dynamic checks. Being able to detect this class of errors at compile time is harder than at runtime and rely on implementing [dependent types](https://en.wikipedia.org/wiki/Dependent_type)(e.g. [Idris](https://www.idris-lang.org/)), so dynamic checks are more commonly found: throwing errors, exceptions, panicking, returning a special value, etc.
+[^mechanisms]: The dynamics can verify this via static and dynamic checks. Being able to detect this class of errors at compile time is harder than at runtime and involves more expressive type systems (such as implementing [dependent types](https://en.wikipedia.org/wiki/Dependent_type) like in [Idris](https://www.idris-lang.org/)), so dynamic checks are more commonly found: throwing errors, exceptions, panicking, returning a special value, etc.
 
-This is all good and well, but I previously hinted that a language has to _prove_ it is sound. So naturally, it has to follow rules.
+This is all well and good, but as I hinted earlier, a language has to _prove_ it is sound; naturally, it must follow rules.
 
 ## How type safety is proven
 
-We have a sense of what type safety _is_; we now know it expresses the _coherence_ between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression is well-defined. 
+We have a sense of what type safety _is_; we now know it expresses the _coherence_ between the statics and the dynamics; where the statics are seen as predicting that the value of an expression will have a certain form so that the dynamics of that expression are well-defined. 
 
 Consequently, evaluation of a well-typed expression _cannot get stuck_! It can never reach a non-value state for which no evaluation rule applies. And this is exactly what is proven via the Preservation and Progress theorems. 
 
@@ -141,7 +144,7 @@ The first theorem is called _Preservation_ and it can be read as _"if under the 
 
 The second is called _Progress_ and it can be read as _"if under the empty typing context ∅, e has type, τ then e is either a value or there exists an expression e' reachable by a single step from e"_. It ensures that well-typed closed expressions are either values or can be further evaluated. [^stuck]
 
-[^stuck]: As you could have guessed by now, a term is "stuck" when it fails to satisfy these conditions.
+[^stuck]: As you could have guessed by now, a term is "stuck" when it fails to satisfy Progress.
 
 *Safety is the conjunction of Preservation and Progress.*
 
@@ -153,11 +156,11 @@ Dynamic languages embrace a model of computation where multiple _classes_ of val
 
 > _"Every dynamic language is inherently a static language in which we confine ourselves to a (needlessly) restricted type discipline to ensure safety."_
 
-The gist of it is what he calls "type discipline". In this type of languages, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed[^dynamic-well-formed] and that there are _no free variables_ in the expression; the dynamics _must_ check for errors during runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is has.
+The gist of it is what he calls "type discipline". In this type of language, every value is _tagged_ to indicate which _class_ of value they belong through a process called _Classification_. Since the static phase limits itself to only check that the expression is well-formed[^dynamic-well-formed] and that there are _no free variables_ in the expression; the dynamics _must_ check for errors at runtime that would have never arisen in a statically-typed language; this is called _Class Checking_ and uses the tags each value is has.
 
 [^dynamic-well-formed]: Here "well-formed" stands for parsing not type-checking.
 
-It's useful to look at an example in the wild. An example of this single recursive type can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know to which class of value they belong to.
+It's useful to look at an example in the wild. An example of this single recursive type can be found in the [CPython Language Reference](https://docs.python.org/3/). It defines a type [`PyObject`](https://docs.python.org/3/c-api/structures.html#c.PyObject), where *all object types are extensions of this type* and one of its fields, called `ob_type`, is a pointer to [`PyTypeObject`](https://docs.python.org/3/c-api/type.html#c.PyTypeObject) and encodes _the object type_ which is exactly the idea of tagging a value to know which class of value they belong to.
 
 Knowing this, what happens to the theorems of Preservation and Progress? How do we talk about type safety in this kind of languages? 
 
@@ -181,7 +184,7 @@ Nowadays static languages seem to be preferred if we take the fact that there ha
 
 ## Case study: Division by zero
 
-Let's look at how real languages implementations handle the same error case and what their specifications have to say. First in Rust, then in C:
+We'll look at how Rust and C handle division by zero, both in their implementations and in their specifications. The goal is to see how soundness is a property of a language's semantics, not of any particular implementation.
 
 ``` rust
 fn div(a: u32, b: u32) -> u32 {
@@ -275,17 +278,15 @@ End of assembler dump.
 
 We see that the fault came from our `div` function. Check how at address `0x0000555555555147` the division is performed with the `idiv` instruction on x86_64. Since the divisor is zero, the CPU raises a `#DE` (Division Error) exception. The OS handles it by sending a `SIGFPE` signal to the program. 
 
-The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB), which is to say, anything goes. Whether the program crashes, hangs, or produces unpredictable results depends on the implementation, the target architecture and OS. 
+The latest publicly available [C language specification](https://www.open-std.org/jtc1/sc22/wg14/www/docs/n1570.pdf#page=110) classifies this as undefined behavior (UB), which is to say anything goes. [^unsafe] Whether the program crashes, hangs, or produces unpredictable results depends on the implementation, the target architecture and OS. 
 
 This illustrates one way the C language is unsound: even well-typed programs can reach runtime states that the language does not account for.
 
-This behavior is a *design decision*. It allows compilers more freedom to do optimizations, which can be for the better or worse, since they end up producing what's basically a black box.
+This behavior is a *design decision*. It allows compilers more freedom to do optimizations, which is great and makes your program faster, but it can end up changing the behavior of your program in ways you don't expect.
 
-::: info
- Rust is not [free of UB](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), although it is a lot less pervasive than in C. Perks of being 45 years younger.
-:::
+[^unsafe]: To be fair, Rust is not [free of UB](https://doc.rust-lang.org/reference/behavior-considered-undefined.html), although it is a lot less pervasive than in C since it's largely confined to unsafe blocks.
 
-To showcase what can happen with these optimizations, lets see three different implementations of C: [`GCC`](https://gcc.gnu.org/), [`Clang`](https://clang.llvm.org/) and [`Fil-C`](https://fil-c.org/):
+To showcase what can happen with these optimizations, let's see three different implementations of C: [`GCC`](https://gcc.gnu.org/), [`Clang`](https://clang.llvm.org/) and [`Fil-C`](https://fil-c.org/):
 
 {highlight="4, 8"}
 ```bash
@@ -323,7 +324,7 @@ End of assembler dump.
 
 This is interesting: without optimizations it behaves similarly to the GCC-compiled one. With optimizations enabled, Clang also deletes `div`; however, it doesn't replace main's body with a `ud2` and instead continues execution normally, printing an arbitrary value!
 
-Fil-C[^Fil-C] is a fork of `Clang 20.1.8` that adds static and runtime memory safety features to C:
+Fil-C[^Fil-C] is a fork of `Clang 20.1.8` that adds static and runtime memory safety features to C and to properly explain what it does deserves an article of its own:
 
 [^Fil-C]: At the time of writing, it is at version 0.678. 
 
@@ -331,51 +332,63 @@ Fil-C[^Fil-C] is a fork of `Clang 20.1.8` that adds static and runtime memory sa
 $ ./build/bin/clang -g -O3 -o main main.c && ./main
 0
 ```
-Again, this implementation does something different! Now it always returns `0`.
+This time, the Fil-C compiler ends up rewriting our program to always return `0`.
 
 ## A Note On Soundness 
 
-Up to this point, it's clear what a sound language offers you: it makes programs easier to reason about and helps avoid whole classes of bugs.
+Up to this point, it's clear what a sound language offers you: it makes programs easier to reason about and helps avoid whole classes of bugs. And with the case study, we saw how it is actually a property of the design of the language and not of the implementation (whereas memory safety _is_). 
 
-With the case study we also saw how it is actually a property of the design of the language and not of the implementation (like memory safety is). 
+I want to take the opportunity to say that arguably the sweet spot of a language is not on being super strict about soundness. As it is often the case, the answer is in the gray and you will end up working with a language that is unsound and still be able to write a safe program using the sound subset, given that it exists.
 
-Now, this is good an all, but why should you care? Certainly many popular languages make concessions around it to:
+Even languages commonly thought of as type safe have their own escape hatches, like `Obj.magic` in Ocaml or the `unsafe` blocks in Rust. Not to mention the fact that you will have to interface with code written in C or C++ (for example, when working with Python, Ruby or Node.js, somewhat popular choices).
+
+## Why It Matters
+
+Now, this is good and all, but why should you care about using sound languages? Certainly, many popular languages are fine with making parts of their language unsound in order to:
 
 - Prioritize compatibility and ease of adoption (Typescript)[^type-safe].
-- Squeezing max performance via optimizations (C or C++).
-- A simpler type system (Go).
+- Squeeze the last drop of performance via optimizations (C or C++).
+- Prefer a simpler type system (Go).
 
-[^type-safe]: In this community, "type safe" if very often used without much sense since it often used to refer to static checking done by the type system.
+[^type-safe]: In this community, "type safe" is often used incorrectly since it is used to refer to static checking.
 
-Well, from the programmers perspective I think they offer two really strong points [^note]:
+I think they offer some interesting incentives[^note]:
 
 - *It unlocks local reasoning*: You can reason about parts of a system without knowing all of it. This impacts code reviewing, makes refactoring easier and allows you to make sense of a codebase faster.
-- *It reduces mental overhead*: Somewhat related to the last point, one usually wants to work less not more; in unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. 
+- *It reduces mental overhead*: Somewhat related to the last point, one usually wants to work less, not more; in unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. 
+- *Language choice*: It is often the case that languages that care about type safety also care about some things you would very much like to have, like strong type systems, a concern about correctness and the ability to express powerful ideas in the code itself.
+
+[^note]: You could argue that this applies more to static languages with strong type systems and I don't really think about dynamic languages. For that I can only say that I don't hide my preferences.
 
 ::: info
 In mainstream languages, known cases of unsoundness are generally well-documented and the effort you have to put to avoid them varies from language to language. Unknown unsoundness, by contrast, could cause correctness and security problems or funnily enough [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
 :::
 
-[^note]: You may argue that this apply more to languages with strong type systems and for that I can only say that I don't hide my preferences.
+Why do I claim that type safety is more important today than it was ever before? 
 
-Before, I said that type safety is more important today than it was ever before. I argue that this is true due to how the advent of agentic coding changed the way development is done. These two points I just make become even more important since we spend significantly more time reviewing code, making sense of it and how it fits with the rest of the codebase than ever before. To me, using an unsound language seems more of a disservice to yourself.
+The crux of my argument is really simple: 
 
-Even if you go further beyond and find yourself a really good oracle for your agent to follow, the time spent and the amount of work you still have to do to properly define what it has to build is closely related to how much you can trust the programming language you are using and how much can you express with it. It is by no means a coincidence that type safe languages and formal methods of verification are of interest for this way of working.
+> Type Safety makes agent-generated code easier to verify and make sense of, since the type system does a lot of heavy lifting for you.
+
+With the advent of agentic coding you spend more time reviewing code, making sure it is what you wanted, the way you wanted to be and thinking about how it fits with the rest of the codebase.[^automatic_programming] So to invest in it means to choose better tools, and the language is one of those choices that heavily influences the results. 
+
+[^automatic_programming]: Instead of vibe-coding, I prefer [Automatic programming](https://antirez.com/news/159), since we should know what we are doing, we are not amateurs.
+
+Even if you go further and find yourself a good enough oracle so you feel there is no need to supervise it, the time spent and the amount of work you still have to do to properly define what it has to build is closely related to how much you can trust the programming language you are using, what guarantees it provides to you and how much can you express with it. [^formal]
+
+[^formal]: It is by no means a coincidence that type safe languages and formal methods of verification are of interest for this way of working.
 
 ## Further reading
 
-Memory safety:
+If any of the themes touched upon this article piqued your interest, I have the following reading recommendations:
 
-- _"[Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)"_ by Steve Klabnik.
-- _"[Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)"_ by Alex Klavod
-
-Oracles and the verification loop:
-
-- _"[Closing the verification loop: Observability-driven harnesses for building with agents](https://www.datadoghq.com/blog/ai/harness-first-agents/)"_ by the Datadog team.
-- _"[Test, don't (just) verify](https://alperenkeles.com/posts/test-dont-verify/)" and "[Verifiability is the Limit](https://alperenkeles.com/posts/verifiability-is-the-limit/)"_ by Alperen Keles.
-
-Formal Methods and Proofs:
-
-- _"[Types Correspond to Propositions](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions)"_ by By Michael R. Clarkson.
-- _"[Dear Agent: Prove it](https://rijnard.com/blog/dear-agent-proof)"_ by Rijnard van Tonder.
+| Theme| Article | Author |
+|:---:|---|---|
+| Memory safety | _"[Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)"_ | Steve Klabnik | 
+| | _"[Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)"_ | Alex Kladov |
+| Oracles & Formal Methods | _"[Closing the verification loop: Observability-driven harnesses for building with agents](https://www.datadoghq.com/blog/ai/harness-first-agents/)"_ | Datadog team |
+| | _"[Test, don't (just) verify](https://alperenkeles.com/posts/test-dont-verify/)" and "[Verifiability is the Limit](https://alperenkeles.com/posts/verifiability-is-the-limit/)"_ | Alperen Keles. |
+| |_"[Types Correspond to Propositions](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions)"_ | Michael R. Clarkson |
+| | _"[Dear Agent: Prove it](https://rijnard.com/blog/dear-agent-proof)"_ | Rijnard van Tonder. |
+| Type Systems | _"[Types are the basic tool of software design](https://www.tedinski.com/2018/12/05/types-as-design-tool.html)"_ and _"[The expression problem](https://www.tedinski.com/2018/02/27/the-expression-problem.html)"_ | Ted Kaminski |
 

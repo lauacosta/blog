@@ -66,7 +66,7 @@
       --emphasis: #1a1a1a;
       --accent: #279af1;
       --text-soft: rgba(0, 0, 0, 0.8);
-      --lang-bg: #fbfbf5; 
+      --lang-bg: #fbfbf5;
     }
   }
 
@@ -87,10 +87,6 @@
   }
 
   main {
-    /* flex-direction: row; */
-    /* display: flex; */
-    /* align-items: flex-start; */
-
     a {
       color: inherit;
       text-decoration: none;
@@ -190,6 +186,10 @@
 
     > * {
       margin: 0;
+    }
+
+    > ol {
+      margin: revert;
     }
 
     > *,
