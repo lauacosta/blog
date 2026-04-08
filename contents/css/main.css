@@ -11,8 +11,7 @@
     --muted: #dbdbd6;
     --lang-bg: #fbfbf5;
     --text: #1a1a1a;
-    /* --accent: #279af1; */
-    --accent: #ee6a1a;
+    --accent: #279af1;
     --text-soft: rgba(0, 0, 0, 0.8);
   }
 
@@ -20,8 +19,7 @@
     :root:has(#theme-toggle:checked) {
       --background: #181a1b;
       --text: #e8e6e3;
-      /* --accent: #279af1; */
-      --accent: #ee6a1a;
+      --accent: #279af1;
       --emphasis: #f5f5f5;
       --lang-bg: #181818;
       --muted: #2a2f36;
@@ -46,11 +44,11 @@
     :root {
       --background: #181a1b;
       --text: #e8e6e3;
-      /* --accent: #279af1; */
-      --accent: #ee6a1a;
+      --accent: #279af1;
       --emphasis: #f5f5f5;
       --muted: #2a2f36;
       --text-soft: rgba(255, 255, 255, 0.75);
+      --lang-bg: #181818;
     }
 
     .theme-toggle::before {
@@ -66,9 +64,9 @@
       --text: #070600;
       --muted: #dbdbd6;
       --emphasis: #1a1a1a;
-      /* --accent: #279af1; */
-      --accent: #ee6a1a;
+      --accent: #279af1;
       --text-soft: rgba(0, 0, 0, 0.8);
+      --lang-bg: #fbfbf5; 
     }
   }
 
@@ -797,6 +795,35 @@
     text-align: center;
     margin-top: 0;
     margin-bottom: 0.5rem;
+  }
+
+  table {
+    border-collapse: collapse;
+    width: 100%;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  thead th {
+    font-size: 0.78rem;
+    letter-spacing: 0.08em;
+    font-weight: bold;
+    padding: 0.6rem 1rem;
+    border: 2px solid #222;
+    border-right: 1px solid #ddd;
+  }
+
+  thead th:last-child {
+    border-right: none;
+  }
+
+  tbody td {
+    padding: 0.5rem 1rem;
+    vertical-align: middle;
+  }
+
+  tbody tr:first-child td {
+    border-top: none;
   }
 }
 
