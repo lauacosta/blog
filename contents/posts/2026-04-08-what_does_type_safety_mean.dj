@@ -1,24 +1,15 @@
 ---
 {
-    "title":"What Does Type Safety Mean",
+    "title":"The Guarantees Your Type System Makes",
     "published": false,
-    "abstract": "We explore what Type Safety is and why it is more important today than ever before with the advent of agentic coding.",
+    "abstract": "We explore what type safety means, how soundness is proven in a language's design, and why the rise of agentic coding makes these guarantees more valuable than ever for reasoning about code you didn't write yourself.",
     "tags": ["Type Systems", "Programming Languages"]
 } 
 ---
 
-# What Does Type Safety Mean
+# The Guarantees Your Type System Makes
 
-Recently, while talking to a friend I realized I couldn't explain why I think Typescript types don't offer the same guarantees as the ones in other static languages like C#, Rust or Java. To fix that, I learned a little bit about programming language theory to understand what sound languages are, so you can think of this article as what I would like to have known then.
-
-Funnily enough, it turned out to be the long road. To answer my original question it was enough to do two things:
-
-1. Read the documentation. [^docs]
-2. Remember it is still Javascript all the way down, so the types are just an illusion.
-
-I don't regret it though. It ended up really fun to write about. By the end of it you will have an understanding of what sound languages are, what type safety is all about, why it is an error to think of it as another term for memory safety and why I believe it matters more today than ever.
-
-[^docs]: It shows how by choosing structural over nominal typing, Typescript has a highly expressive type system at the cost of having many useful patterns be emulated in an ad-hoc way (for example, branded types to approximate nominal distinctions).
+Recently, while talking to a friend, I realized I couldn't explain why Typescript's types don't offer the same guarantees as those in C# or Rust. Looking for an answer led me to somewhere more interesting where I had to learn a little bit about programming language theory to understand what type safety actually means, why it's a property of a language's design and why it matters more today that it ever has.
 
 ## Sound languages
 
@@ -334,37 +325,24 @@ $ ./build/bin/clang -g -O3 -o main main.c && ./main
 ```
 This time, the Fil-C compiler ends up rewriting our program to always return `0`.
 
-## A Note On Soundness 
-
-Up to this point, it's clear what a sound language offers you: it makes programs easier to reason about and helps avoid whole classes of bugs. And with the case study, we saw how it is actually a property of the design of the language and not of the implementation (whereas memory safety _is_). 
-
-I want to take the opportunity to say that arguably the sweet spot of a language is not on being super strict about soundness. As it is often the case, the answer is in the gray and you will end up working with a language that is unsound and still be able to write a safe program using the sound subset, given that it exists.
-
-Even languages commonly thought of as type safe have their own escape hatches, like `Obj.magic` in Ocaml or the `unsafe` blocks in Rust. Not to mention the fact that you will have to interface with code written in C or C++ (for example, when working with Python, Ruby or Node.js, somewhat popular choices).
-
 ## Why It Matters
 
-Now, this is good and all, but why should you care about using sound languages? Certainly, many popular languages are fine with making parts of their language unsound in order to:
+Up to this point, it's clear what a sound language offers you: it makes programs easier to reason about and helps avoid whole classes of bugs. And with the case study, we saw how it is actually a property of the design of the language and not of the implementation (compared to, for example, memory safety). 
 
-- Prioritize compatibility and ease of adoption (Typescript)[^type-safe].
-- Squeeze the last drop of performance via optimizations (C or C++).
-- Prefer a simpler type system (Go).
+Most languages are not perfectly sound, and it's often the case that it is due to tradeoffs. Typescript sacrifices soundness for expressiveness and to be able to type one big mess of a language[^type-safe], C does it for performance, Go for simplicity and the list goes on. Even languages famously known for an emphasis on type safety have their own escape hatches, like `Obj.magic` in Ocaml or `std::transmute` in Rust. Not to mention the fact that _you will_ have to interface with code written in C or C++ (for example, when working with Python, Ruby or Node.js, somewhat popular choices).
 
-[^type-safe]: In this community, "type safe" is often used incorrectly since it is used to refer to static checking.
+[^type-safe]: Curiously, in this community, the term "type safe" is very often used incorrectly since it is used to refer to static checking.
 
-I think they offer some interesting incentives[^note]:
+And yet, the degree to which a language commits to soundness genuinely matters, since its benefits compound over time:[^note]
 
-- *It unlocks local reasoning*: You can reason about parts of a system without knowing all of it. This impacts code reviewing, makes refactoring easier and allows you to make sense of a codebase faster.
-- *It reduces mental overhead*: Somewhat related to the last point, one usually wants to work less, not more; in unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. 
+- *Local reasoning*: You can reason more about parts of a system without knowing all of it. This impacts code reviewing, makes refactoring easier and allows you to make sense of a codebase faster.
+- *Mental overhead*: Somewhat related to the last point, one usually wants to work less, not more; in unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. [^time-travel]
 - *Language choice*: It is often the case that languages that care about type safety also care about some things you would very much like to have, like strong type systems, a concern about correctness and the ability to express powerful ideas in the code itself.
 
+[^time-travel]: [It must have been fun debugging this.](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633)
 [^note]: You could argue that this applies more to static languages with strong type systems and I don't really think about dynamic languages. For that I can only say that I don't hide my preferences.
 
-::: info
-In mainstream languages, known cases of unsoundness are generally well-documented and the effort you have to put to avoid them varies from language to language. Unknown unsoundness, by contrast, could cause correctness and security problems or funnily enough [allow time travel](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633).
-:::
-
-Why do I claim that type safety is more important today than it was ever before? 
+Why do I think that type safety is more important today than it was ever before? 
 
 The crux of my argument is really simple: 
 
@@ -374,7 +352,7 @@ With the advent of agentic coding you spend more time reviewing code, making sur
 
 [^automatic_programming]: Instead of vibe-coding, I prefer [Automatic programming](https://antirez.com/news/159), since we should know what we are doing, we are not amateurs.
 
-Even if you go further and find yourself a good enough oracle so you feel there is no need to supervise it, the time spent and the amount of work you still have to do to properly define what it has to build is closely related to how much you can trust the programming language you are using, what guarantees it provides to you and how much can you express with it. [^formal]
+Even if you go further and find yourself a good enough oracle so you feel like it needs no supervision, the work doesn't disappear, it moves upstream. You still have to work designing the guard-rails so it doesn't go off-track. The language you choose determines how well you can do that: what invariants you can encode, what the type system can verify on your behalf, how much you can say with a signature alone[^formal].
 
 [^formal]: It is by no means a coincidence that type safe languages and formal methods of verification are of interest for this way of working.
 
