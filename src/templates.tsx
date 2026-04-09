@@ -251,7 +251,12 @@ export function Page(name: string, content: HtmlString) {
 
 export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
   function domain(url: string): string {
-    return new URL(url).host;
+    try {
+      return new URL(url).host;
+    } catch (err) {
+      console.error(`Invalid URL: ${url}`);
+      throw err;
+    }
   }
 
   const list_items = posts.map((post) => (

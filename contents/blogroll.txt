@@ -8,7 +8,6 @@ https://fasterthanli.me/index.xml
 https://ianthehenry.com/feed.xml
 https://okmij.org/ftp/rss.xml
 https://www.tedinski.com/feed.xml
-https://graydon2.dreamwidth.org/data/atom
 https://matklad.github.io/feed.xml
 https://vorpus.org/blog/feeds/atom.xml
 https://notes.eatonphil.com/rss.xml
@@ -23,3 +22,4 @@ https://www.brendangregg.com/blog/rss.xml
 https://feeds.feedburner.com/AyendeRahien
 https://alperenkeles.com/atom.xml
 https://gazagnaire.org/feed.xml
+https://graydon2.dreamwidth.org/data/rss

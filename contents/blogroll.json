@@ -1,0 +1,122 @@
+{
+  "createdAt": "2026-04-09T14:55:42.982Z",
+  "entries": [
+    {
+      "title": "GNU and the AI reimplementations",
+      "url": "http://antirez.com/news/162",
+      "date": "2026-03-08T16:08:41.000Z"
+    },
+    {
+      "title": "Examples for the tcpdump and dig man pages",
+      "url": "https://jvns.ca/blog/2026/03/10/examples-for-the-tcpdump-and-dig-man-pages/",
+      "date": "2026-03-10T00:00:00.000Z"
+    },
+    {
+      "title": "Generators with UnpinCell",
+      "url": "https://without.boats/blog/generators-with-unpin-cell/",
+      "date": "2024-10-25T00:00:00.000Z"
+    },
+    {
+      "title": "0058: borrow-checking surprises, books, links",
+      "url": "https://www.scattered-thoughts.net/log/0058/",
+      "date": "2026-04-07T00:00:00.000Z"
+    },
+    {
+      "title": "Steve Ballmer was an underrated CEO",
+      "url": "https://danluu.com/ballmer/",
+      "date": "2024-10-28T00:00:00.000Z"
+    },
+    {
+      "title": "In defense of lock poisoning in Rust",
+      "url": "https://sunshowers.io/posts/on-poisoning/?utm_source=atom_feed",
+      "date": "2025-12-02T00:00:00.000Z"
+    },
+    {
+      "title": "2025 Recap: so many projects",
+      "url": "https://fasterthanli.me/articles/2025-recap",
+      "date": "2025-12-31T22:00:00.000Z"
+    },
+    {
+      "title": "Periodic Spaces",
+      "url": "https://ianthehenry.com/posts/periodic-spaces/",
+      "date": "2025-11-30T00:00:00.000Z"
+    },
+    {
+      "title": "Matrix-matrix multiplication, from less conventional points of view:",
+      "url": "https://okmij.org/ftp/Algorithms/matmul.html",
+      "date": "2026-04-07T00:01:00.000Z"
+    },
+    {
+      "author": "Alex Kladov",
+      "title": "Consensus Board Game",
+      "url": "https://matklad.github.io/2026/03/19/consensus-board-game.html",
+      "date": "2026-03-19T00:00:00.000Z"
+    },
+    {
+      "title": "Who contributed to DataFusion 53",
+      "url": "http://notes.eatonphil.com/2026-04-03-who-contributed-to-datafusion-53.html",
+      "date": "2026-04-03T00:00:00.000Z"
+    },
+    {
+      "title": "dcmake: a new CMake debugger UI",
+      "url": "https://nullprogram.com/blog/2026/04/07/",
+      "date": "2026-04-07T03:04:02.000Z"
+    },
+    {
+      "author": "Alice Ryhl",
+      "title": "RFC: Pass pointers to const in assembly",
+      "url": "https://ryhl.io/blog/asm-const-ptr/",
+      "date": "2025-11-05T00:00:00.000Z"
+    },
+    {
+      "author": "marcbrooker@gmail.com (Marc Brooker)",
+      "title": "What about juniors?",
+      "url": "http://brooker.co.za/blog/2026/03/25/ic-junior.html",
+      "date": "2026-03-25T00:00:00.000Z"
+    },
+    {
+      "author": "Jack Vanlightly",
+      "title": "The Three Durable Function Forms",
+      "url": "https://jack-vanlightly.com/blog/2025/12/10/the-three-durable-function-forms",
+      "date": "2025-12-10T13:52:52.000Z"
+    },
+    {
+      "author": "Julian Hyde",
+      "title": "Datalog in Morel",
+      "url": "http://blog.hydromatic.net/2026/03/09/datalog-in-morel.html",
+      "date": "2026-03-09T20:00:00.000Z"
+    },
+    {
+      "title": "Testing the Datadog Explain Plan Visualizer with Oracle execution plans",
+      "url": "https://tanelpoder.com/posts/testing-datadog-plan-visualizer-with-oracle-execution-plans/",
+      "date": "2026-03-01T01:37:33.000Z"
+    },
+    {
+      "title": "Rust is perfectly imperfect",
+      "url": "http://0x80.pl/notesen/2026-01-08-imperfect-rust.html",
+      "date": "2026-01-08T11:00:00.000Z"
+    },
+    {
+      "title": "Why I joined OpenAI",
+      "url": "http://www.brendangregg.com/blog//2026-02-07/why-i-joined-openai.html",
+      "date": "2026-02-06T13:00:00.000Z"
+    },
+    {
+      "title": "The 'Million AI Monkeys' Hypothesis & Real-World Projects",
+      "url": "https://ayende.com/blog/203907-B/the-million-ai-monkeys-hypothesis-real-world-projects?Key=76196b00-f0e4-4d7a-a587-4187133e99c0",
+      "date": "2026-02-27T12:00:00.000Z"
+    },
+    {
+      "author": "Alperen Keles",
+      "title": "What is a property?",
+      "url": "https://alperenkeles.com/posts/what-is-a-property/",
+      "date": "2026-04-05T00:00:00.000Z"
+    },
+    {
+      "author": "Thomas Gazagnaire",
+      "title": "Predicting Satellite Collisions in OCaml",
+      "url": "https://gazagnaire.org/blog/2026-04-07-ssa.html",
+      "date": "2026-04-07T00:00:00.000Z"
+    }
+  ]
+}

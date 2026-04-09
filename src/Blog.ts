@@ -9,7 +9,6 @@ import {
   Post as PostPage,
   PostList,
 } from "./templates.tsx";
-import { initTreeSitter } from "./tree_sitter.ts";
 import { to_lower_snake_case, to_title_case } from "./utils.ts";
 import { ServeBlog } from "./http_server.ts";
 import { Blogroll } from "./blogroll.ts";
@@ -65,7 +64,6 @@ export const Blog = {
 
   async build(
     clean: boolean,
-    profile: boolean,
     blogroll: boolean,
   ): Promise<void> {
     const t = performance.now();
@@ -167,7 +165,7 @@ export const Blog = {
     ctx.print_stats();
   },
 
-  async watch(clean: boolean, profile: boolean): Promise<void> {
+  async watch(clean: boolean): Promise<void> {
     let signal = Promise.withResolvers();
     (async () => {
       let build_id = 0;
@@ -177,8 +175,7 @@ export const Blog = {
         build_id += 1;
         await Blog.build(
           clean,
-          profile,
-          false,
+          true,
         );
       }
     })();

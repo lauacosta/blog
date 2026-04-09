@@ -1,6 +1,6 @@
 ## Style Guidelines
 
-For all my typography-mindend readers, this is the guideline the site follows:
+I recommend reading [Butterick's Practical Typography](https://practicaltypography.com/) if you have any interest. This is the guideline the site follows:
 
 - [`Iosevka`](http://be5invis.github.io/Iosevka) for everything code related.
 - [et-book](https://edwardtufte.github.io/et-book/) for everything else.

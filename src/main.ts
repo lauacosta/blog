@@ -3,7 +3,10 @@ import { initTreeSitter } from "./tree_sitter.ts";
 
 type CliSchema = {
   draft: { args: ["title"]; options: { published?: boolean } };
-  build: { args: []; options: { profile?: boolean; blogroll?: boolean; clean?: boolean } };
+  build: {
+    args: [];
+    options: { profile?: boolean; blogroll?: boolean; clean?: boolean };
+  };
   watch: { args: []; options: { profile?: boolean; clean?: boolean } };
   serve: { args: []; options: { port?: string } };
   spell: { args: []; options: Record<string, never> };
@@ -40,7 +43,6 @@ Options:
 Does a lot of things to publish
 
 Options:
-  --profile          Enable profiling
   --Blogroll         Include blogroll
   --clean            Clean dist folder first (default: true)`);
       break;
@@ -50,7 +52,6 @@ Options:
 Rebuilds the whole blog on change
 
 Options:
-  --profile          Enable profiling
   --clean            Clean dist folder first`);
       break;
     case "serve":
@@ -69,7 +70,13 @@ Spell checks the newest post with wiz`);
   }
 }
 
-function parseArgs(argv: string[]): { command: keyof CliSchema; args: string[]; options: Record<string, string | boolean> } {
+function parseArgs(
+  argv: string[],
+): {
+  command: keyof CliSchema;
+  args: string[];
+  options: Record<string, string | boolean>;
+} {
   const rawCommand = argv[0];
 
   if (!rawCommand || rawCommand === "--help" || rawCommand === "-h") {
@@ -99,7 +106,11 @@ function parseArgs(argv: string[]): { command: keyof CliSchema; args: string[]; 
     if (arg.startsWith("--")) {
       const [key, value] = arg.slice(2).split("=");
       if (value !== undefined) {
-        options[key] = value === "true" || value === "1" ? true : value === "false" || value === "0" ? false : value;
+        options[key] = value === "true" || value === "1"
+          ? true
+          : value === "false" || value === "0"
+          ? false
+          : value;
       } else if (argv[i + 1] && !argv[i + 1].startsWith("--")) {
         options[key] = argv[++i];
       } else {
@@ -136,18 +147,16 @@ async function main() {
 
     case "build": {
       await initTreeSitter();
-      const profile = options.profile === true;
       const clean = options.clean !== false;
       const blogroll = options.blogroll === true;
-      await Blog.build(clean, profile, blogroll);
+      await Blog.build(clean, blogroll);
       return;
     }
 
     case "watch": {
       await initTreeSitter();
-      const profile = options.profile === true;
       const clean = options.clean !== false;
-      await Blog.watch(clean, profile);
+      await Blog.watch(clean);
       return;
     }
 
