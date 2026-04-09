@@ -91,8 +91,8 @@ function Base(
     extra_css?: string;
   },
 ) {
-  const snake_case_title = to_lower_snake_case(title);
-  const og_image_path = date ? `og-${snake_case_title}-d1d3.png` : "og.png";
+
+  const og_image_path = "og.png";
   const def_title = date ? `${title} - Lautaro Acosta Quintana` : title;
 
   return (
