@@ -23,3 +23,4 @@ https://feeds.feedburner.com/AyendeRahien
 https://alperenkeles.com/atom.xml
 https://gazagnaire.org/feed.xml
 https://graydon2.dreamwidth.org/data/rss
+https://anil.recoil.org/news.xml
