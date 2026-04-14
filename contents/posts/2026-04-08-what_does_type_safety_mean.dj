@@ -357,21 +357,13 @@ Even if you go further and find yourself a good enough oracle that you feel need
 If any of the themes touched upon this article piqued your interest, I have the following reading recommendations:
 
 ::: links
-Memory safety:
-
 - [Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)
 - [Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)
-
-Oracles & Formal Methods:
-
 - [Closing the verification loop: Observability-driven harnesses for building with agents](https://www.datadoghq.com/blog/ai/harness-first-agents/)
 - [Test, don't (just) verify](https://alperenkeles.com/posts/test-dont-verify/)
 - [Verifiability is the Limit](https://alperenkeles.com/posts/verifiability-is-the-limit/)
 - [Types Correspond to Propositions](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions)
 - [Dear Agent: Prove it](https://rijnard.com/blog/dear-agent-proof)
-
-Type Systems:
-
 - [Types are the basic tool of software design](https://www.tedinski.com/2018/12/05/types-as-design-tool.html)
 - [The expression problem](https://www.tedinski.com/2018/02/27/the-expression-problem.html)
 :::

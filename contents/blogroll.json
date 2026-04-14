@@ -1,10 +1,10 @@
 {
-  "createdAt": "2026-04-09T14:55:42.982Z",
+  "createdAt": "2026-04-19T22:39:39.732Z",
   "entries": [
     {
-      "title": "GNU and the AI reimplementations",
-      "url": "http://antirez.com/news/162",
-      "date": "2026-03-08T16:08:41.000Z"
+      "title": "AI cybersecurity is not proof of work",
+      "url": "http://antirez.com/news/163",
+      "date": "2026-04-16T10:46:46.000Z"
     },
     {
       "title": "Examples for the tcpdump and dig man pages",
@@ -53,9 +53,9 @@
       "date": "2026-03-19T00:00:00.000Z"
     },
     {
-      "title": "Who contributed to DataFusion 53",
-      "url": "http://notes.eatonphil.com/2026-04-03-who-contributed-to-datafusion-53.html",
-      "date": "2026-04-03T00:00:00.000Z"
+      "title": "Who even uses jemalloc in 2026 anyway? (many major projects)",
+      "url": "http://notes.eatonphil.com/2026-04-16-who-even-uses-jemalloc-anyway.html",
+      "date": "2026-04-16T00:00:00.000Z"
     },
     {
       "title": "dcmake: a new CMake debugger UI",
@@ -70,9 +70,9 @@
     },
     {
       "author": "marcbrooker@gmail.com (Marc Brooker)",
-      "title": "What about juniors?",
-      "url": "http://brooker.co.za/blog/2026/03/25/ic-junior.html",
-      "date": "2026-03-25T00:00:00.000Z"
+      "title": "Spec Driven Development isn't Waterfall",
+      "url": "http://brooker.co.za/blog/2026/04/09/waterfall-vs-spec.html",
+      "date": "2026-04-09T00:00:00.000Z"
     },
     {
       "author": "Jack Vanlightly",
@@ -87,9 +87,9 @@
       "date": "2026-03-09T20:00:00.000Z"
     },
     {
-      "title": "Testing the Datadog Explain Plan Visualizer with Oracle execution plans",
-      "url": "https://tanelpoder.com/posts/testing-datadog-plan-visualizer-with-oracle-execution-plans/",
-      "date": "2026-03-01T01:37:33.000Z"
+      "title": "Get Oracle Partition High Values as VARCHAR2 types instead of LONG in Oracle 19c and earlier",
+      "url": "https://tanelpoder.com/posts/oracle-get-partition-high-value-function/",
+      "date": "2026-04-10T17:00:30.000Z"
     },
     {
       "title": "Rust is perfectly imperfect",
@@ -102,21 +102,32 @@
       "date": "2026-02-06T13:00:00.000Z"
     },
     {
-      "title": "The 'Million AI Monkeys' Hypothesis & Real-World Projects",
-      "url": "https://ayende.com/blog/203907-B/the-million-ai-monkeys-hypothesis-real-world-projects?Key=76196b00-f0e4-4d7a-a587-4187133e99c0",
-      "date": "2026-02-27T12:00:00.000Z"
+      "title": "Agents, Code Reviews, and the Bottleneck Shift, Oh My!",
+      "url": "https://ayende.com/blog/203939-C/agents-code-reviews-and-the-bottleneck-shift-oh-my?Key=a4aac51e-45ff-426d-8340-9c2056e743f0",
+      "date": "2026-04-17T12:00:00.000Z"
     },
     {
       "author": "Alperen Keles",
-      "title": "What is a property?",
-      "url": "https://alperenkeles.com/posts/what-is-a-property/",
-      "date": "2026-04-05T00:00:00.000Z"
+      "title": "On The Simplicity of Humanness",
+      "url": "https://alperenkeles.com/posts/on-the-simplicity-of-humanness/",
+      "date": "2026-04-13T00:00:00.000Z"
     },
     {
       "author": "Thomas Gazagnaire",
-      "title": "Predicting Satellite Collisions in OCaml",
-      "url": "https://gazagnaire.org/blog/2026-04-07-ssa.html",
-      "date": "2026-04-07T00:00:00.000Z"
+      "title": "Reimplementing the Space Protocol Stack from Scratch",
+      "url": "https://gazagnaire.org/blog/2026-04-15-ccsds-protocol-stack.html",
+      "date": "2026-04-15T00:00:00.000Z"
+    },
+    {
+      "title": "LLM time",
+      "url": "https://graydon2.dreamwidth.org/322732.html",
+      "date": "2026-03-14T20:59:55.000Z"
+    },
+    {
+      "author": "Anil Madhavapeddy",
+      "title": "The FP Launchpad takes off at IIT Madras",
+      "url": "https://anil.recoil.org/notes/fpl-launch",
+      "date": "2026-04-13T00:00:00.000Z"
     }
   ]
 }

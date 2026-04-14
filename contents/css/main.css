@@ -738,23 +738,28 @@
     padding-inline: 0.9em;
     align-self: flex-start;
     margin: 0 0.15em;
-    /* max-width: var(--info-width); */
   }
 
   .links {
-    .ul {
-      padding-left: 0;  
-      margin-left: 0;    
+    ul {
+      padding-left: 0.5rem;
+      margin-left: 0;
+      list-style: none;
     }
 
     li {
       gap: 0.35rem;
+      padding: 0.15rem 0;
       display: flex;
       align-items: center;
+      padding-left: 0;
+      margin-left: 0;
+      list-style: none;
     }
 
     .link-favicon {
       display: block;
+      justify-content: center;
       flex-shrink:0;
       width: 14px;
       height: 14px;
