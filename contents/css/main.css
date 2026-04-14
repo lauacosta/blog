@@ -731,6 +731,48 @@
     text-decoration: underline;
   }
 
+  .info {
+    background: var(--muted);
+    border-radius: 0.8em;
+    padding-block: 0.2em;
+    padding-inline: 0.9em;
+    align-self: flex-start;
+    margin: 0 0.15em;
+    /* max-width: var(--info-width); */
+  }
+
+  .links {
+    .ul {
+      padding-left: 0;  
+      margin-left: 0;    
+    }
+
+    li {
+      gap: 0.35rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .link-favicon {
+      display: block;
+      flex-shrink:0;
+      width: 14px;
+      height: 14px;
+      object-fit: cover;
+      background: var(--background);
+    }
+
+    .link-label {
+      flex: 1;
+      min-width: 0;
+    }
+
+    ul li::marker {
+      content: none;
+    }
+  }
+
+
   kbd {
     font-family: "Iosevka", monospace;
     font-variant-ligatures: none;
@@ -759,7 +801,7 @@
   aside.admn {
     display: flex;
     flex-direction: row;
-    align-items: center;
+    background: var(--background);
   }
 
   aside.admn > svg.icon {

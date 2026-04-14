@@ -30,10 +30,11 @@ export function parse(source: string): Doc {
   return djot_parse(source);
 }
 
-type RenderCtx = {
+export type RenderCtx = {
   date?: Date;
   summary?: string;
   title?: string;
+  faviconMap?: Map<string, Map<string, string>>;
 };
 
 export function estimate_reading_time(doc: Doc): number {
@@ -186,10 +187,33 @@ export function render(
     },
     div: (node: Div, r: HTMLRenderer): string => {
       let admon_icon = "";
-      if (has_class(node, "info")) admon_icon = "info";
       if (has_class(node, "warn")) admon_icon = "warn";
-      // if (has_class(node, "private")) admon_icon = "private";
       if (has_class(node, "danger")) admon_icon = "danger";
+      if (has_class(node, "links")) {
+        const favicons = ctx.faviconMap?.get(node.attributes?._linksKey ?? "");
+
+        if (favicons) {
+          const originalLink = r.options.overrides?.link;
+          r.options.overrides = {
+            ...r.options.overrides,
+            link(n: Link, renderer: HTMLRenderer) {
+              const favicon = favicons.get(n.destination ?? "");
+              const img = favicon
+                ? `<img class="link-favicon" src="${favicon}" width="14" height="14" loading="lazy" alt=""/>`
+                : "";
+              const label = renderer.renderChildren(n);
+              return `${img}<a class="link-label" href="${n.destination}">${label}</a>`;
+            },
+          };
+
+          const html =
+            `<div${r.renderAttributes(node)}>${r.renderChildren(node)}</div>`;
+
+          r.options.overrides = { ...r.options.overrides, link: originalLink };
+
+          return html;
+        }
+      }
 
       if (admon_icon) {
         return `<aside${
@@ -383,3 +407,71 @@ const add_string_content = function (
     }
   }
 };
+
+function findLinks(node: AstNode): string[] {
+  const urls: string[] = [];
+  if (node.tag === "link" && node.destination) {
+    urls.push(node.destination);
+  }
+  const children = (node as { children?: AstNode[] }).children;
+  if (children) {
+    for (const child of children) {
+      urls.push(...findLinks(child));
+    }
+  }
+  return urls;
+}
+
+function findLinksDivs(node: AstNode): Array<{ key: string; urls: string[] }> {
+  const results: Array<{ key: string; urls: string[] }> = [];
+  let counter = 0;
+
+  function walk(n: AstNode) {
+    if (n.tag === "div" && has_class(n, "links")) {
+      const key = `links-${counter++}`;
+      const urls = findLinks(n);
+      (n.attributes ??= {})._linksKey = key;
+      results.push({ key, urls });
+    }
+    const children = (n as { children?: AstNode[] }).children;
+    if (children) {
+      for (const child of children) walk(child);
+    }
+  }
+
+  walk(node);
+  return results;
+}
+
+export async function buildFaviconMap(doc: Doc): Promise<Map<string, Map<string, string>>> {
+  const containers = findLinksDivs(doc);
+
+  if (containers.length === 0) return new Map();
+
+  const allUrls = [...new Set(containers.flatMap((c) => c.urls))];
+
+  console.log(`\x1b[33m[Resolving favicons]\x1b[0m`);
+
+  const entries = await Promise.all(
+    allUrls.map(async (url) => [url, await getFavicon(url)] as const),
+  );
+  const urlToFavicon = new Map(entries);
+
+  const result = new Map<string, Map<string, string>>();
+  for (const { key, urls } of containers) {
+    const nodeMap = new Map(urls.map((u) => [u, urlToFavicon.get(u)!]));
+    result.set(key, nodeMap);
+  }
+
+  console.log(
+    `\x1b[90mResolved ${urlToFavicon.size} favicons for ${containers.length} links divs\x1b[0m`,
+  );
+
+  return result;
+}
+
+function getFavicon(url: string): string {
+  const { hostname } = new URL(url);
+  return `https://www.google.com/s2/favicons?domain=${hostname}&sz=32`;
+}
+
