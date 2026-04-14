@@ -168,14 +168,12 @@ The key difference is that, in the previous model, these kinds of errors were gu
 And since there exists only one singular recursive type, _Preservation_ now plays a lesser role here; there is no static type information to preserve between evaluations! The runtime, through _Classification_ and _Class Checking_, enforces the discipline that guarantees safe evaluation. 
 
 ::: info
-Historically there has been an "war" based on the preference over dynamic or static languages, futile as it is. 
-
-Nowadays static languages seem to be preferred if we take the fact that there have been great efforts made towards introducing static typing to dynamic languages: Python has external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for performing static analysis on annotations. Little old [Typescript](https://www.typescriptlang.org/), the most popular language in the world, plays a similar role by adding a static type system whose types are erased when compiling to Javascript. More recently, [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) has been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/01we lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf) to the language itself.
+There have been great efforts made towards introducing static typing to dynamic languages: Python has external tools like [mypy](https://mypy-lang.org/) and [ty](https://docs.astral.sh/ty/) for static analysis based on annotations. Little old [Typescript](https://www.typescriptlang.org/), the most popular language in the world, plays a similar role by adding a static type system on top of Javascript. More recently, [Elixir](https://hexdocs.pm/elixir/main/gradual-set-theoretic-types.html) has been working on adding a [gradual type system](https://drops.dagstuhl.de/storage/01we lipics/lipics-vol032-snapl2015/LIPIcs.SNAPL.2015.274/LIPIcs.SNAPL.2015.274.pdf).
 :::
 
 ## Case study: Division by zero
 
-We'll look at how Rust and C handle division by zero, both in their implementations and in their specifications. The goal is to see how soundness is a property of a language's semantics, not of any particular implementation.
+We'll look at simple enough snippet in Rust and C to compare what their specifications have to say and what different implementations end up doing, in order to illustrate why soundness is a property of a language semantics and not of it implementations.
 
 ``` rust
 fn div(a: u32, b: u32) -> u32 {
@@ -336,7 +334,7 @@ Most languages are not perfectly sound, and it's often the case that it is due t
 And yet, the degree to which a language commits to soundness genuinely matters, since its benefits compound over time:[^note]
 
 - *Local reasoning*: You can reason more about parts of a system without knowing all of it. This impacts code reviewing, makes refactoring easier and allows you to make sense of a codebase faster.
-- *Mental overhead*: Somewhat related to the last point, one usually wants to work less, not more; in unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. [^time-travel]
+- *Mental overhead*: Somewhat related to the last point, one usually wants to work less, not more. In unsound languages you have to work harder and rely more on tools, your own experience or the community's to learn the [patterns](https://www.lysator.liu.se/c/ten-commandments.html) to avoid the unsound parts. [^time-travel]
 - *Language choice*: It is often the case that languages that care about type safety also care about some things you would very much like to have, like strong type systems, a concern about correctness and the ability to express powerful ideas in the code itself.
 
 [^time-travel]: [It must have been fun debugging this.](https://devblogs.microsoft.com/oldnewthing/20140627-00/?p=633)
@@ -350,23 +348,30 @@ The crux of my argument is really simple:
 
 With the advent of agentic coding, you spend more time reviewing code, making sure it is what you wanted, with the level of care you want it to have and thinking about how it fits with the rest of the codebase.[^automatic_programming] To invest in this way of working means to choose better tools, and a language is one of those choices that heavily influences your results. 
 
-[^automatic_programming]: Instead of vibe-coding, I prefer [Automatic programming](https://antirez.com/news/159), since we know what we are doing, we are not amateurs.
+[^automatic_programming]: I like what Antirez wrote on [Automatic programming](https://antirez.com/news/159), even if I don't like the naming. The idea is that we know what we are doing, we are not amateurs, we do not _vibe_.
 
-Even if you go further and find yourself a good enough oracle that you feel needs no supervision, the work doesn't disappear, it moves upstream. You still have to work designing the guard-rails so it doesn't go off-track. The language you choose determines how well you can do that: what invariants you can encode, what the type system can verify on your behalf, how much you can say with a signature alone[^formal].
-
-[^formal]: It is by no means a coincidence that type-safe languages and formal methods of verification are of interest for this way of working.
+Even if you go further and find yourself a good enough oracle that you feel needs no supervision, the work doesn't disappear, it moves upstream. You still have to work designing the guard-rails so it doesn't go off-track. The language you choose determines how well you can do that: what invariants you can encode, what the type system can verify on your behalf, how much you can say with a signature alone.
 
 ## Further reading
 
 If any of the themes touched upon this article piqued your interest, I have the following reading recommendations:
 
-| Theme| Article | Author |
-|:---:|---|---|
-| Memory safety | _"[Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)"_ | Steve Klabnik | 
-| | _"[Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)"_ | Alex Kladov |
-| Oracles & Formal Methods | _"[Closing the verification loop: Observability-driven harnesses for building with agents](https://www.datadoghq.com/blog/ai/harness-first-agents/)"_ | Datadog team |
-| | _"[Test, don't (just) verify](https://alperenkeles.com/posts/test-dont-verify/)" and "[Verifiability is the Limit](https://alperenkeles.com/posts/verifiability-is-the-limit/)"_ | Alperen Keles. |
-| |_"[Types Correspond to Propositions](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions)"_ | Michael R. Clarkson |
-| | _"[Dear Agent: Prove it](https://rijnard.com/blog/dear-agent-proof)"_ | Rijnard van Tonder. |
-| Type Systems | _"[Types are the basic tool of software design](https://www.tedinski.com/2018/12/05/types-as-design-tool.html)"_ and _"[The expression problem](https://www.tedinski.com/2018/02/27/the-expression-problem.html)"_ | Ted Kaminski |
+::: links
+Memory safety:
 
+- [Memory Safety is a Red Herring](https://steveklabnik.com/writing/memory-safety-is-a-red-herring/)
+- [Memory safety is...](https://matklad.github.io/2025/12/30/memory-safety-is.html)
+
+Oracles & Formal Methods:
+
+- [Closing the verification loop: Observability-driven harnesses for building with agents](https://www.datadoghq.com/blog/ai/harness-first-agents/)
+- [Test, don't (just) verify](https://alperenkeles.com/posts/test-dont-verify/)
+- [Verifiability is the Limit](https://alperenkeles.com/posts/verifiability-is-the-limit/)
+- [Types Correspond to Propositions](https://cs3110.github.io/textbook/chapters/adv/curry-howard.html#types-correspond-to-propositions)
+- [Dear Agent: Prove it](https://rijnard.com/blog/dear-agent-proof)
+
+Type Systems:
+
+- [Types are the basic tool of software design](https://www.tedinski.com/2018/12/05/types-as-design-tool.html)
+- [The expression problem](https://www.tedinski.com/2018/02/27/the-expression-problem.html)
+:::
