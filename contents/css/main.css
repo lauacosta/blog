@@ -694,9 +694,8 @@
   }
 
   .blogroll {
-    margin-left: 0;
-    list-style: none;
     max-width: 65ch;
+    padding-left: 0.3rem;
 
     > li {
       margin-bottom: 1.3rem;
@@ -769,8 +768,6 @@
       display: block;
       justify-content: center;
       flex-shrink:0;
-      /* width: 14px; */
-      /* height: 14px; */
       object-fit: cover;
       background: var(--background);
     }

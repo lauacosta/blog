@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-04-19T22:39:39.732Z",
+  "createdAt": "2026-04-20T18:25:02.627Z",
   "entries": [
     {
       "title": "AI cybersecurity is not proof of work",
@@ -48,9 +48,9 @@
     },
     {
       "author": "Alex Kladov",
-      "title": "Consensus Board Game",
-      "url": "https://matklad.github.io/2026/03/19/consensus-board-game.html",
-      "date": "2026-03-19T00:00:00.000Z"
+      "title": "256 Lines or Less: Test Case Minimization",
+      "url": "https://matklad.github.io/2026/04/20/test-case-minimization.html",
+      "date": "2026-04-20T00:00:00.000Z"
     },
     {
       "title": "Who even uses jemalloc in 2026 anyway? (many major projects)",
@@ -128,6 +128,12 @@
       "title": "The FP Launchpad takes off at IIT Madras",
       "url": "https://anil.recoil.org/notes/fpl-launch",
       "date": "2026-04-13T00:00:00.000Z"
+    },
+    {
+      "author": "Filippo Valsorda <feed@filippo.io>",
+      "title": "Quantum Computers Are Not a Threat to 128-bit Symmetric Keys",
+      "url": "https://words.filippo.io/128-bits/",
+      "date": "2026-04-20T15:21:12.000Z"
     }
   ]
 }
