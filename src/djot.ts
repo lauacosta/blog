@@ -37,7 +37,7 @@ export type RenderCtx = {
   faviconMap?: Map<string, Map<string, string>>;
 };
 
-export function estimate_reading_time(doc: Doc): number {
+export function estimate_reading_time(doc: Doc): {reading_time_mins: number, number_of_words: number} {
   let words = 0;
   let images = 0;
   let code_blocks = 0;
@@ -64,11 +64,11 @@ export function estimate_reading_time(doc: Doc): number {
 
   visit(doc);
 
-  return Math.ceil(
+  return {reading_time_mins: Math.ceil(
     words / 225 +
       images * 0.17 +
       code_blocks * 0.5,
-  );
+  ), number_of_words:words}
 }
 
 export function render(

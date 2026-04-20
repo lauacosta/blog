@@ -273,7 +273,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
     t = performance.now();
     const render_ctx: djot.RenderCtx = { date: iso_date, summary: undefined, title: undefined };
 
-    const reading_time_mins = djot.estimate_reading_time(ast);
+    const { reading_time_mins, number_of_words }= djot.estimate_reading_time(ast);
 
     render_ctx.faviconMap = djot.buildFaviconMap(ast);
     const html = djot.render(ast, render_ctx, reading_time_mins);
@@ -296,6 +296,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
       year,
       month,
       reading_time_mins,
+      words: number_of_words,
       day,
       slug,
       iso_date,

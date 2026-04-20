@@ -248,7 +248,7 @@ export function Page(name: string, content: HtmlString) {
 }
 
 export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
-  function domain(url: string): string {
+  function get_domain(url: string): string {
     try {
       return new URL(url).host;
     } catch (err) {
@@ -257,16 +257,24 @@ export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
     }
   }
 
-  const list_items = posts.map((post) => (
+  posts.sort((p1,p2) => p2.date.getTime() - p1.date.getTime());
+
+  const list_items = posts.map((post) => {
+    const domain = get_domain(post.url);
+    const favicon= `https://www.google.com/s2/favicons?domain=${domain}&sz=32`;
+
+    return (
     <li>
       <h2>
+        <img class="link-favicon" src={favicon} width="22" height="22" loading="lazy" alt=""/>
         <a href={post.url}>{post.title}</a>
       </h2>
       <div class="meta-row">
-        <Time date={post.date} /> {domain(post.url)}
+        <Time date={post.date} /> {domain}
       </div>
     </li>
-  ));
+  )});
+
 
   return (
     <Base
@@ -309,7 +317,7 @@ export function PostList(
         <div class="meta-row">
           <Time className="meta" date={post.iso_date} />
           <span class="reading-time">
-            {post.reading_time_mins} min read
+            {post.reading_time_mins} min read ({post.words} words)
           </span>
           <div class="tags">
             {tags}

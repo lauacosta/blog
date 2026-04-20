@@ -612,6 +612,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 8px;
+    margin-top: 0.15rem;
 
     a::after {
       content: none;
@@ -638,7 +639,6 @@
   .tag {
     font-weight: bold;
     font-style: italic;
-    /* color: var(--accent); */
     color: var(--text-soft);
     text-decoration: none;
   }
@@ -699,7 +699,7 @@
     max-width: 65ch;
 
     > li {
-      margin-bottom: 1rem;
+      margin-bottom: 1.3rem;
     }
 
     > li::marker {
@@ -708,12 +708,20 @@
 
     h2 {
       margin: 0;
-      font-size: 1.6rem;
+      font-size: 1.5rem;
+
+      display: flex;
+      align-items: baseline;
+      gap: 0.5rem;
     }
 
     a {
       text-decoration: none;
-      color: var(--accent);
+      /* color: var(--accent); */
+    }
+
+    h2 a {
+      line-height: 1.25;
     }
 
     a:hover {
@@ -761,8 +769,8 @@
       display: block;
       justify-content: center;
       flex-shrink:0;
-      width: 14px;
-      height: 14px;
+      /* width: 14px; */
+      /* height: 14px; */
       object-fit: cover;
       background: var(--background);
     }
