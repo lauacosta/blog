@@ -443,7 +443,7 @@ function findLinksDivs(node: AstNode): Array<{ key: string; urls: string[] }> {
   return results;
 }
 
-export async function buildFaviconMap(doc: Doc): Promise<Map<string, Map<string, string>>> {
+export function buildFaviconMap(doc: Doc): Map<string, Map<string, string>> {
   const containers = findLinksDivs(doc);
 
   if (containers.length === 0) return new Map();
@@ -452,9 +452,7 @@ export async function buildFaviconMap(doc: Doc): Promise<Map<string, Map<string,
 
   console.log(`\x1b[33m[Resolving favicons]\x1b[0m`);
 
-  const entries = await Promise.all(
-    allUrls.map(async (url) => [url, await getFavicon(url)] as const),
-  );
+  const entries = allUrls.map((url) => [url, getFavicon(url)] as const);
   const urlToFavicon = new Map(entries);
 
   const result = new Map<string, Map<string, string>>();

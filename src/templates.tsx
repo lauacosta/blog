@@ -3,7 +3,6 @@
 /** @jsxFrag Fragment */
 // deno-lint-ignore-file no-explicit-any
 import { escapeHtml, h, Raw, render, VNode } from "./tsx.ts";
-import { to_lower_snake_case } from "./utils.ts";
 import { Post as PostData } from "./Post.ts";
 import { FeedEntry as FeedEntryData } from "./blogroll.ts";
 import { HtmlString } from "./HtmlString.ts";
@@ -276,6 +275,7 @@ export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
       description={blurb}
       src="/src/templates.tsx"
     >
+    <p>Blogs I like reading and have posted in the last 2 years.</p>
       <ul class="blogroll">
         {list_items}
       </ul>

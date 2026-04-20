@@ -275,7 +275,7 @@ async function collect_posts(ctx: Ctx): Promise<Post[]> {
 
     const reading_time_mins = djot.estimate_reading_time(ast);
 
-    render_ctx.faviconMap = await djot.buildFaviconMap(ast);
+    render_ctx.faviconMap = djot.buildFaviconMap(ast);
     const html = djot.render(ast, render_ctx, reading_time_mins);
 
     const render_ms = performance.now() - t;
