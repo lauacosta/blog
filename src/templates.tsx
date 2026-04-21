@@ -266,7 +266,7 @@ export function BlogRoll({ posts }: { posts: FeedEntryData[] }) {
     return (
     <li>
       <h2>
-        <img class="link-favicon" src={favicon} width="22" height="22" loading="lazy" alt=""/>
+        <img class="link-favicon" src={favicon} width="16" height="16" loading="lazy" alt=""/>
         <a href={post.url}>{post.title}</a>
       </h2>
       <div class="meta-row">

@@ -136,6 +136,7 @@ export const Blog = {
       "404",
       "ai_transparency",
       "style_guidelines",
+      "notes",
     ];
     for (const page of pages) {
       const text = await Deno.readTextFile(`contents/${page}.dj`);
