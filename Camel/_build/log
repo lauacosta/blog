@@ -1,0 +1,18 @@
+# /nix/store/mwid28g7c1186hn4gpvmzipx6f7kwbgi-dune-3.21.1/bin/dune exec bin/main.exe
+# OCAMLPARAM: unset
+# Shared cache: enabled-except-user-rules
+# Shared cache location: /home/lautaro/.cache/dune/db
+# Workspace root: /home/lautaro/Documents/Blog/Camel
+# Auto-detected concurrency: 4
+# Dune context:
+#  { name = "default"
+#  ; kind = "default"
+#  ; profile = Dev
+#  ; merlin = true
+#  ; fdo_target_exe = None
+#  ; build_dir = In_build_dir "default"
+#  ; instrument_with = []
+#  }
+$ /nix/store/14nbg9kalx0fzg412ibngwgpfjahcq2b-ocaml-5.4.1/bin/ocamlc.opt -config > /tmp/dune_e3d233_output
+$ (cd _build/default && /nix/store/14nbg9kalx0fzg412ibngwgpfjahcq2b-ocaml-5.4.1/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -I bin/.main.eobjs/byte -I bin/.main.eobjs/native -I lib/.template.objs/byte -I lib/.template.objs/native -cmi-file bin/.main.eobjs/byte/dune__exe__Main.cmi -no-alias-deps -opaque -o bin/.main.eobjs/native/dune__exe__Main.cmx -c -impl bin/main.ml)
+$ (cd _build/default && /nix/store/14nbg9kalx0fzg412ibngwgpfjahcq2b-ocaml-5.4.1/bin/ocamlopt.opt -w @1..3@5..28@31..39@43@46..47@49..57@61..62@67@69-40 -strict-sequence -strict-formats -short-paths -keep-locs -g -o bin/main.exe lib/template.cmxa bin/.main.eobjs/native/dune__exe__Main.cmx)
