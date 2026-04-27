@@ -45,10 +45,12 @@ export const Blogroll = {
       entries: all_entries,
     };
 
-    await Deno.writeTextFile(
-      BLOGROLL_CACHE_FILE,
-      JSON.stringify(cache, null, 2),
-    );
+    if (Deno.env.get("GITHUB_ACTIONS") === "false") {
+      await Deno.writeTextFile(
+        BLOGROLL_CACHE_FILE,
+        JSON.stringify(cache, null, 2),
+      );
+    }
 
     all_entries.sort((a, b) => b.date.getTime() - a.date.getTime());
 
