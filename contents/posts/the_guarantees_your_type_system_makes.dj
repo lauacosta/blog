@@ -1083,3 +1083,7 @@ I'm sure there are more interesting applications of types from languages like [H
 
 If you want to keep learning how to use types to write efficient software I can't recommend enough to read the archive of [Ted Kaminski](https://www.tedinski.com/archive/), especially "_[The One Ring Problem](https://www.tedinski.com/2018/01/30/the-one-ring-problem-abstraction-and-power.html)_"! 
 
+## References
+
+- Harper, Robert. (2016) _Practical Foundations for Programming Languages_. 2nd ed. Cambridge University Press.
+- Cardelli, Luca. (1996) _“Type Systems.”_ In The Computer Science and Engineering Handbook, edited by Allen B. Tucker, chapter 140.

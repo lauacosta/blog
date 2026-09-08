@@ -82,6 +82,7 @@ function Fonts({ fonts }: { fonts: Map<string, string> }) {
   font-display: swap;
 }
 
+
 @font-face {
   font-family: 'et-book';
   src: url('${font("etbookot-italic-webfont.woff2")}') format('woff2');

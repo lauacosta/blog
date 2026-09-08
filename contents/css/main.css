@@ -98,9 +98,10 @@
         font-family: "Libre Bodoni", serif;
     }
 
-    :where(h2, , h3) {
+    :where(h2, h3) {
       font-family: var(--regular-font);
-      font-weight: 700;
+      font-style: italic;
+      font-weight: 400;
     }
 
     :where(h1, h2, h3) a::after {
@@ -301,7 +302,8 @@
     margin-bottom: 2rem;
 
     .site-name {
-        font-family: "Libre Bodoni", "et-book", serif;
+        font-family: Cabin;
+        text-transform: uppercase;
         font-weight: 700;
         font-size: 0.8em;
     }

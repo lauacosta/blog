@@ -1,5 +1,5 @@
 {
-  "createdAt": "2026-09-02T18:25:08.489Z",
+  "createdAt": "2026-09-08T00:27:54.502Z",
   "entries": [
     {
       "title": "The real AI risk is inside the labs",
@@ -22,9 +22,9 @@
       "date": "2026-07-01T00:00:00.000Z"
     },
     {
-      "title": "There's no reason for software to be slow anymore",
-      "url": "https://danluu.com/perf-opt/",
-      "date": "2026-08-21T00:00:00.000Z"
+      "title": "How accurate have Ed Zitron's AI skeptic predictions been?",
+      "url": "https://danluu.com/zitron/",
+      "date": "2026-09-01T00:00:00.000Z"
     },
     {
       "title": "iddqd, or the hardest kind of unsafe Rust",
@@ -65,9 +65,9 @@
       "date": "2019-05-04T17:00:00.000Z"
     },
     {
-      "title": "Another look at SQLite's WAL-Reset bug",
-      "url": "http://notes.eatonphil.com/2026-08-23-another-look-at-sqlite-wal-reset.html",
-      "date": "2026-08-23T00:00:00.000Z"
+      "title": "Data races and the limits of ThreadSanitizer in C and Go",
+      "url": "http://notes.eatonphil.com/2026-09-06-data-races-and-the-limits-of-threadsanitizer-in-c-and-go.html",
+      "date": "2026-09-06T00:00:00.000Z"
     },
     {
       "title": "Concurrent, atomic MSI hash tables",
@@ -132,9 +132,9 @@
     },
     {
       "author": "Anil Madhavapeddy",
-      "title": "Security scanning my own code with Scrutineer and local coding models",
-      "url": "https://anil.recoil.org/notes/scrutineer-local-llm",
-      "date": "2026-08-31T00:00:00.000Z"
+      "title": ".plan-26-36: Ground control to major MODIS",
+      "url": "https://anil.recoil.org/notes/2026w36",
+      "date": "2026-09-06T00:00:00.000Z"
     },
     {
       "author": "Filippo Valsorda <feed@filippo.io>",
@@ -149,9 +149,9 @@
       "date": "2026-08-07T00:00:00.000Z"
     },
     {
-      "title": "Thoughts on the Buildkite Aug 25 incident",
-      "url": "https://surfingcomplexity.blog/2026/09/01/thoughts-on-the-buildkite-aug-25-incident?utm_source=theconsensus.dev&utm_medium=referral",
-      "date": "2026-09-02T04:00:00.000Z"
+      "title": "Rethinking PAM",
+      "url": "https://mariadb.org/rethinking-pam?utm_source=theconsensus.dev&utm_medium=referral",
+      "date": "2026-09-07T04:00:00.000Z"
     },
     {
       "author": "Jepsen",
@@ -166,9 +166,9 @@
       "date": "2026-07-30T00:00:00.000Z"
     },
     {
-      "title": "How to protect yourself from workslop",
-      "url": "https://seangoedecke.com/how-to-protect-yourself-from-workslop/",
-      "date": "2026-09-02T00:00:00.000Z"
+      "title": "Automatically detecting AI text in my browser",
+      "url": "https://seangoedecke.com/deckard/",
+      "date": "2026-09-08T00:00:00.000Z"
     },
     {
       "title": "Find Git Commits by Commit Message Text",
